@@ -9,9 +9,9 @@
 @theme {
     --font-poppins: Poppins, "sans-serif";
 
-    --color-primary: #D9D9D9;
-    --color-secondary: #F0EDED;
-    --color-tertiary: #585858;
+    --color-customgray1: #D9D9D9;
+    --color-customgray2: #F0EDED;
+    --color-customgray3: #585858;
     --color-blue-button: #163A53;
 }
 
@@ -123,10 +123,11 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+
+    body {
+        @apply bg-background text-foreground;
     }
 }
