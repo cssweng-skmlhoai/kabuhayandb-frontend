@@ -1,0 +1,129 @@
+.main {
+  padding-top: 2rem;
+  background-color: #e5e5e5;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+  max-width: 64rem;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.info {
+  padding-top: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+.card {
+  margin-bottom: 1rem;
+  max-width: 64rem;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.inline-fields {
+  display: flex;
+  gap: 1rem;
+}
+
+.accordion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.delete {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.due-label{
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.row {
+  display: flex;            
+  align-items: center;      
+  gap: 1rem;                 
+}
+
+.pagination {
+  margin-top: 1rem;
+}
+
+.pagination-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-page-text {
+  font-size: 0.875rem;
+  color: var(--muted-foreground, #6b7280); 
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.due-message {
+  padding-left: 1.5rem; 
+  padding-right: 1.5rem;
+  padding-bottom: 1rem; 
+  font-size: 0.875rem;  
+  color: var(--muted-foreground, #6b7280); 
+  text-align: center;
+}
+
+.payment-history-label {
+  margin-bottom: 2rem;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  font-size: large;
+  font-weight: 500; 
+}
+
+.payment-history-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; 
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.payment-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+
+@media (min-width: 1024px) {
+  .btn-div {
+    padding-right: 0;
+  }
+}
