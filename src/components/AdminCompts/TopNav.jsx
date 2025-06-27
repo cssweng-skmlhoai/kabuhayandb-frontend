@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 const TopNav = () => {
   return (
-    <div>
+    <div className='xl:hidden'>
       <nav className='p-3 mt-5'>
         <ul className='flex justify-around items-center'>
           <li>
@@ -28,22 +28,28 @@ const TopNav = () => {
             </Link>
           </li>
           <li>
-            <div className='flex flex-col items-center justify-center hover:bg-gray-300 p-1 rounded-sm cursor-pointer'>
-              <GrDocumentUser className='size-6' />
-              <p className='font-poppins text-sm'>Certification</p>
-            </div>
+            <Link to="/certification">
+              <div className='flex flex-col items-center justify-center hover:bg-gray-300 p-1 rounded-sm cursor-pointer'>
+                <GrDocumentUser className='size-6' />
+                <p className='font-poppins text-sm'>Certification</p>
+              </div>
+            </Link>
           </li>
           <li>
-            <div className='flex flex-col items-center justify-center hover:bg-gray-300 p-1 rounded-sm cursor-pointer'>
-              <SlSettings className='size-6' />
-              <p className='font-poppins text-sm'>Settings</p>
-            </div>
+            <Link to="/settings">
+              <div className='flex flex-col items-center justify-center hover:bg-gray-300 p-1 rounded-sm cursor-pointer'>
+                <SlSettings className='size-6' />
+                <p className='font-poppins text-sm'>Settings</p>
+              </div>
+            </Link>
           </li>
           <li>
-            <div className='flex flex-col items-center justify-center hover:bg-gray-300 p-1 rounded-sm cursor-pointer'>
-              <MdOutlineLogout className='size-6' />
-              <p className='font-poppins text-sm'>Logout</p>
-            </div>
+            <Link to="/login">
+              <div className='flex flex-col items-center justify-center hover:bg-gray-300 p-1 rounded-sm cursor-pointer'>
+                <MdOutlineLogout className='size-6' />
+                <p className='font-poppins text-sm'>Logout</p>
+              </div>
+            </Link>
           </li>
         </ul>
       </nav>
