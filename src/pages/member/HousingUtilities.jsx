@@ -15,13 +15,14 @@ const HousingUtilities = () => {
       tct_no: "014-3127112878",
       block_no: "2",
       lot_no: "3",
+      area: "25.99",
       open_space_share: "8.08",
       total: "34.07",
       confirmity_signature: "",
       remarks: "Remark",
-      meralco: 0,
-      maynilad: 1,
-      septic_tank: 0,
+      Meralco: 0,
+      Maynilad: 1,
+      Septic_Tank: 0,
       condition_type: "Needs minor repair",
       land_acquisition: "Direct Buying",
       status_of_occupancy: "Owner",
@@ -80,18 +81,27 @@ const HousingUtilities = () => {
                     inputType="number"
                   />
                 </div>
-                <ClearableInputField
-                  control={form.control}
-                  name="open_space_share"
-                  label="Share of Open Space"
-                  isEditing={isEditing}
-                />
+                <div className="flex gap-4">
+                  <ClearableInputField
+                    control={form.control}
+                    name="area"
+                    label="Area"
+                    isEditing={isEditing}
+                  />
+                  <ClearableInputField
+                    control={form.control}
+                    name="open_space_share"
+                    label="Share of Open Space"
+                    isEditing={isEditing}
+                  />
+                </div>
+                
                 <ClearableInputField
                   control={form.control}
                   name="total"
                   label="Total"
-                  isEditing={isEditing}
-                  inputType="number"
+                  isEditing={false}
+                  inputProps={{ readOnly: true }}
                 />
               </div>
             </CardContent>
@@ -137,19 +147,19 @@ const HousingUtilities = () => {
                 <div className="flex gap-6">
                   <CheckboxField
                     control={form.control}
-                    name="meralco"
+                    name="Meralco"
                     label="Meralco"
                     isEditing={isEditing}
                   />
                   <CheckboxField
                     control={form.control}
-                    name="maynilad"
+                    name="Maynilad"
                     label="Maynilad"
                     isEditing={isEditing}
                   />
                   <CheckboxField
                     control={form.control}
-                    name="septic_tank"
+                    name="Septic_Tank"
                     label="Septic Tank"
                     isEditing={isEditing}
                   />
