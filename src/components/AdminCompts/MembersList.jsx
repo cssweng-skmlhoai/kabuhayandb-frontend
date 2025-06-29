@@ -10,6 +10,7 @@ import { TiDeleteOutline } from "react-icons/ti";
 import { TbCancel } from "react-icons/tb";
 import { FaPlus } from 'react-icons/fa6';
 import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,9 +18,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogClose
+} from "@/components/ui/dialog"
+import { useState } from 'react';
 
 const MembersList = ({ setView }) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   return (
     <div>
       <div className='p-5 bg-customgray1 flex flex-col items-center justify-center gap-4 font-poppins xl:bg-white xl:flex-row xl:px-10 xl:pt-10 xl:pb-5'>
@@ -101,7 +112,7 @@ const MembersList = ({ setView }) => {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setView("view")}><IoIosList />View Details</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setView("edit")}><LuPencil />Edit Details</DropdownMenuItem>
-                <DropdownMenuItem><TiDeleteOutline />Delete Member</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDialogOpen(true)}><TiDeleteOutline />Delete Member</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem><TbCancel />Cancel</DropdownMenuItem>
               </DropdownMenuContent>
@@ -109,7 +120,7 @@ const MembersList = ({ setView }) => {
           </div>
           <div className='flex justify-between items-center font-poppins'>
             <div className='flex items-center gap-4'>
-              <img src="/path/to/profile.jpg" alt="Profile" className='hidden xl:size-12 rounded-full bg-gray-300' />
+              <img src="/path/to/profile.jpg" alt="Profile" className='hidden xl:block size-12 rounded-full bg-gray-300' />
               <div className='flex flex-col gap-1.5'>
                 <p className='font-semibold'>Member Name</p>
                 <div className='xl:flex gap-20'>
@@ -131,6 +142,22 @@ const MembersList = ({ setView }) => {
           </div>
         </div>
       </div>
+
+      {/* Dialog for delete member confirmation */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="w-[70%]">
+          <DialogHeader>
+            <DialogTitle className="text-left">Delete Member?</DialogTitle>
+            <DialogDescription className="flex flex-col gap-4">
+              Are you sure you want to delete this member? This will permanently delete all records related to this member from the database.
+              <div className='w-full flex justify-between'>
+                <Button className="w-[45%] bg-red-500 hover:bg-red-700">Delete</Button>
+                <DialogClose className="w-[45%]"><Button className="w-full">Cancel</Button></DialogClose>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
     </div>
   )

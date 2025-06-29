@@ -114,7 +114,7 @@ const MemberForms = ({ view, setView }) => {
           <div className='bg-white px-5 py-3 flex justify-between rounded-md font-poppins'>
             <p className='font-medium'>Family Composition (n)</p>
             {(view === "edit" || view === "add") && (
-              <div className='flex items-center gap-2 bg-customgray1 px-2 rounded-sm cursor-pointer'>
+              <div className='flex items-center gap-2 bg-customgray1 px-2 rounded-sm cursor-pointer hover:bg-gray-400 duration-300'>
                 <FaPlus />
                 <p>Add</p>
               </div>
@@ -164,7 +164,7 @@ const MemberForms = ({ view, setView }) => {
                 <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={view === "view"} />
 
                 {(view === "edit" || view === "add") && (
-                  <Button className="w-1/5 self-center"><FaRegTrashAlt />Delete</Button>
+                  <Button className="w-1/5 self-center bg-blue-button xl:w-2/5"><FaRegTrashAlt />Delete</Button>
                 )}
               </AccordionContent>
             </AccordionItem>

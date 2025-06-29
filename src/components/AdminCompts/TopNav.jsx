@@ -5,6 +5,16 @@ import { GrDocumentUser } from "react-icons/gr";
 import { SlSettings } from "react-icons/sl";
 import { MdOutlineLogout } from "react-icons/md";
 import { Link } from 'react-router-dom';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose
+} from "@/components/ui/dialog"
+import { Button } from '../ui/button';
 
 const TopNav = () => {
   return (
@@ -44,12 +54,23 @@ const TopNav = () => {
             </Link>
           </li>
           <li>
-            <Link to="/login">
-              <div className='flex flex-col items-center justify-center hover:bg-gray-300 p-1 rounded-sm cursor-pointer'>
-                <MdOutlineLogout className='size-6' />
-                <p className='font-poppins text-sm'>Logout</p>
-              </div>
-            </Link>
+            <Dialog>
+              <DialogTrigger>
+                <div className='flex flex-col items-center justify-center hover:bg-gray-300 p-1 rounded-sm cursor-pointer'>
+                  <MdOutlineLogout className='size-6' />
+                  <p className='font-poppins text-sm'>Logout</p>
+                </div>
+              </DialogTrigger>
+              <DialogContent className="w-[70%]">
+                <DialogHeader>
+                  <DialogTitle className="text-left">Are you Sure You Want to Logout?</DialogTitle>
+                  <DialogDescription className="pt-5 flex justify-between">
+                    <Link to="/login" className='w-[45%]'><Button className="w-full bg-red-500 hover:bg-red-700">Logout</Button></Link>
+                    <DialogClose className="w-[45%]"><Button className="w-full">Cancel</Button></DialogClose>
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </li>
         </ul>
       </nav>
