@@ -19,15 +19,6 @@ import {
 import "./Members.css";
 
 // To be revised - inline with database structure
-// Sample Payment History
-const allPayments = [
-  { receiptNo: "001", amount: "1,000", date: "2024-01-15" },
-  { receiptNo: "002", amount: "1,000", date: "2024-02-15" },
-  { receiptNo: "003", amount: "1,000", date: "2024-03-15" },
-  { receiptNo: "004", amount: "1,000", date: "2024-04-15" },
-  { receiptNo: "005", amount: "1,000", date: "2024-05-15" },
-];
-
 // Sample Dues Data
 const duesData = {
   "Monthly Amortization": {
@@ -56,11 +47,16 @@ const duesData = {
   },
   Others: {
     type: "Others",
-    status: "Pending",
+    status: "Paid",
     amount: "150",
     dueDate: "2024-08-01",
   },
 };
+
+//
+const paidDues = Object.values(duesData).filter(
+  (item) => item.status === "Paid"
+);
 
 const itemsPerPage = 3;
 
@@ -69,11 +65,12 @@ const MemberDues = () => {
   const [page, setPage] = useState(1);
 
   const selectedDetails = duesData[selectedDue] || null;
-  const totalPages = Math.ceil(allPayments.length / itemsPerPage);
-  const paginatedData = allPayments.slice(
+  const totalPages = Math.ceil(paidDues.length / itemsPerPage);
+  const paginatedData = paidDues.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
+
 
   const handlePrevious = () => {
     if (page > 1) setPage(page - 1);
@@ -185,9 +182,9 @@ const MemberDues = () => {
             <div className="space-y-2">
               {paginatedData.map((payment, index) => (
                 <div key={index} className="payment-row">
-                  <span>{payment.receiptNo}</span>
+                  <span>{payment.receiptNo || "—"}</span>
                   <span>{`₱ ${payment.amount}`}</span>
-                  <span>{payment.date}</span>
+                  <span>{payment.dueDate}</span>
                 </div>
               ))}
             </div>
