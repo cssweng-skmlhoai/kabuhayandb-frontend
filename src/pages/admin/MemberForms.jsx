@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { FaPlus } from "react-icons/fa6";
 import { IoIosArrowRoundBack } from "react-icons/io";
@@ -18,50 +18,64 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-const MemberForms = ({ view, setView }) => {
+const MemberForms = ({ view }) => {
+  const { id } = useParams();
+  const [member, setMember] = useState(null);
+
+  useEffect(() => {
+    axios.get()
+  }, [id]);
+
+  const isEdit = view === 'edit';
+
   return (
     <div>
       <div className=' hidden xl:flex justify-between items-center py-4 px-6 bg-customgray2'>
-        <div className='cursor-pointer px-3 rounded-md border border-black flex items-center gap-2' onClick={() => setView("list")}>
+        <Link to="/members" className='cursor-pointer px-3 rounded-md border border-black flex items-center gap-2'>
           <IoIosArrowRoundBack className='size-10' />
           <p className='font-poppins text-lg'>Back</p>
-        </div>
-        {view !== "add" && (
-          <Button className="bg-blue-button cursor-pointer" onClick={() => setView(view === "view" ? "edit" : "view")}>
-            {view === "view" ? "Edit Details" : "Cancel"}
+        </Link>
+        <Link to={`/members/${id}${isEdit ? '' : '/edit'}`}>
+          <Button className="bg-blue-button cursor-pointer">
+            {isEdit ? "Cancel" : "Edit Details"}
           </Button>
-        )}
+        </Link>
       </div>
 
       <div className='p-5 bg-customgray1 flex flex-col gap-4 xl:grid xl:grid-cols-3 xl:p-8 xl:gap-7'>
         <div className='flex flex-col gap-4 xl:col-start-1'>
           <div className='flex justify-between items-center xl:hidden'>
-            <IoIosArrowRoundBack className='size-10 cursor-pointer' onClick={() => setView("list")} />
-            {view !== "add" && (
-              <Button className="bg-blue-button cursor-pointer" onClick={() => setView(view === "view" ? "edit" : "view")}>
-                {view === "view" ? "Edit Details" : "Cancel"}
+            <Link to="/members">
+              <IoIosArrowRoundBack className='size-10 cursor-pointer' />
+            </Link>
+            <Link to={`/members/${id}${isEdit ? '' : '/edit'}`}>
+              <Button className="bg-blue-button cursor-pointer">
+                {isEdit ? "Cancel" : "Edit Details"}
               </Button>
-            )}
+            </Link>
           </div>
 
           <div className='bg-white p-5 flex flex-col rounded-md font-poppins font-normal'>
             <label htmlFor="lastname">Last Name</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Last Name" type="text" name="" id="" disabled={view === "view"} />
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Last Name" type="text" name="" id="" disabled={!isEdit} />
 
             <label htmlFor="firstname">First Name</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="First Name" type="text" name="" id="" disabled={view === "view"} />
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="First Name" type="text" name="" id="" disabled={!isEdit} />
 
             <label htmlFor="middlename">Middle Name</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Middle Name" type="text" name="" id="" disabled={view === "view"} />
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Middle Name" type="text" name="" id="" disabled={!isEdit} />
 
             <label htmlFor="birthdate">Date of Birth</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" type="date" name="" id="" disabled={view === "view"} />
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" type="date" name="" id="" disabled={!isEdit} />
 
             <div className='flex justify-between gap-4'>
               <div className='flex flex-col w-1/2'>
                 <label htmlFor="age">Age</label>
-                <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="00" type="number" name="" id="" disabled={view === "view"} />
+                <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="00" type="number" name="" id="" disabled={!isEdit} />
               </div>
 
               <div className='flex flex-col w-1/2'>
@@ -79,41 +93,41 @@ const MemberForms = ({ view, setView }) => {
             </div>
 
             <label htmlFor="position">Position</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Position" type="text" name="" id="" disabled={view === "view"} />
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Position" type="text" name="" id="" disabled={!isEdit} />
 
             <label htmlFor="contact">Contact Number</label>
-            <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={view === "view"} />
+            <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={!isEdit} />
 
           </div>
 
           <div className='bg-white p-5 flex flex-col rounded-md font-poppins font-normal'>
             <label htmlFor="tct">TCT No.</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={view === "view"} />
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={!isEdit} />
 
             <div className='flex justify-between gap-4'>
               <div className='flex flex-col w-1/2'>
                 <label htmlFor="block">Block No.</label>
-                <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={view === "view"} />
+                <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={!isEdit} />
               </div>
 
               <div className='flex flex-col w-1/2'>
                 <label htmlFor="lot">Lot No.</label>
-                <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={view === "view"} />
+                <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={!isEdit} />
               </div>
             </div>
 
             <label htmlFor="openspace">Share of Open Space</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={view === "view"} />
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={!isEdit} />
 
             <label htmlFor="total">Total</label>
-            <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={view === "view"} />
+            <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Contact Number" type="number" name="" id="" disabled={!isEdit} />
           </div>
         </div>
 
         <div className='flex flex-col gap-4 xl:col-start-2'>
           <div className='bg-white px-5 py-3 flex justify-between rounded-md font-poppins'>
             <p className='font-medium'>Family Composition (n)</p>
-            {(view === "edit" || view === "add") && (
+            {isEdit && (
               <div className='flex items-center gap-2 bg-customgray1 px-2 rounded-sm cursor-pointer hover:bg-gray-400 duration-300'>
                 <FaPlus />
                 <p>Add</p>
@@ -126,24 +140,24 @@ const MemberForms = ({ view, setView }) => {
               <AccordionTrigger className="hover:no-underline bg-white p-5 rounded-md font-poppins font-medium data-[state=open]:rounded-b-none cursor-pointer">Family Member 1</AccordionTrigger>
               <AccordionContent className="flex flex-col bg-white px-5 pb-5 font-poppins rounded-b-sm">
                 <label htmlFor="famlastname">Last Name</label>
-                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={view === "view"} />
+                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={!isEdit} />
 
                 <label htmlFor="famfirstname">First Name</label>
-                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={view === "view"} />
+                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={!isEdit} />
 
                 <label htmlFor="fammiddlename">Middle Name</label>
-                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={view === "view"} />
+                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={!isEdit} />
 
                 <label htmlFor="relation">Relation to Member</label>
-                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={view === "view"} />
+                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={!isEdit} />
 
                 <label htmlFor="fambirthdate">Date of Birth</label>
-                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="date" name="" id="" disabled={view === "view"} />
+                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="date" name="" id="" disabled={!isEdit} />
 
                 <div className='flex w-full justify-between gap-4'>
                   <div className='flex flex-col w-1/2'>
                     <label htmlFor="famage">Age</label>
-                    <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="number" name="" id="" disabled={view === "view"} />
+                    <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="number" name="" id="" disabled={!isEdit} />
                   </div>
 
                   <div className='flex flex-col w-1/2'>
@@ -161,9 +175,9 @@ const MemberForms = ({ view, setView }) => {
                 </div>
 
                 <label htmlFor="education">Educational Attainment</label>
-                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={view === "view"} />
+                <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Remarks" type="text" name="" id="" disabled={!isEdit} />
 
-                {(view === "edit" || view === "add") && (
+                {isEdit && (
                   <Button className="w-1/5 self-center bg-blue-button xl:w-2/5"><FaRegTrashAlt />Delete</Button>
                 )}
               </AccordionContent>
@@ -174,10 +188,10 @@ const MemberForms = ({ view, setView }) => {
         <div className='flex flex-col gap-4 xl:col-start-3'>
           <div className='bg-white p-5 flex flex-col rounded-md font-poppins font-normal'>
             <label htmlFor="signature">Conformity/Signature</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="-----" type="text" name="" id="" disabled={view === "view"} />
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="-----" type="text" name="" id="" disabled={!isEdit} />
 
             <label htmlFor="remarks">Remarks</label>
-            <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Remarks" type="text" name="" id="" disabled={view === "view"} />
+            <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Remarks" type="text" name="" id="" disabled={!isEdit} />
           </div>
 
           <div className='bg-white p-5 flex flex-col rounded-md font-poppins font-normal'>
@@ -240,9 +254,9 @@ const MemberForms = ({ view, setView }) => {
 
           <div className='flex w-full justify-between gap-4 font-poppins'>
             <button className="w-1/2 px-5 py-2 rounded-md bg-white text-black hover:bg-gray-200 transition duration-200 xl:hidden" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Back to Top</button>
-            {(view === "edit" || view === "add") && (
+            {isEdit && (
               <button className="w-1/2 px-5 py-2 rounded-md text-white bg-blue-button hover:bg-black transition duration-200 xl:w-full">
-                {view === "edit" ? "Save Changes" : "Add Member"}
+                Save Changes
               </button>
             )}
           </div>

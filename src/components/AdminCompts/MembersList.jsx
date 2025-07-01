@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IoSearchOutline } from "react-icons/io5";
 import { IoFilterOutline } from "react-icons/io5";
 import { TbArrowsSort } from "react-icons/tb";
@@ -27,9 +27,47 @@ import {
   DialogClose
 } from "@/components/ui/dialog"
 import { useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-const MembersList = ({ setView }) => {
+const MembersList = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [members, setMembers] = useState([]);
+  const [searched, setSearched] = useState("");
+
+  const API_SECRET = import.meta.env.VITE_API_SECRET;
+  const API_URL = "https://kabuhayandb-backend.onrender.com";
+
+  // fetch all members once
+  useEffect(() => {
+    axios.get(`${API_URL}/members/home`, {
+      headers: {
+        'Authorization': `Bearer ${API_SECRET}`
+      }
+    }).then(res => {
+      if (!res.data) {
+        setMembers([]);
+      } else {
+        setMembers(res.data);
+      }
+    }).catch(err => { console.log(err) })
+  }, []);
+
+  // function to search for user
+  const searchUser = () => {
+    axios.get(`${API_URL}/members/home?name=${searched}`, {
+      headers: {
+        'Authorization': `Bearer ${API_SECRET}`
+      }
+    }).then(res => {
+      if (!res.data) {
+        setMembers([]);
+      } else {
+        const results = Array.isArray(res.data) ? res.data : [res.data];
+        setMembers(results);
+      }
+    }).catch(err => { console.log(err) })
+  }
 
   return (
     <div>
@@ -46,14 +84,15 @@ const MembersList = ({ setView }) => {
               <p>Export</p>
             </Button>
 
-            <Button className="bg-blue-button" onClick={() => setView("add")}><FaPlus />Add Member</Button>
+            <Button className="bg-blue-button" >
+              <Link to="/members/add" className='flex items-center gap-2'><FaPlus />Add Member</Link>
+            </Button>
           </div>
         </div>
 
         <div className="relative w-[80%] xl:hidden">
-          <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer size-5" />
-          <input type="text" placeholder="Search Member Name" className="border border-gray-300 rounded-md pl-10 pr-3 py-3 w-full bg-white"
-          />
+          <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer size-5" onClick={searchUser} />
+          <input type="text" placeholder="Search Member Name" className="border border-gray-300 rounded-md pl-10 pr-3 py-3 w-full bg-white" value={searched} onChange={(e) => setSearched(e.target.value)} />
         </div>
         <div className='flex justify-around w-[80%] xl:hidden'>
           <Button className='rounded-sm bg-white border-1 border-black w-[30%] hover:bg-gray-300 text-customgray3 cursor-pointer'>
@@ -90,8 +129,8 @@ const MembersList = ({ setView }) => {
 
           <div className='flex items-center w-1/2 justify-end gap-3'>
             <div className="relative w-1/2">
-              <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer size-5" />
-              <input type="text" placeholder="Search Member Name" className="border border-black rounded-md pl-10 pr-3 py-1.5 w-full bg-white" />
+              <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer size-5" onClick={searchUser} />
+              <input type="text" placeholder="Search Member Name" className="border border-black rounded-md pl-10 pr-3 py-1.5 w-full bg-white" value={searched} onChange={(e) => setSearched(e.target.value)} />
             </div>
 
             <Button className='rounded-sm bg-white border-1 border-black w-[20%] hover:bg-gray-300 text-customgray3 cursor-pointer'>
@@ -101,37 +140,57 @@ const MembersList = ({ setView }) => {
           </div>
         </div>
 
-        <div className='bg-customgray2 px-4 pb-4 pt-3 flex flex-col xl:rounded-md xl:relative xl:py-5'> {/* separate component? */}
-          <div className='flex justify-end xl:absolute xl:right-4 xl:-translate-y-3'>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className='cursor-pointer'>
-                  <BsThreeDots className='size-6 rounded hover:bg-gray-300' />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setView("view")}><IoIosList />View Details</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setView("edit")}><LuPencil />Edit Details</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setDialogOpen(true)}><TiDeleteOutline />Delete Member</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem><TbCancel />Cancel</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div className='flex justify-between items-center font-poppins'>
-            <div className='flex items-center gap-4'>
-              <img src="/path/to/profile.jpg" alt="Profile" className='hidden xl:block size-12 rounded-full bg-gray-300' />
-              <div className='flex flex-col gap-1.5'>
-                <p className='font-semibold'>Member Name</p>
-                <div className='xl:flex gap-20'>
-                  <p>013 - 3017002676</p>
-                  <p>BLK 00 LOT 00</p>
+        {members.length === 0 ? (
+          <p className="text-center text-gray-500 mt-4">No members found.</p>
+        ) : (
+          members.map(member => (
+            <div key={member.member_id} className='bg-customgray2 px-4 pb-4 pt-3 flex flex-col xl:rounded-md xl:relative xl:py-5'>
+              <div className='flex justify-end xl:absolute xl:right-4 xl:-translate-y-3'>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className='cursor-pointer'>
+                      <BsThreeDots className='size-6 rounded hover:bg-gray-300' />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem >
+                      <Link to={`/members/${member.member_id}`} className='flex items-center gap-2'>
+                        <IoIosList />View Details
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link to={`/members/${member.member_id}/edit`} className='flex items-center gap-2'>
+                        <LuPencil />Edit Details
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setDialogOpen(true)}>
+                      <TiDeleteOutline />Delete Member
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem><TbCancel />Cancel</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              <div className='flex justify-between items-center font-poppins'>
+                <div className='flex items-center gap-4'>
+                  <img src={member.imageUrl || "/path/to/default.jpg"} alt="Profile" className='hidden xl:block size-12 rounded-full bg-gray-300' />
+                  <div className='flex flex-col gap-1.5'>
+                    <p className='font-semibold'>{member.fullname}</p>
+                    <div className='xl:flex gap-20'>
+                      <p>{member.tct_no}</p>
+                      <p>BLK {member.block_no} • LOT {member.lot_no}</p>
+                    </div>
+                  </div>
                 </div>
+                <p className='px-3 py-0.5 bg-white rounded-md mr-[8%] xl:mr-[12%]'>
+                  {member.head_position || "N/A"}
+                </p>
               </div>
             </div>
-            <p className='px-3 py-0.5 bg-white rounded-md mr-[8%] xl:mr-[12%]'>POSITION</p>
-          </div>
-        </div>
+          ))
+        )}
+
 
         <div className='hidden xl:flex justify-between'> {/* for pagination/desktop only */}
           <p>1 - 08 of 00</p>
