@@ -89,14 +89,20 @@ const MemberForms = ({ view }) => {
         block_no: data.block_no,
         lot_no: data.lot_no,
         open_space_share: data.open_space_share,
-        total: data.total,
         condition_type: data.condition_type,
         Meralco: data.Meralco,
         Maynilad: data.Maynilad,
         Septic_Tank: data.Septic_Tank,
       });
 
-      setFamilyMembers(data.family_members || []);
+      const transformedFamilyMembers = (data.family_members || []).map(fm => {
+        const { relation, ...rest } = fm;
+        return {
+          ...rest,
+          relation_to_member: relation,
+        };
+      });
+      setFamilyMembers(transformedFamilyMembers);
 
     }).catch(err => {
       console.log(err)
@@ -106,17 +112,13 @@ const MemberForms = ({ view }) => {
 
   // function to update member details
   const handleUpdates = () => {
-    const updated = familyMembers.filter(fm => fm.family_member_id);
-    const created = familyMembers
-      .filter(fm => !fm.family_member_id)
-      .map(fm => ({ ...fm, isNew: true }));
-    const deleted = deletedMemberIds.map(id => ({ id, isDeleted: true }));
+    const cleanedFamilyMembers = familyMembers.map(({ age, ...rest }) => rest);
 
     const payload = {
       members: memberData,
       families: familyData,
       households: householdData,
-      family_members: [...updated, ...created, ...deleted]
+      family_members: cleanedFamilyMembers
     };
     console.log(payload);
 
@@ -260,7 +262,7 @@ const MemberForms = ({ view }) => {
                     <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Middle Name" type="text" name="" id="" disabled={!isEdit} value={member?.middle_name || ""} onChange={e => handleFamilyMemberChange(index, 'middle_name', e.target.value)} />
 
                     <label htmlFor="relation">Relation to Member</label>
-                    <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Relation to Member" type="text" name="" id="" disabled={!isEdit} value={member?.relation || ""} onChange={e => handleFamilyMemberChange(index, 'relation_to_member', e.target.value)} />
+                    <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Relation to Member" type="text" name="" id="" disabled={!isEdit} value={member?.relation_to_member || ""} onChange={e => handleFamilyMemberChange(index, 'relation_to_member', e.target.value)} />
 
                     <label htmlFor="fambirthdate">Date of Birth</label>
                     <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Birth Date" type="date" name="" id="" disabled={!isEdit} value={formatDate(member?.birth_date) || ""} onChange={e => handleFamilyMemberChange(index, 'birth_date', e.target.value)} />
@@ -268,7 +270,7 @@ const MemberForms = ({ view }) => {
                     <div className='flex w-full justify-between gap-4'>
                       <div className='flex flex-col w-1/2'>
                         <label htmlFor="famage">Age</label>
-                        <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Age" type="number" name="" id="" disabled={!isEdit} value={member?.age || ""} readOnly />
+                        <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="00" type="number" name="" id="" disabled={!isEdit} value={member?.age || ""} readOnly />
                       </div>
 
                       <div className='flex flex-col w-1/2'>
