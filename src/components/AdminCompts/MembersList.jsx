@@ -24,7 +24,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogClose
+  DialogClose,
+  DialogFooter
 } from "@/components/ui/dialog"
 import { useState } from 'react';
 import axios from 'axios';
@@ -34,6 +35,7 @@ const MembersList = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [members, setMembers] = useState([]);
   const [searched, setSearched] = useState("");
+  const [memberToDeleteId, setMemberToDeleteId] = useState(null);
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
@@ -68,6 +70,18 @@ const MembersList = () => {
       }
     }).catch(err => { console.log(err) })
   }
+
+  // function to delete member
+  const handleDelete = (id) => {
+    axios.delete(`${API_URL}/members/delete/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${API_SECRET}`
+      }
+    }).then(() => {
+      setMembers(prev => prev.filter(m => m.member_id !== id));
+      setDialogOpen(false);
+    }).catch(err => console.log(err))
+  };
 
   return (
     <div>
@@ -163,7 +177,7 @@ const MembersList = () => {
                         <LuPencil />Edit Details
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setDialogOpen(true)}>
+                    <DropdownMenuItem onClick={() => { setDialogOpen(true); setMemberToDeleteId(member.member_id); }}>
                       <TiDeleteOutline />Delete Member
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -209,12 +223,14 @@ const MembersList = () => {
             <DialogTitle className="text-left">Delete Member?</DialogTitle>
             <DialogDescription className="flex flex-col gap-4">
               Are you sure you want to delete this member? This will permanently delete all records related to this member from the database.
-              <div className='w-full flex justify-between'>
-                <Button className="w-[45%] bg-red-500 hover:bg-red-700">Delete</Button>
-                <DialogClose className="w-[45%]"><Button className="w-full">Cancel</Button></DialogClose>
-              </div>
             </DialogDescription>
           </DialogHeader>
+          <DialogFooter>
+            <div className='w-full flex justify-between'>
+              <Button className="w-[45%] bg-red-500 hover:bg-red-700" onClick={() => handleDelete(memberToDeleteId)}>Delete</Button>
+              <DialogClose className="w-[45%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">Cancel</DialogClose>
+            </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
