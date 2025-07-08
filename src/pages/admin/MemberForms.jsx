@@ -31,31 +31,40 @@ const MemberForms = ({ view }) => {
   const [memberData, setMemberData] = useState({});
   const [familyData, setFamilyData] = useState({});
   const [familyMembers, setFamilyMembers] = useState([]);
-  const [deletedMemberIds, setDeletedMemberIds] = useState([]);
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
 
   const handleAddFamilyMember = () => {
     setFamilyMembers(prev => [...prev, {
-      last_name: '', first_name: '', middle_name: '',
+      tempId: Date.now(), last_name: '', first_name: '', middle_name: '',
       birth_date: '', gender: '',
       relation_to_family: '', educational_attainment: ''
     }]);
   };
 
-  const handleRemoveFamilyMember = (index) => {
-    const member = familyMembers[index];
-    if (member.family_member_id) {
-      setDeletedMemberIds(prev => [...prev, member.family_member_id]);
-    }
-    setFamilyMembers(prev => prev.filter((_, i) => i !== index));
+  const handleRemoveFamilyMember = (key) => {
+    setFamilyMembers(prev =>
+      prev.flatMap(member => {
+        const memberKey = member.id ?? member.tempId;
+        if (memberKey === key) {
+          return member.id ? [{ ...member, update: false }] : []; // soft delete if has ID
+        }
+        return [member];
+      })
+    );
   };
 
-  const handleFamilyMemberChange = (index, field, value) => {
-    const updated = [...familyMembers];
-    updated[index][field] = value;
-    setFamilyMembers(updated);
+  const handleFamilyMemberChange = (key, field, value) => {
+    setFamilyMembers(prev =>
+      prev.map(member => {
+        const memberKey = member.id ?? member.tempId;
+        if (memberKey === key) {
+          return { ...member, [field]: value };
+        }
+        return member;
+      })
+    );
   };
 
   useEffect(() => {
@@ -100,6 +109,7 @@ const MemberForms = ({ view }) => {
         return {
           ...rest,
           relation_to_member: relation,
+          update: true
         };
       });
       setFamilyMembers(transformedFamilyMembers);
@@ -109,10 +119,9 @@ const MemberForms = ({ view }) => {
     });
   }, [id]);
 
-
   // function to update member details
   const handleUpdates = () => {
-    const cleanedFamilyMembers = familyMembers.map(({ age, ...rest }) => rest);
+    const cleanedFamilyMembers = familyMembers.map(({ age, tempId, ...rest }) => rest);
 
     const payload = {
       members: memberData,
@@ -137,6 +146,7 @@ const MemberForms = ({ view }) => {
   };
 
   const isEdit = view === 'edit';
+  const filteredMembers = familyMembers.filter(m => m.update !== false);
 
   return (
     <div>
@@ -237,7 +247,7 @@ const MemberForms = ({ view }) => {
 
         <div className='flex flex-col gap-4 xl:col-start-2'>
           <div className='bg-white px-5 py-3 flex justify-between rounded-md font-poppins'>
-            <p className='font-medium'>Family Composition ({familyMembers?.length})</p>
+            <p className='font-medium'>Family Composition ({filteredMembers.length})</p>
             {isEdit && (
               <div className='flex items-center gap-2 bg-customgray1 px-2 rounded-sm cursor-pointer hover:bg-gray-400 duration-300' onClick={handleAddFamilyMember} variant='outline'>
                 <FaPlus />
@@ -248,54 +258,57 @@ const MemberForms = ({ view }) => {
 
           <Accordion type="single" collapsible>
             <div className='flex flex-col gap-4'>
-              {familyMembers?.map((member, index) => (
-                <AccordionItem key={index} value={`member${index}`}>
-                  <AccordionTrigger className="hover:no-underline bg-white p-5 rounded-md font-poppins font-medium data-[state=open]:rounded-b-none cursor-pointer">Family Member {index + 1}</AccordionTrigger>
-                  <AccordionContent className="flex flex-col bg-white px-5 pb-5 font-poppins rounded-b-sm">
-                    <label htmlFor="famlastname">Last Name</label>
-                    <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Last Name" type="text" name="" id="" disabled={!isEdit} value={member?.last_name || ""} onChange={e => handleFamilyMemberChange(index, 'last_name', e.target.value)} />
+              {filteredMembers?.map((member, index) => {
+                const key = member.id ?? member.tempId;
+                return (
+                  <AccordionItem key={key} value={`member-${key}`}>
+                    <AccordionTrigger className="hover:no-underline bg-white p-5 rounded-md font-poppins font-medium data-[state=open]:rounded-b-none cursor-pointer">Family Member {index + 1}</AccordionTrigger>
+                    <AccordionContent className="flex flex-col bg-white px-5 pb-5 font-poppins rounded-b-sm">
+                      <label htmlFor="famlastname">Last Name</label>
+                      <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Last Name" type="text" name="" id="" disabled={!isEdit} value={member?.last_name || ""} onChange={e => handleFamilyMemberChange(key, 'last_name', e.target.value)} />
 
-                    <label htmlFor="famfirstname">First Name</label>
-                    <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="First Name" type="text" name="" id="" disabled={!isEdit} value={member?.first_name || ""} onChange={e => handleFamilyMemberChange(index, 'first_name', e.target.value)} />
+                      <label htmlFor="famfirstname">First Name</label>
+                      <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="First Name" type="text" name="" id="" disabled={!isEdit} value={member?.first_name || ""} onChange={e => handleFamilyMemberChange(key, 'first_name', e.target.value)} />
 
-                    <label htmlFor="fammiddlename">Middle Name</label>
-                    <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Middle Name" type="text" name="" id="" disabled={!isEdit} value={member?.middle_name || ""} onChange={e => handleFamilyMemberChange(index, 'middle_name', e.target.value)} />
+                      <label htmlFor="fammiddlename">Middle Name</label>
+                      <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Middle Name" type="text" name="" id="" disabled={!isEdit} value={member?.middle_name || ""} onChange={e => handleFamilyMemberChange(key, 'middle_name', e.target.value)} />
 
-                    <label htmlFor="relation">Relation to Member</label>
-                    <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Relation to Member" type="text" name="" id="" disabled={!isEdit} value={member?.relation_to_member || ""} onChange={e => handleFamilyMemberChange(index, 'relation_to_member', e.target.value)} />
+                      <label htmlFor="relation">Relation to Member</label>
+                      <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Relation to Member" type="text" name="" id="" disabled={!isEdit} value={member?.relation_to_member || ""} onChange={e => handleFamilyMemberChange(key, 'relation_to_member', e.target.value)} />
 
-                    <label htmlFor="fambirthdate">Date of Birth</label>
-                    <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Birth Date" type="date" name="" id="" disabled={!isEdit} value={formatDate(member?.birth_date) || ""} onChange={e => handleFamilyMemberChange(index, 'birth_date', e.target.value)} />
+                      <label htmlFor="fambirthdate">Date of Birth</label>
+                      <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Birth Date" type="date" name="" id="" disabled={!isEdit} value={formatDate(member?.birth_date) || ""} onChange={e => handleFamilyMemberChange(key, 'birth_date', e.target.value)} />
 
-                    <div className='flex w-full justify-between gap-4'>
-                      <div className='flex flex-col w-1/2'>
-                        <label htmlFor="famage">Age</label>
-                        <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="00" type="number" name="" id="" disabled={!isEdit} value={member?.age || ""} readOnly />
+                      <div className='flex w-full justify-between gap-4'>
+                        <div className='flex flex-col w-1/2'>
+                          <label htmlFor="famage">Age</label>
+                          <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="00" type="number" name="" id="" disabled={!isEdit} value={member?.age || ""} readOnly />
+                        </div>
+
+                        <div className='flex flex-col w-1/2'>
+                          <label htmlFor="famgender">Gender</label>
+                          <Select value={member?.gender || ""} onValueChange={(value) => handleFamilyMemberChange(key, 'gender', value)}>
+                            <SelectTrigger className={`bg-customgray2 w-full !py-1 !h-auto rounded-sm ${view === "view" ? "pointer-events-none cursor-default text-black opacity-100" : ""}`} >
+                              <SelectValue placeholder="Options" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Male">Male</SelectItem>
+                              <SelectItem value="Female">Female</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
 
-                      <div className='flex flex-col w-1/2'>
-                        <label htmlFor="famgender">Gender</label>
-                        <Select value={member?.gender || ""} onValueChange={(value) => handleFamilyMemberChange(index, 'gender', value)}>
-                          <SelectTrigger className={`bg-customgray2 w-full !py-1 !h-auto rounded-sm ${view === "view" ? "pointer-events-none cursor-default text-black opacity-100" : ""}`} >
-                            <SelectValue placeholder="Options" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Male">Male</SelectItem>
-                            <SelectItem value="Female">Female</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                      <label htmlFor="education">Educational Attainment</label>
+                      <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Educational Attainment" type="text" name="" id="" disabled={!isEdit} value={member?.educational_attainment || ""} onChange={e => handleFamilyMemberChange(key, 'educational_attainment', e.target.value)} />
 
-                    <label htmlFor="education">Educational Attainment</label>
-                    <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Educational Attainment" type="text" name="" id="" disabled={!isEdit} value={member?.educational_attainment || ""} onChange={e => handleFamilyMemberChange(index, 'educational_attainment', e.target.value)} />
-
-                    {isEdit && (
-                      <Button className="w-1/5 self-center bg-blue-button xl:w-2/5" onClick={() => handleRemoveFamilyMember(index)} variant='destructive'><FaRegTrashAlt />Delete</Button>
-                    )}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
+                      {isEdit && (
+                        <Button className="w-1/5 self-center bg-blue-button xl:w-2/5" onClick={() => handleRemoveFamilyMember(key)} variant='destructive'><FaRegTrashAlt />Delete</Button>
+                      )}
+                    </AccordionContent>
+                  </AccordionItem>
+                )
+              })}
             </div>
           </Accordion>
         </div>
@@ -303,7 +316,7 @@ const MemberForms = ({ view }) => {
         <div className='flex flex-col gap-4 xl:col-start-3'>
           <div className='bg-white p-5 flex flex-col rounded-md font-poppins font-normal'>
             <label htmlFor="signature">Conformity/Signature</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="-----" type="text" name="" id="" disabled={!isEdit} value={memberData?.confirmity_signature || ""}
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="-----" type="text" name="" id="" disabled={!isEdit} value={""}
               onChange={e => setMemberData({ ...memberData, confirmity_signature: e.target.value })} />
 
             <label htmlFor="remarks">Remarks</label>
@@ -383,7 +396,6 @@ const MemberForms = ({ view }) => {
             )}
           </div>
         </div>
-
       </div>
     </div>
   )
