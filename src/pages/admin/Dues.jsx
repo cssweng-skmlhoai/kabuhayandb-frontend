@@ -73,7 +73,7 @@ const Dues = () => {
                   <input className="bg-customgray2 p-2 text-md rounded-sm xl:border xl:border-black" type="date" name="" id="" />
 
                   <label htmlFor="amount">Amount</label>
-                  <input className="bg-customgray2 p-2 text-md rounded-sm xl:border xl:border-black" type="text" name="" id="" placeholder='₱ 0.00' />
+                  <input className="bg-customgray2 p-2 text-md rounded-sm xl:border xl:border-black" type="number" name="" id="" placeholder='₱ 0.00' />
                 </div>
 
                 <div className='flex flex-col gap-2 xl:gap-0 xl:justify-between xl:col-start-2'>
@@ -84,7 +84,8 @@ const Dues = () => {
                         <SelectValue placeholder="Options" />
                       </SelectTrigger>
                       <SelectContent>
-
+                        <SelectItem value="Paid">Paid</SelectItem>
+                        <SelectItem value="Unpaid">Unpaid</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -111,10 +112,22 @@ const Dues = () => {
                       </thead>
                       <tbody>
                         <tr className="bg-customgray2 rounded-md">
-                          <td className="px-4 py-2 rounded-l-md">####</td>
-                          <td className="px-4 py-2">₱ 0.00</td>
+                          <td className="px-4 py-2 rounded-l-md">0001</td>
+                          <td className="px-4 py-2">₱ 420.00</td>
                           <td className="px-4 py-2">Monthly Amortization</td>
-                          <td className="px-4 py-2 rounded-r-md">00/00/00</td>
+                          <td className="px-4 py-2 rounded-r-md">20/03/25</td>
+                        </tr>
+                        <tr className="bg-customgray2 rounded-md">
+                          <td className="px-4 py-2 rounded-l-md">0002</td>
+                          <td className="px-4 py-2">₱ 560.00</td>
+                          <td className="px-4 py-2">Monthly Dues</td>
+                          <td className="px-4 py-2 rounded-r-md">10/02/25</td>
+                        </tr>
+                        <tr className="bg-customgray2 rounded-md">
+                          <td className="px-4 py-2 rounded-l-md">0003</td>
+                          <td className="px-4 py-2">₱ 320.00</td>
+                          <td className="px-4 py-2">Monthly Taxes</td>
+                          <td className="px-4 py-2 rounded-r-md">30/01/25</td>
                         </tr>
                       </tbody>
                     </table>

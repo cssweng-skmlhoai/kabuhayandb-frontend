@@ -31,7 +31,7 @@ const AllMembers = () => {
               <Button className="size-12 rounded-full text-3xl font-normal fixed bottom-30 right-5 bg-blue-button xl:hidden">+</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" side="top" className="mb-2">
-              <DropdownMenuItem ><Link to="/members/add"><FaPlus />Add Member</Link></DropdownMenuItem>
+              <DropdownMenuItem><Link to="/members/add" className='flex items-center gap-2'><FaPlus />Add Member</Link></DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem><TbCancel />Cancel</DropdownMenuItem>
             </DropdownMenuContent>

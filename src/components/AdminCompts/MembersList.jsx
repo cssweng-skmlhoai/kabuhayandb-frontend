@@ -36,6 +36,14 @@ const MembersList = () => {
   const [members, setMembers] = useState([]);
   const [searched, setSearched] = useState("");
   const [memberToDeleteId, setMemberToDeleteId] = useState(null);
+  const [memberToDeleteName, setMemberToDeleteName] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const membersPerPage = 5;
+  const indexOfLastMember = currentPage * membersPerPage;
+  const indexOfFirstMember = indexOfLastMember - membersPerPage;
+  const currentMembers = members.slice(indexOfFirstMember, indexOfLastMember);
+  const totalPages = Math.ceil(members.length / membersPerPage);
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
@@ -67,6 +75,7 @@ const MembersList = () => {
       } else {
         const results = Array.isArray(res.data) ? res.data : [res.data];
         setMembers(results);
+        setCurrentPage(1);
       }
     }).catch(err => { console.log(err) })
   }
@@ -157,7 +166,7 @@ const MembersList = () => {
         {members.length === 0 ? (
           <p className="text-center text-gray-500 mt-4">No members found.</p>
         ) : (
-          members.map(member => (
+          currentMembers.map(member => (
             <div key={member.member_id} className='bg-customgray2 px-4 pb-4 pt-3 flex flex-col xl:rounded-md xl:relative xl:py-5'>
               <div className='flex justify-end xl:absolute xl:right-4 xl:-translate-y-3'>
                 <DropdownMenu>
@@ -177,7 +186,7 @@ const MembersList = () => {
                         <LuPencil />Edit Details
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => { setDialogOpen(true); setMemberToDeleteId(member.member_id); }}>
+                    <DropdownMenuItem onClick={() => { setDialogOpen(true); setMemberToDeleteId(member.member_id); setMemberToDeleteName(member.fullname); }}>
                       <TiDeleteOutline />Delete Member
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -206,12 +215,21 @@ const MembersList = () => {
         )}
 
 
-        <div className='hidden xl:flex justify-between'> {/* for pagination/desktop only */}
-          <p>1 - 08 of 00</p>
+        <div className='flex justify-between items-center mt-5 xl:mt-0'> {/* for pagination */}
+          <p className="text-sm text-gray-600">
+            {members.length === 0 ? "0 results" : `${indexOfFirstMember + 1}-${Math.min(indexOfLastMember, members.length)} of ${members.length}`}
+          </p>
+
           <div className='flex items-center gap-3'>
-            <button className="border border-gray-400 rounded hover:bg-gray-400"><ChevronLeft /></button>
-            <p>1/10</p>
-            <button className="border border-gray-400 rounded hover:bg-gray-400"><ChevronRight /></button>
+            <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className={`border border-gray-400 rounded hover:bg-gray-300 px-2 py-1 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <ChevronLeft />
+            </button>
+            <p className='text-sm'>{currentPage}/{totalPages}</p>
+            <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className={`border border-gray-400 rounded hover:bg-gray-300 px-2 py-1 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <ChevronRight />
+            </button>
           </div>
         </div>
       </div>
@@ -220,9 +238,9 @@ const MembersList = () => {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="w-[70%]">
           <DialogHeader>
-            <DialogTitle className="text-left">Delete Member?</DialogTitle>
-            <DialogDescription className="flex flex-col gap-4">
-              Are you sure you want to delete this member? This will permanently delete all records related to this member from the database.
+            <DialogTitle className="text-left">Delete This Member?</DialogTitle>
+            <DialogDescription className="text-md text-gray-700">
+              All records related to <span className='font-bold'>{memberToDeleteName}</span> will be permanently deleted from the database, including their family members, their household, and dues.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

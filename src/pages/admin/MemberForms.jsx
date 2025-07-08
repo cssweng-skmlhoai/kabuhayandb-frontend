@@ -18,6 +18,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+  DialogFooter
+} from "@/components/ui/dialog"
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -31,6 +40,10 @@ const MemberForms = ({ view }) => {
   const [memberData, setMemberData] = useState({});
   const [familyData, setFamilyData] = useState({});
   const [familyMembers, setFamilyMembers] = useState([]);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [memberToDeleteId, setMemberToDeleteId] = useState(null);
+  const [memberToDeleteName, setMemberToDeleteName] = useState('');
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
@@ -148,6 +161,17 @@ const MemberForms = ({ view }) => {
   const isEdit = view === 'edit';
   const filteredMembers = familyMembers.filter(m => m.update !== false);
 
+  const confirmRemoveFamilyMember = (key, fullName) => {
+    setMemberToDeleteId(key);
+    setMemberToDeleteName(fullName);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirmed = () => {
+    handleRemoveFamilyMember(memberToDeleteId);
+    setDeleteDialogOpen(false);
+  };
+
   return (
     <div>
       <div className=' hidden xl:flex justify-between items-center py-4 px-6 bg-customgray2'>
@@ -189,7 +213,7 @@ const MemberForms = ({ view }) => {
               onChange={e => setMemberData({ ...memberData, middle_name: e.target.value })} />
 
             <label htmlFor="birthdate">Date of Birth</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" type="date" name="" id="" disabled={!isEdit} value={formatDate(memberData?.birth_date) || ""}
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" type="date" name="" id="" disabled value={formatDate(memberData?.birth_date) || ""}
               onChange={e => setMemberData({ ...memberData, birth_date: e.target.value })} />
 
             <div className='flex justify-between gap-4'>
@@ -277,7 +301,7 @@ const MemberForms = ({ view }) => {
                       <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Relation to Member" type="text" name="" id="" disabled={!isEdit} value={member?.relation_to_member || ""} onChange={e => handleFamilyMemberChange(key, 'relation_to_member', e.target.value)} />
 
                       <label htmlFor="fambirthdate">Date of Birth</label>
-                      <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Birth Date" type="date" name="" id="" disabled={!isEdit} value={formatDate(member?.birth_date) || ""} onChange={e => handleFamilyMemberChange(key, 'birth_date', e.target.value)} />
+                      <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Birth Date" type="date" name="" id="" value={formatDate(member?.birth_date) || ""} onChange={e => handleFamilyMemberChange(key, 'birth_date', e.target.value)} />
 
                       <div className='flex w-full justify-between gap-4'>
                         <div className='flex flex-col w-1/2'>
@@ -303,7 +327,7 @@ const MemberForms = ({ view }) => {
                       <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Educational Attainment" type="text" name="" id="" disabled={!isEdit} value={member?.educational_attainment || ""} onChange={e => handleFamilyMemberChange(key, 'educational_attainment', e.target.value)} />
 
                       {isEdit && (
-                        <Button className="w-1/5 self-center bg-blue-button xl:w-2/5" onClick={() => handleRemoveFamilyMember(key)} variant='destructive'><FaRegTrashAlt />Delete</Button>
+                        <Button className="w-1/4 self-center bg-blue-button xl:w-2/5" onClick={() => confirmRemoveFamilyMember(key, `${member.first_name} ${member.last_name}`)} variant='destructive'><FaRegTrashAlt />Delete</Button>
                       )}
                     </AccordionContent>
                   </AccordionItem>
@@ -316,7 +340,7 @@ const MemberForms = ({ view }) => {
         <div className='flex flex-col gap-4 xl:col-start-3'>
           <div className='bg-white p-5 flex flex-col rounded-md font-poppins font-normal'>
             <label htmlFor="signature">Conformity/Signature</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="-----" type="text" name="" id="" disabled={!isEdit} value={""}
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="-----" type="text" name="" id="" disabled={!isEdit} value={memberData?.confirmity_signature || ""}
               onChange={e => setMemberData({ ...memberData, confirmity_signature: e.target.value })} />
 
             <label htmlFor="remarks">Remarks</label>
@@ -397,6 +421,24 @@ const MemberForms = ({ view }) => {
           </div>
         </div>
       </div>
+
+      {/* dialog for delete confirmation on family member */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="w-[70%]">
+          <DialogHeader>
+            <DialogTitle className="text-left">Delete This Family Member?</DialogTitle>
+            <DialogDescription className="text-md text-gray-700">
+              Are you sure you want to remove <span className="font-bold">{memberToDeleteName}</span> as a family member?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <div className='w-full flex justify-between'>
+              <Button className="w-[45%] bg-red-500 hover:bg-red-700" onClick={handleDeleteConfirmed}>Delete</Button>
+              <DialogClose className="w-[45%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">Cancel</DialogClose>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

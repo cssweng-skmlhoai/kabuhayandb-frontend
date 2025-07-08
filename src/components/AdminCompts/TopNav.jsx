@@ -12,7 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose
+  DialogClose,
+  DialogFooter
 } from "@/components/ui/dialog"
 import { Button } from '../ui/button';
 
@@ -64,11 +65,12 @@ const TopNav = () => {
               <DialogContent className="w-[70%]">
                 <DialogHeader>
                   <DialogTitle className="text-left">Are you Sure You Want to Logout?</DialogTitle>
-                  <DialogDescription className="pt-5 flex justify-between">
-                    <Link to="/login" className='w-[45%]'><Button className="w-full bg-red-500 hover:bg-red-700">Logout</Button></Link>
-                    <DialogClose className="w-[45%]"><Button className="w-full">Cancel</Button></DialogClose>
-                  </DialogDescription>
                 </DialogHeader>
+                <DialogDescription></DialogDescription>
+                <DialogFooter className="flex flex-row justify-between gap-4">
+                  <Link to="/login" className='w-full'><Button className="w-full bg-red-500 hover:bg-red-700">Logout</Button></Link>
+                  <DialogClose className="w-full bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">Cancel</DialogClose>
+                </DialogFooter>
               </DialogContent>
             </Dialog>
           </li>

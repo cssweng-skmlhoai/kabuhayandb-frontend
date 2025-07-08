@@ -26,7 +26,11 @@ const AddMember = () => {
 
   const [memberData, setMemberData] = useState({});
   const [familyData, setFamilyData] = useState({});
-  const [householdData, setHouseholdData] = useState({});
+  const [householdData, setHouseholdData] = useState({
+    Meralco: false,
+    Maynilad: false,
+    Septic_Tank: false
+  });
   const [familyMembers, setFamilyMembers] = useState([]);
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
@@ -36,7 +40,7 @@ const AddMember = () => {
     setFamilyMembers(prev => [...prev, {
       last_name: '', first_name: '', middle_name: '',
       birth_date: '', age: '', gender: '',
-      relation_to_family: '', educational_attainment: ''
+      relation_to_member: '', educational_attainment: ''
     }]);
   };
 
@@ -46,16 +50,26 @@ const AddMember = () => {
 
   const handleFamilyMemberChange = (index, field, value) => {
     const updated = [...familyMembers];
-    updated[index][field] = value;
+
+    if (field === "birth_date") {
+      const age = calculateAge(value);
+      updated[index] = { ...updated[index], birth_date: value, age };
+    } else {
+      updated[index][field] = value;
+    }
+
     setFamilyMembers(updated);
   };
 
   const handleSubmit = () => {
+    const { age, ...cleanedMemberData } = memberData;
+    const cleanedFamilyMembers = familyMembers.map(({ age, ...rest }) => rest);
+
     const payload = {
-      members: memberData,
+      members: cleanedMemberData,
       families: familyData,
       households: householdData,
-      family_members: familyMembers
+      family_members: cleanedFamilyMembers
     };
     console.log(payload);
     axios.post(`${API_URL}/members/info`, payload, {
@@ -65,6 +79,22 @@ const AddMember = () => {
     }).then(() => { navigate('/members'); })
       .catch(err => console.log(err))
   };
+
+  function calculateAge(birthdateStr) {
+    const birthDate = new Date(birthdateStr);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const hasHadBirthdayThisYear =
+      today.getMonth() > birthDate.getMonth() ||
+      (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+
+    if (!hasHadBirthdayThisYear) {
+      age--;
+    }
+
+    return isNaN(age) ? "" : age;
+  }
 
   return (
     <div>
@@ -94,12 +124,20 @@ const AddMember = () => {
             <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Middle Name" type="text" name="" id="" value={memberData.middle_name || ""} onChange={e => setMemberData({ ...memberData, middle_name: e.target.value })} />
 
             <label htmlFor="birthdate">Date of Birth</label>
-            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" type="date" name="" id="" value={memberData.birth_date || ""} onChange={e => setMemberData({ ...memberData, birth_date: e.target.value })} />
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" type="date" name="" id="" value={memberData.birth_date || ""} onChange={e => {
+              const value = e.target.value;
+              const age = calculateAge(value);
+              setMemberData(prev => ({
+                ...prev,
+                birth_date: value,
+                age,
+              }));
+            }} />
 
             <div className='flex justify-between gap-4'>
               <div className='flex flex-col w-1/2'>
                 <label htmlFor="age">Age</label>
-                <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="00" type="number" name="" id="" value={memberData.age || ""} onChange={e => setMemberData({ ...memberData, age: e.target.value })} />
+                <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="00" type="number" name="" id="" value={memberData.age || ""} readOnly />
               </div>
 
               <div className='flex flex-col w-1/2'>
@@ -137,7 +175,7 @@ const AddMember = () => {
 
               <div className='flex flex-col w-1/2'>
                 <label htmlFor="lot">Lot No.</label>
-                <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Lot Number" type="number" name="" id="" value={householdData?.lot_no || ""} onChange={e => setHouseholdData({ ...householdData, lot_no: e.target.value })} />
+                <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Lot Number" type="number" name="" id="" value={householdData.lot_no || ""} onChange={e => setHouseholdData({ ...householdData, lot_no: e.target.value })} />
               </div>
             </div>
 
@@ -182,7 +220,7 @@ const AddMember = () => {
                     <div className='flex w-full justify-between gap-4'>
                       <div className='flex flex-col w-1/2'>
                         <label htmlFor="famage">Age</label>
-                        <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Age" type="number" name="" id="" value={member.age || ""} onChange={e => handleFamilyMemberChange(index, 'age', e.target.value)} />
+                        <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Age" type="number" name="" id="" value={member.age || ""} readOnly />
                       </div>
 
                       <div className='flex flex-col w-1/2'>
@@ -202,7 +240,7 @@ const AddMember = () => {
                     <label htmlFor="education">Educational Attainment</label>
                     <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Educational Attainment" type="text" name="" id="" value={member.educational_attainment || ""} onChange={e => handleFamilyMemberChange(index, 'educational_attainment', e.target.value)} />
 
-                    <Button className="w-1/5 self-center bg-blue-button xl:w-2/5" onClick={() => handleRemoveFamilyMember(index)} variant='destructive'><FaRegTrashAlt />Delete</Button>
+                    <Button className="w-1/4 self-center bg-blue-button xl:w-2/5" onClick={() => handleRemoveFamilyMember(index)} variant='destructive'><FaRegTrashAlt />Delete</Button>
                   </AccordionContent>
                 </AccordionItem>
               ))}
@@ -212,7 +250,7 @@ const AddMember = () => {
 
         <div className='flex flex-col gap-4 xl:col-start-3'>
           <div className='bg-white p-5 flex flex-col rounded-md font-poppins font-normal'>
-            <label htmlFor="signature">Conformity/Signature</label>
+            <label htmlFor="signature">Confirmity/Signature</label>
             <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="-----" type="text" name="" id="" value={memberData.confirmity_signature || ""}
               onChange={e => setMemberData({ ...memberData, confirmity_signature: e.target.value })} />
 
@@ -247,12 +285,12 @@ const AddMember = () => {
 
               <div className='flex flex-col items-center mb-3 gap-1'>
                 <label htmlFor="maynilad">Maynilad</label>
-                <Checkbox id="maynilad" className="border bg-customgray1 size-6" checked={!!householdData?.Maynilad || false} onCheckedChange={(checked) => setHouseholdData({ ...householdData, Maynilad: checked })} />
+                <Checkbox id="maynilad" className="border bg-customgray1 size-6" checked={!!householdData.Maynilad || false} onCheckedChange={(checked) => setHouseholdData({ ...householdData, Maynilad: checked })} />
               </div>
 
               <div className='flex flex-col items-center mb-3 gap-1'>
                 <label htmlFor="septic">Septic Tank</label>
-                <Checkbox id="septic" className="border bg-customgray1 size-6" checked={!!householdData?.Septic_Tank || false} onCheckedChange={(checked) => setHouseholdData({ ...householdData, Septic_Tank: checked })} />
+                <Checkbox id="septic" className="border bg-customgray1 size-6" checked={!!householdData.Septic_Tank || false} onCheckedChange={(checked) => setHouseholdData({ ...householdData, Septic_Tank: checked })} />
               </div>
             </div>
 

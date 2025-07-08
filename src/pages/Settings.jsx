@@ -42,7 +42,7 @@ const Settings = () => {
               <div className='flex flex-col gap-2'>
                 <label htmlFor="username">New Username</label>
                 <input className='border border-black p-2 rounded-md bg-customgray2' type="text" name="" id="" placeholder='Enter Your New Username' required />
-                <p className='ml-3 text-red-500'>Error!</p>
+                {/* <p className='ml-3 text-red-500'>Error!</p> */}
               </div>
             </div>
           )}
@@ -58,7 +58,7 @@ const Settings = () => {
                     <LuEye className='size-5' />
                   </button>
                 </div>
-                <p className='ml-3 text-red-500'>Error!</p>
+                {/* <p className='ml-3 text-red-500'>Error!</p> */}
               </div>
 
               <div className='flex flex-col gap-2'>
@@ -70,7 +70,7 @@ const Settings = () => {
                     <LuEye className='size-5' />
                   </button>
                 </div>
-                <p className='ml-3 text-red-500'>Error!</p>
+                {/* <p className='ml-3 text-red-500'>Error!</p> */}
               </div>
 
               <div className='flex flex-col gap-2'>
@@ -82,7 +82,7 @@ const Settings = () => {
                     <LuEye className='size-5' />
                   </button>
                 </div>
-                <p className='ml-3 text-red-500'>Error!</p>
+                {/* <p className='ml-3 text-red-500'>Error!</p> */}
               </div>
             </div>
           )}
@@ -91,9 +91,13 @@ const Settings = () => {
 
       {/* Dialog for username/password change */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="w-[70%]">
-          <p className='pt-10 pb-3 text-center font-medium text-lg'>Your Username Has Been Updated!</p>
-        </DialogContent>
+        <DialogHeader>
+          <DialogTitle></DialogTitle>
+          <DialogContent className="w-[70%]">
+            <DialogDescription></DialogDescription>
+            <p className='pt-3 pb-3 text-center font-medium text-lg'>Your Username Has Been Updated!</p>
+          </DialogContent>
+        </DialogHeader>
       </Dialog>
     </div>
   )
