@@ -21,7 +21,7 @@ const DatePickerField = ({ control, name, label, isEdit, className }) => (
     name={name}
     render={({ field }) => (
       <FormItem className={cn("relative", className)}>
-        <FormLabel>{label}</FormLabel>
+        <FormLabel className={`text-base`}>{label}</FormLabel>
         <FormControl>
           {isEdit ? (
             <Popover>
@@ -29,7 +29,7 @@ const DatePickerField = ({ control, name, label, isEdit, className }) => (
                 <button
                   type="button"
                   className={cn(
-                    "w-full flex items-center justify-between border rounded-md p-2 text-sm",
+                    "w-full flex items-center justify-between border rounded-md p-2 text-base !text-black bg-[#F0EDED]",
                     !field.value && "text-muted-foreground"
                   )}
                 >
@@ -38,7 +38,7 @@ const DatePickerField = ({ control, name, label, isEdit, className }) => (
                       ? format(field.value, "MM/dd/yy")
                       : "Select date"}
                   </span>
-                  <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                  <CalendarIcon className="h-4 w-4 text-black" />
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -51,7 +51,7 @@ const DatePickerField = ({ control, name, label, isEdit, className }) => (
               </PopoverContent>
             </Popover>
           ) : (
-            <div className="px-3 py-2 border rounded-md text-sm text-muted-foreground">
+            <div className="px-3 py-2 border rounded-md text-base !text-black bg-[#F0EDED]">
               {field.value ? format(field.value, "MM/dd/yy") : "—"}
             </div>
           )}
