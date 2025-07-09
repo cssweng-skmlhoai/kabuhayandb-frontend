@@ -106,7 +106,67 @@ const HHMembers = ({view}) => {
 
   // function to update member details
   const handleUpdates = async (data) => {
-    //To be added
+    const cleanedFamilyMembers = data.family.map((member) => {
+      const {
+        id,
+        last_name,
+        first_name,
+        middle_name,
+        relation_to_member,
+        birth_date,
+        gender,
+        educational_attainment,
+      } = member;
+
+      return {
+        id: id || null,
+        last_name,
+        first_name,
+        middle_name,
+        relation_to_member,
+        birth_date,
+        gender,
+        educational_attainment,
+      };
+    });
+
+    // append deleted family members 
+    for (const deleted of deletedFamilyMembers) {
+      cleanedFamilyMembers.push({
+        id: deleted.id,
+        update: false, 
+      });
+    }
+
+    const payload = {
+      members: {
+        last_name: data.last_name,
+        first_name: data.first_name,
+        middle_name: data.middle_name,
+        birth_date: data.birth_date,
+        gender: data.gender,
+        contact_number: data.contact_number,
+      },
+      families: {
+        head_position: data.position,
+      },
+      households: {}, 
+      family_members: cleanedFamilyMembers,
+    };
+
+    try {
+      await axios.put(`${API_URL}/members/info/${id}`, payload, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET}`,
+        },
+      });
+
+      setDeletedFamilyMembers([]);
+      setSavedData(data);
+      navigate(`/members/${id}`);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -149,7 +209,7 @@ const HHMembers = ({view}) => {
 
                 <div className="inline-fields">
                   <ClearableInputField control={form.control} name="age" label="Age" isEdit={false} className="w-1/2" inputProps={{ readOnly: true }}/>
-                  <ClearableSelectField control={form.control} name="gender" label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Prefer not to say"]}/>
+                  <ClearableSelectField control={form.control} name="gender" label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Other"]}/>
                 </div>
 
                 {[
@@ -217,8 +277,8 @@ const HHMembers = ({view}) => {
                           <DatePickerField control={form.control} name={`family.${index}.birth_date`} label="Date of Birth" isEdit={isEdit}/>
                           
                           <div className="flex gap-4">
-                            <ClearableInputField control={form.control} name={`family.${index}.age`} label="Age" isEdit={false} className="w-1/2" inputProps={{ readOnly: true }}/>
-                            <ClearableSelectField control={form.control} name={`family.${index}.gender`} label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Other"]}/>
+                            <ClearableInputField control={form.control} name={`family.${index}.age`} label="Age" isEdit={isEdit} className="w-1/2"/>
+                            <ClearableSelectField control={form.control} name={`family.${index}.gender`} label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Prefer not to say"]}/>
                           </div>
 
                           <div>
