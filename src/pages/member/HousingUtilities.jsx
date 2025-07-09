@@ -72,9 +72,43 @@ const HousingUtilities = ({ view }) => {
         console.log(err))
   }, [form, id]);
 
-  // function to update member details
+  // function to update housing & utilities details
   const handleUpdates = async (data) => {
-    //To be added
+    const payload = {
+      members: {
+        //confirmity_signature: data.confirmity_signature,
+        remarks: data.remarks,
+      },
+      families: {},
+      households: {
+        tct_no: data.tct_no,
+        block_no: data.block_no,
+        lot_no: data.lot_no,
+        //area: data.area,
+        open_space_share: data.open_space_share,
+        //total: data.total,
+        condition_type: data.condition_type,
+        Meralco: data.Meralco,
+        Maynilad: data.Maynilad,
+        Septic_Tank: data.Septic_Tank,
+        //land_acquisition: data.land_acquisition,
+        //status_of_occupancy: data.status_of_occupancy,
+      },
+      family_members: [],
+    };
+    
+    try {
+      await axios.put(`${API_URL}/members/info/${id}`, payload, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET}`,
+        },
+      });
+
+      setSavedData(data);
+      navigate(`/members/${id}/housing-utilities`);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -153,7 +187,7 @@ const HousingUtilities = ({ view }) => {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <ClearableSelectField control={form.control} name="land_acquisition" label="Land Acquisition" isEdit={isEdit}
+                <ClearableSelectField control={form.control} name="land_acquisition" label="Land Acquisition" isEdit={false}
                   options={[
                     "CMP",
                     "Direct Buying",
@@ -163,7 +197,7 @@ const HousingUtilities = ({ view }) => {
                     "Expropriation",
                   ]}
                 />
-                <ClearableSelectField control={form.control} name="status_of_occupancy" label="Status of Occupancy" isEdit={isEdit} options={["Owner", "Sharer", "Renter"]} />
+                <ClearableSelectField control={form.control} name="status_of_occupancy" label="Status of Occupancy" isEdit={false} options={["Owner", "Sharer", "Renter"]} />
               </div>
 
             </CardContent>
