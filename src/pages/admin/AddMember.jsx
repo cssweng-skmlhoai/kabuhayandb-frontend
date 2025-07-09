@@ -64,6 +64,11 @@ const AddMember = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // if (!memberData.gender) {
+    //   alert("Please Select a Gender");
+    //   return;
+    // }
+
     const { age, ...cleanedMemberData } = memberData;
     const cleanedFamilyMembers = familyMembers.map(({ age, ...rest }) => rest);
 
@@ -142,17 +147,20 @@ const AddMember = () => {
                 <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="00" type="number" name="" id="" value={memberData.age || ""} readOnly />
               </div>
 
-              <div className='flex flex-col w-1/2'>
+              <div className='flex flex-col w-1/2 relative'>
                 <label htmlFor="gender">Gender</label>
-                <Select value={memberData.gender || ""} onValueChange={(value) => setMemberData({ ...memberData, gender: value })} required>
-                  <SelectTrigger id='gender' className="bg-customgray2 w-full !py-1 !h-auto rounded-sm">
-                    <SelectValue placeholder="Male/Female" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Male">Male</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
-                  </SelectContent>
-                </Select>
+                <select name="" id="" required value={memberData.gender || ""} onChange={(e) => setMemberData({ ...memberData, gender: e.target.value })} className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm">
+                  <option value="" disabled hidden></option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+
+                {!memberData.gender && (
+                  <span className="absolute left-2 top-[28px] text-sm opacity-50 pointer-events-none z-0">
+                    Male/Female
+                  </span>
+                )}
               </div>
             </div>
 
@@ -223,17 +231,20 @@ const AddMember = () => {
                         <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3" placeholder="Age" type="number" name="" id="" value={member.age || ""} readOnly />
                       </div>
 
-                      <div className='flex flex-col w-1/2'>
+                      <div className='flex flex-col w-1/2 relative'>
                         <label htmlFor="famgender">Gender</label>
-                        <Select value={member.gender || ""} onValueChange={(value) => handleFamilyMemberChange(index, 'gender', value)} required>
-                          <SelectTrigger className="bg-customgray2 w-full !py-1 !h-auto rounded-sm" >
-                            <SelectValue placeholder="Options" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Male">Male</SelectItem>
-                            <SelectItem value="Female">Female</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <select name="" id="" required value={member.gender || ""} onChange={(e) => handleFamilyMemberChange(index, 'gender', e.target.value)} className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm">
+                          <option value="" disabled hidden></option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+
+                        {!member.gender && (
+                          <span className="absolute left-2 top-[24px] text-sm opacity-50 pointer-events-none z-0">
+                            Male/Female
+                          </span>
+                        )}
                       </div>
                     </div>
 

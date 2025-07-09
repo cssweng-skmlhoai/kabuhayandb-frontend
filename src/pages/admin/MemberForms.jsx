@@ -61,7 +61,7 @@ const MemberForms = ({ view }) => {
       prev.flatMap(member => {
         const memberKey = member.id ?? member.tempId;
         if (memberKey === key) {
-          return member.id ? [{ ...member, update: false }] : []; // soft delete if has ID
+          return member.id ? [{ ...member, update: false }] : [];
         }
         return [member];
       })
@@ -88,6 +88,7 @@ const MemberForms = ({ view }) => {
     }).then(res => {
       const data = res.data;
       setAllDetails(data);
+      console.log(data);
 
       setMemberData({
         last_name: data.last_name,
@@ -115,6 +116,7 @@ const MemberForms = ({ view }) => {
         Meralco: data.Meralco,
         Maynilad: data.Maynilad,
         Septic_Tank: data.Septic_Tank,
+        area: data.area,
       });
 
       const transformedFamilyMembers = (data.family_members || []).map(fm => {
@@ -131,6 +133,17 @@ const MemberForms = ({ view }) => {
       console.log(err)
     });
   }, [id]);
+
+  useEffect(() => {
+    const area = parseFloat(householdData.area) || 0;
+    const openSpace = parseFloat(householdData.open_space_share) || 0;
+    const total = area + openSpace;
+
+    setAllDetails(prev => ({
+      ...prev,
+      total: total
+    }));
+  }, [householdData.area, householdData.open_space_share]);
 
   // function to update member details
   const handleUpdates = (e) => {
@@ -263,6 +276,9 @@ const MemberForms = ({ view }) => {
 
             <label htmlFor="openspace">Share of Open Space</label>
             <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Open Space Share" type="number" name="" id="" disabled={!isEdit} required value={householdData?.open_space_share || ""} onChange={e => setHouseholdData({ ...householdData, open_space_share: e.target.value })} />
+
+            <label htmlFor="openspace">Area</label>
+            <input className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Area" type="number" name="" id="" disabled={!isEdit} required value={householdData?.area || ""} onChange={e => setHouseholdData({ ...householdData, area: e.target.value })} />
 
             <label htmlFor="total">Total</label>
             <input className="bg-customgray2 py-1 px-2 text-sm rounded-sm" placeholder="Total" type="number" name="" id="" value={allDetails?.total || ""} readOnly />

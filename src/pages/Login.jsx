@@ -24,7 +24,7 @@ const Login = () => {
           </div>
           <p className='text-sm text-right md:w-3/5 lg:w-1/2 xl:w-2/5'>Forgot Password?</p>
         </div>
-        <Link to="/members" className='w-[65%] flex justify-center'>
+        <Link to="/select" className='w-[65%] flex justify-center'>
           <Button className="bg-blue-button font-light text-md px-10 py-7 w-full md:w-3/5 lg:w-1/2 xl:w-2/5">Log In</Button>
         </Link>
       </div>
