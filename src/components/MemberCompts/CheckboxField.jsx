@@ -7,7 +7,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-const CheckboxField = ({ control, name, label, isEditing }) => (
+const CheckboxField = ({ control, name, label, isEdit }) => (
   <FormField
     control={control}
     name={name}
@@ -17,7 +17,7 @@ const CheckboxField = ({ control, name, label, isEditing }) => (
           <Checkbox
             checked={!!field.value}
             onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
-            disabled={!isEditing}
+            disabled={!isEdit}
           />
         </FormControl>
         <FormLabel className="mb-0">{label}</FormLabel>

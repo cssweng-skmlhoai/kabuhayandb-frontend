@@ -12,7 +12,7 @@ const ClearableInputField = ({
   control,
   name,
   label,
-  isEditing,
+  isEdit,
   className,
   inputType = "text",
 }) => (
@@ -27,10 +27,10 @@ const ClearableInputField = ({
             <Input
               {...field}
               type={inputType}
-              disabled={!isEditing}
-              className={isEditing ? "pr-10" : ""}
+              disabled={!isEdit}
+              className={isEdit ? "pr-10" : ""}
             />
-            {isEditing && field.value && (
+            {isEdit && field.value && (
               <button
                 type="button"
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
@@ -45,6 +45,7 @@ const ClearableInputField = ({
       </FormItem>
     )}
   />
+  
 );
 
 export default ClearableInputField;

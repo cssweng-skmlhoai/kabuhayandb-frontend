@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-const DatePickerField = ({ control, name, label, isEditing, className }) => (
+const DatePickerField = ({ control, name, label, isEdit, className }) => (
   <FormField
     control={control}
     name={name}
@@ -23,7 +23,7 @@ const DatePickerField = ({ control, name, label, isEditing, className }) => (
       <FormItem className={cn("relative", className)}>
         <FormLabel>{label}</FormLabel>
         <FormControl>
-          {isEditing ? (
+          {isEdit ? (
             <Popover>
               <PopoverTrigger asChild>
                 <button
