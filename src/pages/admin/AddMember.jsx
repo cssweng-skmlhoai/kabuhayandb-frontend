@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { FaPlus } from "react-icons/fa6";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { RxCross2 } from "react-icons/rx";
 import {
   Accordion,
   AccordionContent,
@@ -11,13 +10,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -63,11 +55,6 @@ const AddMember = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // if (!memberData.gender) {
-    //   alert("Please Select a Gender");
-    //   return;
-    // }
 
     const { age, ...cleanedMemberData } = memberData;
     const cleanedFamilyMembers = familyMembers.map(({ age, ...rest }) => rest);
@@ -157,7 +144,7 @@ const AddMember = () => {
                 </select>
 
                 {!memberData.gender && (
-                  <span className="absolute left-2 top-[28px] text-sm opacity-50 pointer-events-none z-0">
+                  <span className="absolute left-3 top-[28px] text-sm opacity-50 pointer-events-none z-0">
                     Male/Female
                   </span>
                 )}
@@ -241,7 +228,7 @@ const AddMember = () => {
                         </select>
 
                         {!member.gender && (
-                          <span className="absolute left-2 top-[24px] text-sm opacity-50 pointer-events-none z-0">
+                          <span className="absolute left-3 top-[24px] text-sm opacity-50 pointer-events-none z-0">
                             Male/Female
                           </span>
                         )}
@@ -274,19 +261,23 @@ const AddMember = () => {
             <p className='mb-3'>Other Info</p>
 
             <label htmlFor="housing">Housing Conditions/Types</label>
-            <Select value={householdData.condition_type || ""} onValueChange={(value) => setHouseholdData({ ...householdData, condition_type: value })} required>
-              <SelectTrigger className="bg-customgray2 w-full !py-1 !h-auto rounded-sm mb-3">
-                <SelectValue placeholder="Options" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Needs minor repair">Needs minor repair</SelectItem>
-                <SelectItem value="Needs major repair">Needs major repair</SelectItem>
-                <SelectItem value="Dilapidated/Condemned">Dilapidated/Condemned</SelectItem>
-                <SelectItem value="Under renovation/Being repaired">Under renovation/Being repaired</SelectItem>
-                <SelectItem value="Unfinished construction">Unfinished construction</SelectItem>
-                <SelectItem value="Under construction">Under construction</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className='relative'>
+              <select name="" id="" required value={householdData.condition_type || ""} onChange={(e) => setHouseholdData({ ...householdData, condition_type: e.target.value })} className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm w-full">
+                <option value="" disabled hidden></option>
+                <option value="Needs minor repair">Needs minor repair</option>
+                <option value="Needs major repair">Needs major repair</option>
+                <option value="Dilapidated/Condemned">Dilapidated/Condemned</option>
+                <option value="Under renovation/Being repaired">Under renovation/Being repaired</option>
+                <option value="Unfinished construction">Unfinished construction</option>
+                <option value="Under construction">Under construction</option>
+              </select>
+
+              {!householdData.condition_type && (
+                <span className="absolute left-3 top-[4px] text-sm opacity-50 pointer-events-none z-0">
+                  Options
+                </span>
+              )}
+            </div>
 
             <div className='flex justify-between'>
               <div className='flex flex-col items-center mb-3 gap-1'>
@@ -306,31 +297,39 @@ const AddMember = () => {
             </div>
 
             <label htmlFor="acquisition">Land Acquisition</label>
-            <Select value={familyData.land_acquisition || ""} onValueChange={(value) => setFamilyData({ ...familyData, land_acquisition: value })} required>
-              <SelectTrigger className="bg-customgray2 w-full !py-1 !h-auto rounded-sm mb-3">
-                <SelectValue placeholder="Options" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="CMP">CMP</SelectItem>
-                <SelectItem value="Direct Buying">Direct Buying</SelectItem>
-                <SelectItem value="On Process">On Process</SelectItem>
-                <SelectItem value="Auction">Auction</SelectItem>
-                <SelectItem value="Organized Community">Organized Community</SelectItem>
-                <SelectItem value="Expropriation">Expropriation</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className='relative'>
+              <select name="" id="" required value={familyData.land_acquisition || ""} onChange={(e) => setFamilyData({ ...familyData, land_acquisition: e.target.value })} className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm w-full">
+                <option value="" disabled hidden></option>
+                <option value="CMP">CMP</option>
+                <option value="Direct Buying">Direct Buying</option>
+                <option value="On Process">On Process</option>
+                <option value="Auction">Auction</option>
+                <option value="Organized Community">Organized Community</option>
+                <option value="Expropriation">Expropriation</option>
+              </select>
+
+              {!familyData.land_acquisition && (
+                <span className="absolute left-3 top-[4px] text-sm opacity-50 pointer-events-none z-0">
+                  Options
+                </span>
+              )}
+            </div>
 
             <label htmlFor="occupancy">Status of Occupancy</label>
-            <Select value={familyData.status_of_occupancy || ""} onValueChange={(value) => setFamilyData({ ...familyData, status_of_occupancy: value })} required>
-              <SelectTrigger className="bg-customgray2 w-full !py-1 !h-auto rounded-sm">
-                <SelectValue placeholder="Options" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Owner">Owner</SelectItem>
-                <SelectItem value="Sharer">Sharer</SelectItem>
-                <SelectItem value="Renter">Renter</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className='relative'>
+              <select name="" id="" required value={familyData.status_of_occupancy || ""} onChange={(e) => setFamilyData({ ...familyData, status_of_occupancy: e.target.value })} className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm w-full">
+                <option value="" disabled hidden></option>
+                <option value="Owner">Owner</option>
+                <option value="Sharer">Sharer</option>
+                <option value="Renter">Renter</option>
+              </select>
+
+              {!familyData.status_of_occupancy && (
+                <span className="absolute left-3 top-[4px] text-sm opacity-50 pointer-events-none z-0">
+                  Options
+                </span>
+              )}
+            </div>
           </div>
 
           <div className='flex w-full justify-between gap-4 font-poppins'>
