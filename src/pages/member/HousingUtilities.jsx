@@ -52,7 +52,7 @@ const HousingUtilities = ({ view }) => {
           tct_no: data.tct_no,
           block_no: data.block_no,
           lot_no: data.lot_no,
-          area: data.area || "",
+          area: data.area,
           open_space_share: data.open_space_share,
           total: data.total || "",
           confirmity_signature: data.confirmity_signature || "",
@@ -84,7 +84,7 @@ const HousingUtilities = ({ view }) => {
         tct_no: data.tct_no,
         block_no: data.block_no,
         lot_no: data.lot_no,
-        //area: data.area,
+        area: data.area,
         open_space_share: data.open_space_share,
         //total: data.total,
         condition_type: data.condition_type,
@@ -96,7 +96,7 @@ const HousingUtilities = ({ view }) => {
       },
       family_members: [],
     };
-    
+
     try {
       await axios.put(`${API_URL}/members/info/${id}`, payload, {
         headers: {
