@@ -259,7 +259,7 @@ const HHMembers = ({view}) => {
                   return (
                     <AccordionItem key={member.id || index} value={`member-${index}`}
                     >
-                      <AccordionTrigger> {watchedFirstName || `Family Member ${index + 1}`} </AccordionTrigger>
+                      <AccordionTrigger className={`text-base`}> {watchedFirstName || `Family Member ${index + 1}`} </AccordionTrigger>
                       <AccordionContent>
                         <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
                           {[
