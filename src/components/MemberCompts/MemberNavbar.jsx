@@ -1,14 +1,16 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Settings, LogOut } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import "./MemberNavbar.css";
 
-const MemberNavbar = () => {
+const MemberNavbar = ({ member }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  //const id = 1; // hardcoded for testing
+  const { id } = useParams(); 
 
   return (
     <div className="navbar">
@@ -16,9 +18,9 @@ const MemberNavbar = () => {
         <div className="top-section">
           <div className="left-side">
             <Avatar>
-              <AvatarImage src="https://cdn.pfps.gg/pfps/2301-default-2.png" />
+              <AvatarImage src="/SKMLHOAI_Logo.png" />
             </Avatar>
-            <span className="greeting"> Mabuhay, name!</span>
+            <span className="greeting"> Mabuhay, {member?.first_name}!</span>
           </div>
           <div className="actions">
             <div className="icon-label">
@@ -36,16 +38,10 @@ const MemberNavbar = () => {
       <Separator className="separator" />
 
       <div className="bottom-section">
-        <Tabs
-          className="w-fit"
-          value={location.pathname}
-          onValueChange={(path) => navigate(path)}
-        >
+        <Tabs className="w-fit" value={location.pathname} onValueChange={(path) => navigate(path)}>
           <TabsList className="w-fit">
-            <TabsTrigger value="/members">Household Members</TabsTrigger>
-            <TabsTrigger value="/members/housing-utilities">
-              Housing & Utilities
-            </TabsTrigger>
+            <TabsTrigger value={`/members/${id}`}>Household Members</TabsTrigger>
+            <TabsTrigger value={`/members/${id}/housing-utilities`}>Housing & Utilities</TabsTrigger>
             <TabsTrigger value="/members/dues">Dues</TabsTrigger>
           </TabsList>
         </Tabs>
