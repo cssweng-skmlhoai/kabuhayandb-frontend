@@ -140,19 +140,19 @@ const HousingUtilities = ({ view }) => {
             <CardContent className="card-content">
               <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
                 
-                <ClearableInputField control={form.control} name="tct_no" label="TCT No." isEdit={isEdit} />
+                <ClearableInputField control={form.control} name="tct_no" label="TCT No." isEdit={isEdit} inputProps={{placeholder: "000-0000000000"}}/>
 
                 <div className="flex gap-4">
-                  <ClearableInputField control={form.control} name="block_no" label="Block No." className="w-1/2" isEdit={isEdit} />
-                  <ClearableInputField control={form.control} name="lot_no" label="Lot No." className="w-1/2" isEdit={isEdit} />
+                  <ClearableInputField control={form.control} name="block_no" label="Block No." className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}}/>
+                  <ClearableInputField control={form.control} name="lot_no" label="Lot No." className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}}/>
                 </div>
 
-                <div className="flex gap-4">
-                  <ClearableInputField control={form.control} name="area" label="Area" className="w-1/2" isEdit={isEdit} />
-                  <ClearableInputField control={form.control} name="open_space_share" label="Share of Open Space" className="w-1/2" isEdit={isEdit} />
+                <div className="flex gap-4 items-end">
+                  <ClearableInputField control={form.control} name="area" label="Area" className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}}/>
+                  <ClearableInputField control={form.control} name="open_space_share" label="Share of Open Space" className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}}/>
                 </div>
                 
-                <ClearableInputField control={form.control} name="total" label="Total" isEdit={false} inputProps={{ readOnly: true }}/>
+                <ClearableInputField control={form.control} name="total" label="Total" isEdit={false} inputProps={{ readOnly: true, placeholder:"00" }}/>
               
               </div>
             </CardContent>
@@ -161,8 +161,8 @@ const HousingUtilities = ({ view }) => {
           <Card className="card">
             <CardContent className="card-content">
               <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
-                <ClearableInputField control={form.control} name="confirmity_signature" label="Conformity/ Signature" isEdit={isEdit}/>
-                <ClearableInputField control={form.control} name="remarks" label="Remarks" isEdit={isEdit}/>
+                <ClearableInputField control={form.control} name="confirmity_signature" label="Conformity/ Signature" isEdit={isEdit} inputProps={{placeholder: "----"}}/>
+                <ClearableInputField control={form.control} name="remarks" label="Remarks" isEdit={isEdit} inputProps={{placeholder: "Remarks"}}/>
               </div>
             </CardContent>
           </Card>
