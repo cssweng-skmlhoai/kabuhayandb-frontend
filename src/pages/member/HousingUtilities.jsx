@@ -19,6 +19,7 @@ const HousingUtilities = ({ view }) => {
   const isEdit = view === "edit";
 
   const form = useForm({
+    mode: "all",
     defaultValues: {
       tct_no: "",
       block_no: "",
@@ -140,16 +141,16 @@ const HousingUtilities = ({ view }) => {
             <CardContent className="card-content">
               <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
                 
-                <ClearableInputField control={form.control} name="tct_no" label="TCT No." isEdit={isEdit} inputProps={{placeholder: "000-0000000000"}}/>
+                <ClearableInputField control={form.control} name="tct_no" label="TCT No." isEdit={isEdit} inputProps={{placeholder: "000-0000000000"}} rules={{required: "Please enter your TCT number"}}/>
 
                 <div className="flex gap-4">
-                  <ClearableInputField control={form.control} name="block_no" label="Block No." className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}}/>
-                  <ClearableInputField control={form.control} name="lot_no" label="Lot No." className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}}/>
+                  <ClearableInputField control={form.control} name="block_no" label="Block No." className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}} rules={{required: "Please enter your block number"}}/>
+                  <ClearableInputField control={form.control} name="lot_no" label="Lot No." className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}} rules={{required: "Please enter your lot number"}}/>
                 </div>
 
                 <div className="flex gap-4 items-end">
-                  <ClearableInputField control={form.control} name="area" label="Area" className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}}/>
-                  <ClearableInputField control={form.control} name="open_space_share" label="Share of Open Space" className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}}/>
+                  <ClearableInputField control={form.control} name="area" label="Area" className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}} rules={{required: "Please enter your area"}}/>
+                  <ClearableInputField control={form.control} name="open_space_share" label="Share of Open Space" className="w-1/2" isEdit={isEdit} inputProps={{placeholder: "00"}} rules={{required: "Please enter your share of open space"}}/>
                 </div>
                 
                 <ClearableInputField control={form.control} name="total" label="Total" isEdit={false} inputProps={{ readOnly: true, placeholder:"00" }}/>
@@ -178,6 +179,7 @@ const HousingUtilities = ({ view }) => {
                   "Unfinished construction",
                   "Under construction",
                 ]}
+                rules={{required: "Please select from the options"}}
               />
 
               <div className="flex gap-6">
@@ -196,6 +198,7 @@ const HousingUtilities = ({ view }) => {
                     "Organized Community",
                     "Expropriation",
                   ]}
+                  rules={{required: "Please select from the options"}}
                 />
                 <ClearableSelectField control={form.control} name="status_of_occupancy" label="Status of Occupancy" isEdit={false} options={["Owner", "Sharer", "Renter"]} />
               </div>

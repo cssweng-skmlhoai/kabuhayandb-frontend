@@ -16,10 +16,12 @@ const ClearableInputField = ({
   className,
   inputType = "text",
   inputProps = {},
+  rules ={},
 }) => (
   <FormField
     control={control}
     name={name}
+    rules={rules}
     render={({ field }) => (
       <FormItem className={`relative ${className}`}>
         <FormLabel className={`text-base`}>{label}</FormLabel>

@@ -15,10 +15,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-const DatePickerField = ({ control, name, label, isEdit, className }) => (
+const DatePickerField = ({ control, name, label, isEdit, className, rules={}, }) => (
   <FormField
     control={control}
     name={name}
+    rules={rules}
     render={({ field }) => (
       <FormItem className={cn("relative", className)}>
         <FormLabel className={`text-base`}>{label}</FormLabel>

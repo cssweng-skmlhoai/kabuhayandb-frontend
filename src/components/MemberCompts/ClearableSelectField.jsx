@@ -20,10 +20,12 @@ const ClearableSelectField = ({
   isEdit,
   className,
   options = [],
+  rules = {},
 }) => (
   <FormField
     control={control}
     name={name}
+    rules={rules}
     render={({ field }) => (
       <FormItem className={className}>
         <FormLabel className={`text-base`}>{label}</FormLabel>
