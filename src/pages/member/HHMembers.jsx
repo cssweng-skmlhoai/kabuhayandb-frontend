@@ -14,6 +14,7 @@ import DatePickerField from "@/components/MemberCompts/DatePickerField";
 import ClearableSelectField from "@/components/MemberCompts/ClearableSelectField";
 import ConfirmDialog from "@/components/MemberCompts/ConfirmDialog";
 import ClearableInputField from "@/components/MemberCompts/ClearableInputField";
+import AddFamilyMemberDialog from "@/components/MemberCompts/AddFamilyMemberDialog";
 import { Trash2, Plus } from "lucide-react";
 import axios from "axios";
 import "./Members.css";
@@ -25,6 +26,7 @@ const HHMembers = ({view}) => {
   const [savedData, setSavedData] = useState(null);
   const [deletedFamilyMembers, setDeletedFamilyMembers] = useState([]);
   const [openAccordions, setOpenAccordions] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const isEdit = view === "edit";
 
@@ -227,28 +229,21 @@ const HHMembers = ({view}) => {
               <div className="accordion">
                 <p className="text-lg font-semibold"> Family Composition ({fields.length}) </p>
                 {isEdit && (
-                  <Button
-                    variant="add"
-                    onClick={() => {
-                      append({
-                        last_name: "",
-                        first_name: "",
-                        middle_name: "",
-                        relation_to_member: "",
-                        birth_date: "",
-                        age: 0,
-                        gender: "",
-                        educational_attainment: "",
-                      });
-                      setOpenAccordions((prev) => [
-                        ...prev,
-                        `member-${fields.length}`,
-                      ]);
-                    }}
-                  >
-                    <Plus />
-                    Add
-                  </Button>
+                  <>
+                    <Button variant="add" onClick={() => setIsDialogOpen(true)}>
+                      <Plus className="mr-1" />
+                      Add
+                    </Button>
+
+                    <AddFamilyMemberDialog
+                      open={isDialogOpen}
+                      onOpenChange={setIsDialogOpen}
+                      onAdd={(data) => {
+                        append(data);
+                        setOpenAccordions((prev) => [...prev, `member-${fields.length}`]);
+                      }}
+                    />
+                  </>
                 )}
               </div>
 
