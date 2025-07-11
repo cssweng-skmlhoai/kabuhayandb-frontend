@@ -15,6 +15,7 @@ import ClearableSelectField from "@/components/MemberCompts/ClearableSelectField
 import ConfirmDialog from "@/components/MemberCompts/ConfirmDialog";
 import ClearableInputField from "@/components/MemberCompts/ClearableInputField";
 import AddFamilyMemberDialog from "@/components/MemberCompts/AddFamilyMemberDialog";
+import BackToTopButton from "@/components/MemberCompts/BackToTopButton";
 import { Trash2, Plus } from "lucide-react";
 import axios from "axios";
 import "./Members.css";
@@ -173,6 +174,7 @@ const HHMembers = ({view}) => {
   };
 
   return (
+    <>
     <div className="main">
       <div className="btn-div">
         {isEdit ? (
@@ -295,7 +297,10 @@ const HHMembers = ({view}) => {
       </div>
 
     </div>
+    <BackToTopButton />
+    </>
   );
 };
+
 
 export default HHMembers;
