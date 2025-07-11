@@ -199,14 +199,9 @@ const HHMembers = ({view}) => {
           <Card className="card">
             <CardContent className="card-content">
               <div className="space-y-4 grid gap-4 sm:grid-cols-2">
-                {[
-                  { name: "last_name", label: "Last Name" },
-                  { name: "first_name", label: "First Name" },
-                  { name: "middle_name", label: "Middle Name" },
-                ].map(({ name, label }) => (
-                  <ClearableInputField key={name} control={form.control} name={name} label={label} isEdit={isEdit} inputProps={{placeholder: label}}/>
-                ))}
-
+                <ClearableInputField control={form.control} name="last_name" label="Last Name" isEdit={isEdit} inputProps={{placeholder: "Last Name"}}/>
+                <ClearableInputField control={form.control} name="first_name" label="First Name" isEdit={isEdit} inputProps={{placeholder: "First Name"}}/>
+                <ClearableInputField control={form.control} name="middle_name" label="Middle Name" isEdit={isEdit} inputProps={{placeholder: "Middle Name"}}/>
                 <DatePickerField control={form.control} name="birth_date" label="Date of Birth" isEdit={isEdit}/>
 
                 <div className="inline-fields">
@@ -214,12 +209,8 @@ const HHMembers = ({view}) => {
                   <ClearableSelectField control={form.control} name="gender" label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Other"]}/>
                 </div>
 
-                {[
-                  { name: "position", label: "Position" },
-                  { name: "contact_number", label: "Contact Number" },
-                ].map(({ name, label }) => (
-                  <ClearableInputField key={name} control={form.control} name={name} label={label} isEdit={isEdit} inputProps={{placeholder: label}}/>
-                ))}
+                <ClearableInputField control={form.control} name="position" label="Position" isEdit={isEdit} inputProps={{placeholder: "Position"}}/>
+                <ClearableInputField control={form.control} name="contact_number" label="Contact Number" isEdit={isEdit} inputProps={{placeholder: "Contact Number"}}/>
               </div>
             </CardContent>
           </Card>
@@ -252,24 +243,15 @@ const HHMembers = ({view}) => {
                   const watchedFirstName = watchedFamily?.[index]?.first_name;
 
                   return (
-                    <AccordionItem key={member.id || index} value={`member-${index}`}
-                    >
+                    <AccordionItem key={member.id || index} value={`member-${index}`}>
                       <AccordionTrigger className={`text-base`}> {watchedFirstName || `Family Member ${index + 1}`} </AccordionTrigger>
                       <AccordionContent>
                         <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
-                          {[
-                            { name: "last_name", label: "Last Name" },
-                            { name: "first_name", label: "First Name" },
-                            { name: "middle_name", label: "Middle Name" },
-                            {
-                              name: "relation_to_member",
-                              label: "Relation to Member",
-                            },
-                          ].map(({ name, label }) => (
-                            <ClearableInputField key={name} control={form.control} name={`family.${index}.${name}`} label={label} isEdit={isEdit} inputProps={{placeholder: label}}/>
-                          ))}
-
-                          <DatePickerField control={form.control} name={`family.${index}.birth_date`} label="Date of Birth" isEdit={isEdit}/>
+                          <ClearableInputField control={form.control} name={`family.${index}.last_name`} label="Last Name" isEdit={isEdit} inputProps={{placeholder: "Last Name"}}/>
+                          <ClearableInputField control={form.control} name={`family.${index}.first_name`} label="First Name" isEdit={isEdit} inputProps={{placeholder: "First Name"}}/>
+                          <ClearableInputField control={form.control} name={`family.${index}.middle_name`} label="Middle Name" isEdit={isEdit} inputProps={{placeholder: "Middle Name"}}/>
+                          <ClearableInputField control={form.control} name={`family.${index}.relation_to_member`} label="Relation to Member" isEdit={isEdit} inputProps={{placeholder: "Relation to Member"}}/>
+                          <DatePickerField control={form.control} name={`family.${index}.birth_date`} label="Birth Date" isEdit={isEdit}/>
                           
                           <div className="flex gap-4">
                             <ClearableInputField control={form.control} name={`family.${index}.age`} label="Age" isEdit={false} className="w-1/2" inputProps={{ readOnly: true, placeholder: "Age" }}/>
@@ -282,16 +264,11 @@ const HHMembers = ({view}) => {
 
                           {isEdit && (
                             <div className="delete">
-                              <ConfirmDialog title="Delete Family Member" description="Are you sure you want to delete"
-                                triggerLabel={
-                                  <>
-                                    <Trash2 />
-                                    Delete Family Member
-                                  </>
-                                }
-                                onConfirm={() => {
-                                  handleDeleteFamilyMember(index);
-                                }}
+                              <ConfirmDialog 
+                                title="Delete Family Member" 
+                                description="Are you sure you want to delete"
+                                triggerLabel={ <><Trash2 /> Delete Family Member</>}
+                                onConfirm={() => { handleDeleteFamilyMember(index);}}
                               />
                             </div>
                           )}
