@@ -1,3 +1,7 @@
+body{
+  font-family: 'Poppins', sans-serif;
+}
+
 .main {
   padding-top: 2rem;
   background-color: #e5e5e5;
@@ -53,77 +57,67 @@
   margin-top: 1rem;
 }
 
-.due-label{
+.card-label-flex {
   margin-bottom: 1rem;
   display: flex;
   justify-content: center;
+  font-weight: 500;
+  font-size: 1rem;
 }
 
-.row {
-  display: flex;            
-  align-items: center;      
-  gap: 1rem;                 
+.card-label {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 1rem;
 }
 
-.pagination {
-  margin-top: 1rem;
+.payment-history-header {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+}
+
+.payment-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  background-color: #F0EDED;
+  border-radius: 0.5rem;
 }
 
 .pagination-content {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .pagination-page-text {
   font-size: 0.875rem;
-  color: var(--muted-foreground, #6b7280); 
 }
 
-.disabled {
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-.due-message {
-  padding-left: 1.5rem; 
-  padding-right: 1.5rem;
-  padding-bottom: 1rem; 
-  font-size: 0.875rem;  
-  color: var(--muted-foreground, #6b7280); 
-  text-align: center;
-}
-
-.payment-history-label {
-  margin-bottom: 2rem;
-  text-align: center;
-  font-family: "Poppins", sans-serif;
-  font-size: large;
-  font-weight: 500; 
-}
-
-.payment-history-header {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr; 
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border-bottom: 1px solid #e5e7eb;
-  text-align: left;
-}
-
-.payment-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  font-size: 0.875rem;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 0.5rem;
+.card {
+  padding: 0.5rem;
 }
 
 
 @media (min-width: 1024px) {
   .btn-div {
     padding-right: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .card-label-flex {
+    margin-bottom: 0;
+    justify-content: flex-end;
+    width: 200px;
+    padding-right: 1rem;
   }
 }
