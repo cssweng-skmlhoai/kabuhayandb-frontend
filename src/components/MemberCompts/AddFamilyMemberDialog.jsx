@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import ClearableInputField from "@/components/MemberCompts/ClearableInputField";
 import DatePickerField from "@/components/MemberCompts/DatePickerField";
 import ClearableSelectField from "@/components/MemberCompts/ClearableSelectField";
+import { toast } from "sonner";
 
 const AddFamilyMemberDialog = ({ onAdd, open, onOpenChange }) => {
   const form = useForm({
@@ -28,6 +29,10 @@ const AddFamilyMemberDialog = ({ onAdd, open, onOpenChange }) => {
   });
 
   const handleSubmit = (data) => {
+    toast(`${data.first_name} ${data.last_name} has been added!`, {
+      variant: "success",
+      duration: 3000,
+    });
     onAdd(data); 
     form.reset();
     onOpenChange(false);

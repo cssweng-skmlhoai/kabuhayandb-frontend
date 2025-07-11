@@ -15,7 +15,17 @@ const App = () => {
 
   return (
     <>
-    <Toaster richColors position="top-center" />
+    <Toaster 
+      richColors 
+      position="top-center" 
+      toastOptions={{
+        classNames: {
+          toast: "text-base px-6 py-4 rounded-xl", 
+          description: "text-sm mt-1", 
+          actionButton: "text-sm px-4 py-2", 
+          closeButton: "text-lg", 
+        },    
+    }}/>
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to={`/members/${id}`} replace />} />

@@ -282,7 +282,12 @@ const HHMembers = ({view}) => {
                                 title="Delete Family Member" 
                                 description="Are you sure you want to delete"
                                 triggerLabel={ <><Trash2 /> Delete Family Member</>}
-                                onConfirm={() => { handleDeleteFamilyMember(index);}}
+                                onConfirm={() => { 
+                                  handleDeleteFamilyMember(index);
+                                  toast(`${watchedFirstName || "Family member"} has been removed.`, {
+                                    duration: 3000,
+                                  });
+                                }}
                               />
                             </div>
                           )}
