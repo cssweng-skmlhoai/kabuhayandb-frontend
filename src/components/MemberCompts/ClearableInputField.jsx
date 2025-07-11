@@ -24,11 +24,12 @@ const ClearableInputField = ({
     rules={rules}
     render={({ field }) => (
       <FormItem className={`relative ${className}`}>
-        <FormLabel className={`text-base`}>{label}</FormLabel>
+        <FormLabel htmlFor={name} className={`text-base`}>{label}</FormLabel>
         <FormControl>
           <div className="relative">
             <Input
               {...field}
+              id={name}
               type={inputType}
               disabled={!isEdit}
               className={isEdit ? "pr-10" : "h-10 px-3 py-2 text-base !text-black disabled:opacity-100 rounded-md"}
