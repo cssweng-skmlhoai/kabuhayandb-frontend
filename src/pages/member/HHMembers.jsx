@@ -17,6 +17,7 @@ import ClearableInputField from "@/components/MemberCompts/ClearableInputField";
 import AddFamilyMemberDialog from "@/components/MemberCompts/AddFamilyMemberDialog";
 import BackToTopButton from "@/components/MemberCompts/BackToTopButton";
 import { Trash2, Plus } from "lucide-react";
+import { toast } from "sonner";
 import axios from "axios";
 import "./Members.css";
 
@@ -168,8 +169,10 @@ const HHMembers = ({view}) => {
       setDeletedFamilyMembers([]);
       setSavedData(data);
       navigate(`/members/${id}`);
+      toast.success("Changes saved successfully!");
     } catch (err) {
       console.log(err);
+      toast.error("Something went wrong. Please try again!");
     }
   };
 

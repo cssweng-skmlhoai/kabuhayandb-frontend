@@ -8,6 +8,7 @@ import ClearableInputField from "@/components/MemberCompts/ClearableInputField";
 import ClearableSelectField from "@/components/MemberCompts/ClearableSelectField";
 import CheckboxField from "@/components/MemberCompts/CheckboxField";
 import ConfirmDialog from "@/components/MemberCompts/ConfirmDialog";
+import { toast } from "sonner";
 import axios from "axios";
 import "./Members.css";
 
@@ -107,8 +108,10 @@ const HousingUtilities = ({ view }) => {
 
       setSavedData(data);
       navigate(`/members/${id}/housing-utilities`);
+      toast.success("Changes saved successfully!");
     } catch (err) {
       console.log(err);
+      toast.error("Something went wrong. Please try again!");
     }
   };
 
