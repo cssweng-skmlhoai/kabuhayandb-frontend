@@ -8,6 +8,8 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const { isAuth, isAdmin, memberId, login } = useAuthStore();
   const navigate = useNavigate();
 
@@ -35,11 +37,12 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
+      setErrorMessage("Invalid username or password. Please try again.");
     }
   };
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
+    <div className="h-screen flex justify-center items-center my-10">
       <form
         onSubmit={handleLogin}
         className="flex flex-col justify-center items-center gap-10 font-poppins w-full lg:gap-6"
@@ -92,6 +95,12 @@ const Login = () => {
             Forgot Password?
           </p>
         </div>
+
+        {errorMessage && (
+          <p className="text-red-500 text-sm w-3/5 lg:w-1/2 xl:w-2/5 text-center">
+            {errorMessage}
+          </p>
+        )}
 
         <div className="w-[65%] flex justify-center">
           <Button

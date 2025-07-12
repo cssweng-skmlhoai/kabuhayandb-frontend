@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const Landing = () => {
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
+    <div className="h-screen flex justify-center items-center">
       <div className="flex flex-col justify-center items-center gap-10 font-poppins">
         <img
           src={Logo}

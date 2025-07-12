@@ -28,7 +28,6 @@ const useAuthStore = create(
           );
 
           const user = res.data.user;
-          console.log(user);
           set({
             isAuth: true,
             isAdmin: user.is_admin,
@@ -41,6 +40,7 @@ const useAuthStore = create(
             isAdmin: false,
             memberId: null,
           });
+          throw error;
         }
       },
 
