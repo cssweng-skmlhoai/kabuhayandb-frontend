@@ -61,7 +61,7 @@ const MembersList = () => {
         setMembers(res.data);
       }
     }).catch(err => { console.log(err) })
-  }, []);
+  }, [API_SECRET]);
 
   // function to search for user
   const searchUser = () => {
@@ -167,7 +167,7 @@ const MembersList = () => {
           <p className="text-center text-gray-500 mt-4">No members found.</p>
         ) : (
           currentMembers.map(member => (
-            <div key={member.member_id} className='bg-customgray2 px-4 pb-4 pt-3 flex flex-col xl:rounded-md xl:relative xl:py-5'>
+            <div key={member.member_id} className='bg-customgray2 px-4 pb-4 pt-3 flex flex-col mb-7 xl:rounded-md xl:relative xl:py-5 xl:mb-0'>
               <div className='flex justify-end xl:absolute xl:right-4 xl:-translate-y-3'>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

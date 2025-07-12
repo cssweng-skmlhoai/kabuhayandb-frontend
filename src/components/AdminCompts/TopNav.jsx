@@ -4,7 +4,7 @@ import { PiWallet } from "react-icons/pi";
 import { GrDocumentUser } from "react-icons/gr";
 import { SlSettings } from "react-icons/sl";
 import { MdOutlineLogout } from "react-icons/md";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Dialog,
   DialogContent,
@@ -16,8 +16,17 @@ import {
   DialogFooter
 } from "@/components/ui/dialog"
 import { Button } from '../ui/button';
+import useAuthStore from '@/authStore';
 
 const TopNav = () => {
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  }
+
   return (
     <div className='xl:hidden'>
       <nav className='p-3 mt-5'>
@@ -68,7 +77,7 @@ const TopNav = () => {
                 </DialogHeader>
                 <DialogDescription></DialogDescription>
                 <DialogFooter className="flex flex-row justify-between gap-4">
-                  <Link to="/login" className='w-full'><Button className="w-full bg-red-500 hover:bg-red-700">Logout</Button></Link>
+                  <Button className="w-full bg-red-500 hover:bg-red-700" onClick={handleLogout}>Logout</Button>
                   <DialogClose className="w-full bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">Cancel</DialogClose>
                 </DialogFooter>
               </DialogContent>

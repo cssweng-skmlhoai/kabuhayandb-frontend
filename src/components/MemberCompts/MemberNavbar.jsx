@@ -1,16 +1,21 @@
 import React from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Settings, LogOut } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import "./MemberNavbar.css";
+import useAuthStore from "@/authStore";
 
 const MemberNavbar = ({ member }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const id = 1; // hardcoded for testing
-  // const { id } = useParams();
+  const { logout, member_id } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  }
 
   return (
     <div className="navbar">
@@ -27,7 +32,7 @@ const MemberNavbar = ({ member }) => {
               <Settings />
               <span>Settings</span>
             </div>
-            <div className="icon-label">
+            <div className="icon-label" onClick={handleLogout}>
               <LogOut />
               <span>Log Out</span>
             </div>
@@ -40,8 +45,8 @@ const MemberNavbar = ({ member }) => {
       <div className="bottom-section">
         <Tabs className="w-fit" value={location.pathname} onValueChange={(path) => navigate(path)}>
           <TabsList className="w-fit">
-            <TabsTrigger value={`/memberView/${id}`}>Household Members</TabsTrigger>
-            <TabsTrigger value={`/memberView/${id}/housing-utilities`}>Housing & Utilities</TabsTrigger>
+            <TabsTrigger value={`/memberView/${member_id}`}>Household Members</TabsTrigger>
+            <TabsTrigger value={`/memberView/${member_id}/housing-utilities`}>Housing & Utilities</TabsTrigger>
             <TabsTrigger value="/memberView/dues">Dues</TabsTrigger>
           </TabsList>
         </Tabs>

@@ -70,7 +70,7 @@ const HousingUtilities = ({ view }) => {
 
       }).catch(err =>
         console.log(err))
-  }, [form, id]);
+  }, [form, id, API_SECRET]);
 
   // function to update housing & utilities details
   const handleUpdates = async (data) => {

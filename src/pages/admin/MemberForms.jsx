@@ -124,7 +124,7 @@ const MemberForms = ({ view }) => {
     }).catch(err => {
       console.log(err)
     });
-  }, [id]);
+  }, [id, API_SECRET]);
 
   useEffect(() => {
     const area = parseFloat(householdData.area) || 0;
@@ -141,7 +141,7 @@ const MemberForms = ({ view }) => {
   const handleUpdates = (e) => {
     e.preventDefault();
 
-    const cleanedFamilyMembers = familyMembers.map(({ age, tempId, ...rest }) => rest);
+    const cleanedFamilyMembers = familyMembers.map(({ age: _age, tempId: _tempId, ...rest }) => rest);
 
     const payload = {
       members: memberData,

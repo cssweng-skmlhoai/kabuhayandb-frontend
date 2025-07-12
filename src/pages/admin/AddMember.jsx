@@ -56,8 +56,8 @@ const AddMember = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const { age, ...cleanedMemberData } = memberData;
-    const cleanedFamilyMembers = familyMembers.map(({ age, ...rest }) => rest);
+    const { age: _age, ...cleanedMemberData } = memberData;
+    const cleanedFamilyMembers = familyMembers.map(({ age: _age, ...rest }) => rest);
 
     const payload = {
       members: cleanedMemberData,

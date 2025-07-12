@@ -91,7 +91,7 @@ const HHMembers = ({ view }) => {
 
       }).catch(err =>
         console.log(err))
-  }, [form, id]);
+  }, [form, id, API_SECRET]);
 
   // function for the deletion of a family member from the form
   const handleDeleteFamilyMember = (indexToRemove) => {
