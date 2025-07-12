@@ -48,6 +48,8 @@ const DatePickerField = ({ control, name, label, isEdit, className, rules={}, })
                   selected={field.value}
                   onSelect={field.onChange}
                   initialFocus
+                  captionLayout="dropdown"
+                  toYear={new Date().getFullYear()}
                 />
               </PopoverContent>
             </Popover>
