@@ -60,9 +60,10 @@ const HHMembers = ({ view }) => {
     axios
       .get(`${API_URL}/members/info/${id}`, {
         headers: {
-          Authorization: `Bearer ${API_SECRET}`
+          Authorization: `Bearer ${API_SECRET}`,
         },
-      }).then((res) => {
+      })
+      .then((res) => {
         const data = res.data;
         const normalizedData = {
           last_name: data.last_name,
@@ -88,9 +89,8 @@ const HHMembers = ({ view }) => {
 
         setSavedData(normalizedData);
         form.reset(normalizedData);
-
-      }).catch(err =>
-        console.log(err))
+      })
+      .catch((err) => console.log(err));
   }, [form, id, API_SECRET]);
 
   // function for the deletion of a family member from the form
@@ -130,7 +130,7 @@ const HHMembers = ({ view }) => {
       };
     });
 
-    // append deleted family members 
+    // append deleted family members
     for (const deleted of deletedFamilyMembers) {
       cleanedFamilyMembers.push({
         id: deleted.id,
@@ -182,13 +182,28 @@ const HHMembers = ({ view }) => {
                   setDeletedFamilyMembers([]);
                 }
                 navigate(`/memberView/${id}`);
-              }
-              }> Cancel</Button>
+              }}
+            >
+              {" "}
+              Cancel
+            </Button>
 
-            <ConfirmDialog title="Save Changes" description="Are you sure you want to save these changes?" triggerLabel="Save Details" onConfirm={form.handleSubmit(handleUpdates)} variant="edit_details" />
+            <ConfirmDialog
+              title="Save Changes"
+              description="Are you sure you want to save these changes?"
+              triggerLabel="Save Details"
+              onConfirm={form.handleSubmit(handleUpdates)}
+              variant="edit_details"
+            />
           </>
         ) : (
-          <Button variant="edit_details" onClick={() => navigate(`/memberView/${id}/edit`)}> Edit Details </Button>
+          <Button
+            variant="edit_details"
+            onClick={() => navigate(`/memberView/${id}/edit`)}
+          >
+            {" "}
+            Edit Details{" "}
+          </Button>
         )}
       </div>
 
@@ -202,21 +217,52 @@ const HHMembers = ({ view }) => {
                   { name: "first_name", label: "First Name" },
                   { name: "middle_name", label: "Middle Name" },
                 ].map(({ name, label }) => (
-                  <ClearableInputField key={name} control={form.control} name={name} label={label} isEdit={isEdit} />
+                  <ClearableInputField
+                    key={name}
+                    control={form.control}
+                    name={name}
+                    label={label}
+                    isEdit={isEdit}
+                  />
                 ))}
 
-                <DatePickerField control={form.control} name="birth_date" label="Date of Birth" isEdit={isEdit} />
+                <DatePickerField
+                  control={form.control}
+                  name="birth_date"
+                  label="Date of Birth"
+                  isEdit={isEdit}
+                />
 
                 <div className="inline-fields">
-                  <ClearableInputField control={form.control} name="age" label="Age" isEdit={false} className="w-1/2" inputProps={{ readOnly: true }} />
-                  <ClearableSelectField control={form.control} name="gender" label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Other"]} />
+                  <ClearableInputField
+                    control={form.control}
+                    name="age"
+                    label="Age"
+                    isEdit={false}
+                    className="w-1/2"
+                    inputProps={{ readOnly: true }}
+                  />
+                  <ClearableSelectField
+                    control={form.control}
+                    name="gender"
+                    label="Gender"
+                    isEdit={isEdit}
+                    className="w-1/2"
+                    options={["Male", "Female", "Other"]}
+                  />
                 </div>
 
                 {[
                   { name: "position", label: "Position" },
                   { name: "contact_number", label: "Contact Number" },
                 ].map(({ name, label }) => (
-                  <ClearableInputField key={name} control={form.control} name={name} label={label} isEdit={isEdit} />
+                  <ClearableInputField
+                    key={name}
+                    control={form.control}
+                    name={name}
+                    label={label}
+                    isEdit={isEdit}
+                  />
                 ))}
               </div>
             </CardContent>
@@ -225,7 +271,10 @@ const HHMembers = ({ view }) => {
           <Card className="card">
             <CardContent className="card-content">
               <div className="accordion">
-                <p className="text-lg font-semibold"> Family Composition ({fields.length}) </p>
+                <p className="text-lg font-semibold">
+                  {" "}
+                  Family Composition ({fields.length}){" "}
+                </p>
                 {isEdit && (
                   <Button
                     variant="add"
@@ -252,14 +301,24 @@ const HHMembers = ({ view }) => {
                 )}
               </div>
 
-              <Accordion type="multiple" value={openAccordions} onValueChange={setOpenAccordions} className="space-y-4">
+              <Accordion
+                type="multiple"
+                value={openAccordions}
+                onValueChange={setOpenAccordions}
+                className="space-y-4"
+              >
                 {fields.map((member, index) => {
                   const watchedFirstName = watchedFamily?.[index]?.first_name;
 
                   return (
-                    <AccordionItem key={member.id || index} value={`member-${index}`}
+                    <AccordionItem
+                      key={member.id || index}
+                      value={`member-${index}`}
                     >
-                      <AccordionTrigger> {watchedFirstName || `Family Member ${index + 1}`} </AccordionTrigger>
+                      <AccordionTrigger>
+                        {" "}
+                        {watchedFirstName || `Family Member ${index + 1}`}{" "}
+                      </AccordionTrigger>
                       <AccordionContent>
                         <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
                           {[
@@ -271,23 +330,54 @@ const HHMembers = ({ view }) => {
                               label: "Relation to Member",
                             },
                           ].map(({ name, label }) => (
-                            <ClearableInputField key={name} control={form.control} name={`family.${index}.${name}`} label={label} isEdit={isEdit} />
+                            <ClearableInputField
+                              key={name}
+                              control={form.control}
+                              name={`family.${index}.${name}`}
+                              label={label}
+                              isEdit={isEdit}
+                            />
                           ))}
 
-                          <DatePickerField control={form.control} name={`family.${index}.birth_date`} label="Date of Birth" isEdit={isEdit} />
+                          <DatePickerField
+                            control={form.control}
+                            name={`family.${index}.birth_date`}
+                            label="Date of Birth"
+                            isEdit={isEdit}
+                          />
 
                           <div className="flex gap-4">
-                            <ClearableInputField control={form.control} name={`family.${index}.age`} label="Age" isEdit={isEdit} className="w-1/2" />
-                            <ClearableSelectField control={form.control} name={`family.${index}.gender`} label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Prefer not to say"]} />
+                            <ClearableInputField
+                              control={form.control}
+                              name={`family.${index}.age`}
+                              label="Age"
+                              isEdit={isEdit}
+                              className="w-1/2"
+                            />
+                            <ClearableSelectField
+                              control={form.control}
+                              name={`family.${index}.gender`}
+                              label="Gender"
+                              isEdit={isEdit}
+                              className="w-1/2"
+                              options={["Male", "Female", "Prefer not to say"]}
+                            />
                           </div>
 
                           <div>
-                            <ClearableInputField control={form.control} name={`family.${index}.educational_attainment`} label="Education" isEdit={isEdit} />
+                            <ClearableInputField
+                              control={form.control}
+                              name={`family.${index}.educational_attainment`}
+                              label="Education"
+                              isEdit={isEdit}
+                            />
                           </div>
 
                           {isEdit && (
                             <div className="delete">
-                              <ConfirmDialog title="Delete Family Member" description="Are you sure you want to delete"
+                              <ConfirmDialog
+                                title="Delete Family Member"
+                                description="Are you sure you want to delete"
                                 triggerLabel={
                                   <>
                                     <Trash2 />
@@ -306,13 +396,10 @@ const HHMembers = ({ view }) => {
                   );
                 })}
               </Accordion>
-
             </CardContent>
           </Card>
-
         </Form>
       </div>
-
     </div>
   );
 };

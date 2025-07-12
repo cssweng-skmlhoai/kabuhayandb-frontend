@@ -15,7 +15,7 @@ const MemberNavbar = ({ member }) => {
   const handleLogout = () => {
     logout();
     navigate("/login");
-  }
+  };
 
   return (
     <div className="navbar">
@@ -43,10 +43,18 @@ const MemberNavbar = ({ member }) => {
       <Separator className="separator" />
 
       <div className="bottom-section">
-        <Tabs className="w-fit" value={location.pathname} onValueChange={(path) => navigate(path)}>
+        <Tabs
+          className="w-fit"
+          value={location.pathname}
+          onValueChange={(path) => navigate(path)}
+        >
           <TabsList className="w-fit">
-            <TabsTrigger value={`/memberView/${member_id}`}>Household Members</TabsTrigger>
-            <TabsTrigger value={`/memberView/${member_id}/housing-utilities`}>Housing & Utilities</TabsTrigger>
+            <TabsTrigger value={`/memberView/${member_id}`}>
+              Household Members
+            </TabsTrigger>
+            <TabsTrigger value={`/memberView/${member_id}/housing-utilities`}>
+              Housing & Utilities
+            </TabsTrigger>
             <TabsTrigger value="/memberView/dues">Dues</TabsTrigger>
           </TabsList>
         </Tabs>

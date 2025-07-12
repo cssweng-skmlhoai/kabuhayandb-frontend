@@ -71,7 +71,6 @@ const MemberDues = () => {
     page * itemsPerPage
   );
 
-
   const handlePrevious = () => {
     if (page > 1) setPage(page - 1);
   };
@@ -110,7 +109,9 @@ const MemberDues = () => {
         <Card className="card">
           <CardContent className="space-y-4 grid gap-4 sm:grid-cols-2">
             <div className="row">
-              <Label htmlFor="type" className="w-24">Type</Label>
+              <Label htmlFor="type" className="w-24">
+                Type
+              </Label>
               <Input
                 id="type"
                 readOnly
@@ -120,7 +121,9 @@ const MemberDues = () => {
               />
             </div>
             <div className="row">
-              <Label htmlFor="status" className="w-24">Status</Label>
+              <Label htmlFor="status" className="w-24">
+                Status
+              </Label>
               <Input
                 id="status"
                 readOnly
@@ -130,7 +133,9 @@ const MemberDues = () => {
               />
             </div>
             <div className="row">
-              <Label htmlFor="amount" className="w-24">Amount</Label>
+              <Label htmlFor="amount" className="w-24">
+                Amount
+              </Label>
               <Input
                 id="amount"
                 readOnly
@@ -144,7 +149,9 @@ const MemberDues = () => {
               />
             </div>
             <div className="row">
-              <Label htmlFor="due-date" className="w-24">Due Date</Label>
+              <Label htmlFor="due-date" className="w-24">
+                Due Date
+              </Label>
               <Input
                 id="due-date"
                 readOnly

@@ -12,6 +12,7 @@ cd kabuhayandb-frontend
 ```
 
 3. Switch to this branch
+
 ```bash
 git checkout combined_views
 ```
@@ -31,4 +32,3 @@ npm install
 ```bash
 npm run dev
 ```
-

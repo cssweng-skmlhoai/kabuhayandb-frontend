@@ -28,8 +28,7 @@ const buttonVariants = cva(
           "font-normal font-poppins bg-white text-black rounded-md text-base px-8 py-4",
         cancel_outline:
           "font-normal font-poppins bg-white text-black border border-gray-300 rounded-md text-base px-8 py-4",
-        add: 
-          "font-normal font-poppins bg-[#C7C7C7] text-black rounded-md text-base px-8 py-4",
+        add: "font-normal font-poppins bg-[#C7C7C7] text-black rounded-md text-base px-8 py-4",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

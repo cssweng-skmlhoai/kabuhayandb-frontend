@@ -45,7 +45,6 @@ const ClearableInputField = ({
       </FormItem>
     )}
   />
-  
 );
 
 export default ClearableInputField;

@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 import AllMembers from "./pages/admin/AllMembers";
 import MemberForms from "./pages/admin/MemberForms";
@@ -8,9 +8,9 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Settings from "./pages/Settings";
 import AddMember from "./pages/admin/AddMember";
-import MemberLayout from './layouts/MemberLayout';
+import MemberLayout from "./layouts/MemberLayout";
 import SelectView from "./pages/SelectView";
-import ProtectedRoute from './layouts/ProtectedRoute';
+import ProtectedRoute from "./layouts/ProtectedRoute";
 
 const App = () => {
   return (
@@ -38,7 +38,7 @@ const App = () => {
         {/* <Route path="/memberViews" element={<NavigateToMemberView />} /> */}
       </Route>
     </Routes>
-  )
-}
+  );
+};
 
-export default App
+export default App;

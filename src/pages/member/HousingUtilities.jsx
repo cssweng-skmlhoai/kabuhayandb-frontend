@@ -33,7 +33,7 @@ const HousingUtilities = ({ view }) => {
       Septic_Tank: 0,
       condition_type: "",
       land_acquisition: "",
-      status_of_occupancy: ""
+      status_of_occupancy: "",
     },
   });
 
@@ -44,9 +44,10 @@ const HousingUtilities = ({ view }) => {
     axios
       .get(`${API_URL}/members/info/${id}`, {
         headers: {
-          Authorization: `Bearer ${API_SECRET}`
+          Authorization: `Bearer ${API_SECRET}`,
         },
-      }).then((res) => {
+      })
+      .then((res) => {
         const data = res.data;
         const household = {
           tct_no: data.tct_no,
@@ -67,9 +68,8 @@ const HousingUtilities = ({ view }) => {
 
         setSavedData(household);
         form.reset(household);
-
-      }).catch(err =>
-        console.log(err))
+      })
+      .catch((err) => console.log(err));
   }, [form, id, API_SECRET]);
 
   // function to update housing & utilities details
@@ -124,36 +124,81 @@ const HousingUtilities = ({ view }) => {
                 }
                 navigate(`/memberView/${id}/housing-utilities`);
               }}
-            >Cancel</Button>
-            <ConfirmDialog title="Save Changes" description="Are you sure you want to save these changes?" triggerLabel="Save Details" onConfirm={form.handleSubmit(handleUpdates)} variant="edit_details"
+            >
+              Cancel
+            </Button>
+            <ConfirmDialog
+              title="Save Changes"
+              description="Are you sure you want to save these changes?"
+              triggerLabel="Save Details"
+              onConfirm={form.handleSubmit(handleUpdates)}
+              variant="edit_details"
             />
           </>
         ) : (
-          <Button variant="edit_details" onClick={() => navigate(`/memberView/${id}/housing-utilities/edit`)}> Edit Details </Button>
+          <Button
+            variant="edit_details"
+            onClick={() => navigate(`/memberView/${id}/housing-utilities/edit`)}
+          >
+            {" "}
+            Edit Details{" "}
+          </Button>
         )}
       </div>
 
       <Form {...form}>
         <div className="info">
-
           <Card className="card">
             <CardContent className="card-content">
               <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
-
-                <ClearableInputField control={form.control} name="tct_no" label="TCT No." isEdit={isEdit} />
+                <ClearableInputField
+                  control={form.control}
+                  name="tct_no"
+                  label="TCT No."
+                  isEdit={isEdit}
+                />
 
                 <div className="flex gap-4">
-                  <ClearableInputField control={form.control} name="block_no" label="Block No." className="w-1/2" isEdit={isEdit} />
-                  <ClearableInputField control={form.control} name="lot_no" label="Lot No." className="w-1/2" isEdit={isEdit} />
+                  <ClearableInputField
+                    control={form.control}
+                    name="block_no"
+                    label="Block No."
+                    className="w-1/2"
+                    isEdit={isEdit}
+                  />
+                  <ClearableInputField
+                    control={form.control}
+                    name="lot_no"
+                    label="Lot No."
+                    className="w-1/2"
+                    isEdit={isEdit}
+                  />
                 </div>
 
                 <div className="flex gap-4">
-                  <ClearableInputField control={form.control} name="area" label="Area" className="w-1/2" isEdit={isEdit} />
-                  <ClearableInputField control={form.control} name="open_space_share" label="Share of Open Space" className="w-1/2" isEdit={isEdit} />
+                  <ClearableInputField
+                    control={form.control}
+                    name="area"
+                    label="Area"
+                    className="w-1/2"
+                    isEdit={isEdit}
+                  />
+                  <ClearableInputField
+                    control={form.control}
+                    name="open_space_share"
+                    label="Share of Open Space"
+                    className="w-1/2"
+                    isEdit={isEdit}
+                  />
                 </div>
 
-                <ClearableInputField control={form.control} name="total" label="Total" isEdit={false} inputProps={{ readOnly: true }} />
-
+                <ClearableInputField
+                  control={form.control}
+                  name="total"
+                  label="Total"
+                  isEdit={false}
+                  inputProps={{ readOnly: true }}
+                />
               </div>
             </CardContent>
           </Card>
@@ -161,15 +206,29 @@ const HousingUtilities = ({ view }) => {
           <Card className="card">
             <CardContent className="card-content">
               <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
-                <ClearableInputField control={form.control} name="confirmity_signature" label="Conformity/ Signature" isEdit={isEdit} />
-                <ClearableInputField control={form.control} name="remarks" label="Remarks" isEdit={isEdit} />
+                <ClearableInputField
+                  control={form.control}
+                  name="confirmity_signature"
+                  label="Conformity/ Signature"
+                  isEdit={isEdit}
+                />
+                <ClearableInputField
+                  control={form.control}
+                  name="remarks"
+                  label="Remarks"
+                  isEdit={isEdit}
+                />
               </div>
             </CardContent>
           </Card>
 
           <Card className="card">
             <CardContent className="card-content space-y-4">
-              <ClearableSelectField control={form.control} name="condition_type" label="Housing Condition/ Types" isEdit={isEdit}
+              <ClearableSelectField
+                control={form.control}
+                name="condition_type"
+                label="Housing Condition/ Types"
+                isEdit={isEdit}
                 options={[
                   "Needs minor repair",
                   "Needs major repair",
@@ -181,13 +240,32 @@ const HousingUtilities = ({ view }) => {
               />
 
               <div className="flex gap-6">
-                <CheckboxField control={form.control} name="Meralco" label="Meralco" isEdit={isEdit} />
-                <CheckboxField control={form.control} name="Maynilad" label="Maynilad" isEdit={isEdit} />
-                <CheckboxField control={form.control} name="Septic_Tank" label="Septic Tank" isEdit={isEdit} />
+                <CheckboxField
+                  control={form.control}
+                  name="Meralco"
+                  label="Meralco"
+                  isEdit={isEdit}
+                />
+                <CheckboxField
+                  control={form.control}
+                  name="Maynilad"
+                  label="Maynilad"
+                  isEdit={isEdit}
+                />
+                <CheckboxField
+                  control={form.control}
+                  name="Septic_Tank"
+                  label="Septic Tank"
+                  isEdit={isEdit}
+                />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <ClearableSelectField control={form.control} name="land_acquisition" label="Land Acquisition" isEdit={false}
+                <ClearableSelectField
+                  control={form.control}
+                  name="land_acquisition"
+                  label="Land Acquisition"
+                  isEdit={false}
                   options={[
                     "CMP",
                     "Direct Buying",
@@ -197,12 +275,16 @@ const HousingUtilities = ({ view }) => {
                     "Expropriation",
                   ]}
                 />
-                <ClearableSelectField control={form.control} name="status_of_occupancy" label="Status of Occupancy" isEdit={false} options={["Owner", "Sharer", "Renter"]} />
+                <ClearableSelectField
+                  control={form.control}
+                  name="status_of_occupancy"
+                  label="Status of Occupancy"
+                  isEdit={false}
+                  options={["Owner", "Sharer", "Renter"]}
+                />
               </div>
-
             </CardContent>
           </Card>
-
         </div>
       </Form>
     </div>
