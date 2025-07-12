@@ -26,7 +26,6 @@ const HHMembers = ({view}) => {
   const navigate = useNavigate();
 
   const [savedData, setSavedData] = useState(null);
-  const [deletedFamilyMembers, setDeletedFamilyMembers] = useState([]);
   const [openAccordions, setOpenAccordions] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -88,6 +87,7 @@ const HHMembers = ({view}) => {
             age: fm.age,
             gender: fm.gender,
             educational_attainment: fm.educational_attainment,
+            update: true,
           })),
         };
 
@@ -101,17 +101,16 @@ const HHMembers = ({view}) => {
   // function for the deletion of a family member from the form
   const handleDeleteFamilyMember = (indexToRemove) => {
     const memberToDelete = form.getValues(`family.${indexToRemove}`);
-
     if (memberToDelete?.id) {
-      setDeletedFamilyMembers((prev) => [...prev, memberToDelete]);
+      form.setValue(`family.${indexToRemove}.update`, false);
+    } else {
+      remove(indexToRemove);
     }
-
-    remove(indexToRemove);
   };
 
   // function to update member details
   const handleUpdates = async (data) => {
-    const cleanedFamilyMembers = data.family.map((member) => {
+    const cleanedFamilyMembers = data.family.filter((m) => m.update !== false || m.id).map((member) => {
       const {
         id,
         last_name,
@@ -121,6 +120,7 @@ const HHMembers = ({view}) => {
         birth_date,
         gender,
         educational_attainment,
+        update,
       } = member;
 
       return {
@@ -132,16 +132,9 @@ const HHMembers = ({view}) => {
         birth_date,
         gender,
         educational_attainment,
+        update: update !== false,
       };
     });
-
-    // append deleted family members 
-    for (const deleted of deletedFamilyMembers) {
-      cleanedFamilyMembers.push({
-        id: deleted.id,
-        update: false, 
-      });
-    }
 
     const payload = {
       members: {
@@ -166,7 +159,6 @@ const HHMembers = ({view}) => {
         },
       });
 
-      setDeletedFamilyMembers([]);
       setSavedData(data);
       navigate(`/members/${id}`);
       toast.success("Changes saved successfully!");
@@ -187,7 +179,6 @@ const HHMembers = ({view}) => {
               onClick={() => {
                 if (savedData) {
                   form.reset(savedData);
-                  setDeletedFamilyMembers([]);
                 } 
                 navigate(`/members/${id}`);
                 }
@@ -244,7 +235,7 @@ const HHMembers = ({view}) => {
                       open={isDialogOpen}
                       onOpenChange={setIsDialogOpen}
                       onAdd={(data) => {
-                        append(data);
+                        append({ ...data, update: true });
                         setOpenAccordions((prev) => [...prev, `member-${fields.length}`]);
                       }}
                     />
@@ -254,6 +245,8 @@ const HHMembers = ({view}) => {
 
               <Accordion type="multiple" value={openAccordions} onValueChange={setOpenAccordions} className="space-y-4">
                 {fields.map((member, index) => {
+                  const isDeleted = form.getValues(`family.${index}.update`) === false;
+                  if (isDeleted) return null;
                   const watchedFirstName = watchedFamily?.[index]?.first_name;
 
                   return (
@@ -281,7 +274,7 @@ const HHMembers = ({view}) => {
                               <ConfirmDialog 
                                 title="Delete Family Member" 
                                 description="Are you sure you want to delete"
-                                triggerLabel={ <><Trash2 /> Delete Family Member</>}
+                                triggerLabel={ <><Trash2 /> Delete</>}
                                 onConfirm={() => { 
                                   handleDeleteFamilyMember(index);
                                   toast(`${watchedFirstName || "Family member"} has been removed.`, {
