@@ -28,7 +28,14 @@ const buttonVariants = cva(
           "font-normal font-poppins bg-white text-black rounded-md text-base px-8 py-4",
         cancel_outline:
           "font-normal font-poppins bg-white text-black border border-gray-300 rounded-md text-base px-8 py-4",
+<<<<<<< HEAD
         add: "font-normal font-poppins bg-[#C7C7C7] text-black rounded-md text-base px-8 py-4",
+=======
+        add: 
+          "font-normal font-poppins bg-[#C7C7C7] text-black rounded-md text-base px-8 py-4",
+        back_to_top:
+          "fixed bottom-6 right-6 z-50 font-normal font-poppins bg-[#163A53] text-white rounded-full p-2 shadow-md bg-[#163A53] hover:bg-muted hover:text-[#163A53] transition-all",
+>>>>>>> members_view
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

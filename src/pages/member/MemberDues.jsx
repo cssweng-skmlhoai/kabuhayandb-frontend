@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,205 +17,135 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
+import axios from "axios";
 import "./Members.css";
 
-// To be revised - inline with database structure
-// Sample Dues Data
-const duesData = {
-  "Monthly Amortization": {
-    type: "Monthly Amortization",
-    status: "Paid",
-    amount: "5,000",
-    dueDate: "2024-06-30",
-  },
-  "Monthly Dues": {
-    type: "Monthly Dues",
-    status: "Unpaid",
-    amount: "1,000",
-    dueDate: "2024-06-30",
-  },
-  Taxes: {
-    type: "Taxes",
-    status: "Unpaid",
-    amount: "500",
-    dueDate: "2024-07-15",
-  },
-  Penalties: {
-    type: "Penalties",
-    status: "Unpaid",
-    amount: "300",
-    dueDate: "2024-07-20",
-  },
-  Others: {
-    type: "Others",
-    status: "Paid",
-    amount: "150",
-    dueDate: "2024-08-01",
-  },
-};
-
-//
-const paidDues = Object.values(duesData).filter(
-  (item) => item.status === "Paid"
-);
-
-const itemsPerPage = 3;
-
 const MemberDues = () => {
+  const { id } = useParams();
+
   const [selectedDue, setSelectedDue] = useState("");
-  const [page, setPage] = useState(1);
 
-  const selectedDetails = duesData[selectedDue] || null;
-  const totalPages = Math.ceil(paidDues.length / itemsPerPage);
-  const paginatedData = paidDues.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
-
-  const handlePrevious = () => {
-    if (page > 1) setPage(page - 1);
-  };
-
-  const handleNext = () => {
-    if (page < totalPages) setPage(page + 1);
-  };
+  const API_SECRET = import.meta.env.VITE_API_SECRET;
+  const API_URL = "https://kabuhayandb-backend.onrender.com";
 
   return (
     <div className="main">
-      <div className="info">
+      <div className="info space-y-4">
+        {/* Select Due Type */}
         <Card className="card">
-          <CardContent>
-            <p className="due-label">Select type of due:</p>
-            <Select
-              value={selectedDue}
-              onValueChange={(value) => {
-                setSelectedDue(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select type of due" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(duesData).map((key) => (
-                  <SelectItem key={key} value={key}>
-                    {key}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <CardContent className="card-content flex justify-center">
+            <div className="flex flex-col md:flex-row md:items-center gap-2 w-full md:max-w-lg">
+              <p className="card-label-flex">Select type of due:</p>
+              <Select defaultValue="Monthly Amortization">
+                <SelectTrigger className="w-full md:w-64">
+                  <SelectValue placeholder="Select type of due" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem key="Monthly Amortization" value="Monthly Amortization">Monthly Amortization</SelectItem>
+                  <SelectItem key="Monthly Dues" value="Monthly Dues">Monthly Dues</SelectItem>
+                  <SelectItem key="Taxes" value="Taxes">Taxes</SelectItem>
+                  <SelectItem key="Penalties" value="Penalties">Penalties</SelectItem>
+                  <SelectItem key="Others" value="Others">Others</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </CardContent>
         </Card>
 
+        {/* Outstanding Balance */}
         <Card className="card">
-          <CardContent className="space-y-4 grid gap-4 sm:grid-cols-2">
-            <div className="row">
-              <Label htmlFor="type" className="w-24">
-                Type
-              </Label>
-              <Input
-                id="type"
-                readOnly
-                value={selectedDue ? selectedDetails.type : ""}
-                placeholder="Type"
-                className="w-full"
-              />
+          <CardContent className="card-content flex justify-center">
+            <div className="flex flex-col md:flex-row md:items-center gap-2 w-full md:max-w-lg">
+              <Label className="card-label-flex">Outstanding Balance:</Label>
+              <Input readOnly value="₱ 100.00" className="w-full md:w-64" />
             </div>
-            <div className="row">
-              <Label htmlFor="status" className="w-24">
-                Status
-              </Label>
-              <Input
-                id="status"
-                readOnly
-                value={selectedDue ? selectedDetails.status : ""}
-                placeholder="Status"
-                className="w-full"
-              />
-            </div>
-            <div className="row">
-              <Label htmlFor="amount" className="w-24">
-                Amount
-              </Label>
-              <Input
-                id="amount"
-                readOnly
-                value={
-                  selectedDue
-                    ? `₱ ${selectedDetails.amount.toLocaleString()}`
-                    : ""
-                }
-                placeholder="Amount"
-                className="w-full"
-              />
-            </div>
-            <div className="row">
-              <Label htmlFor="due-date" className="w-24">
-                Due Date
-              </Label>
-              <Input
-                id="due-date"
-                readOnly
-                value={selectedDue ? selectedDetails.dueDate : ""}
-                placeholder="mm/dd/yy"
-                className="w-full"
-              />
-            </div>
-
-            {selectedDue && (
-              <div className="due-message">
-                {/* Logic to be updated based on database */}
-                {selectedDetails.amount === 0 ||
-                selectedDetails.status.toLowerCase() === "paid" ? (
-                  <>You have no outstanding balance as of {"mm-dd-yyyy"}.</>
-                ) : (
-                  <>
-                    Please pay your outstanding balance before or on{" "}
-                    {"mm-dd-yyyy"}.
-                  </>
-                )}
-              </div>
-            )}
           </CardContent>
         </Card>
 
+        {/* Unpaid Dues Table */}
         <Card className="card">
-          <CardContent>
-            <h4 className="payment-history-label">Payment History</h4>
+          <CardContent className="card-content">
+            <h4 className="card-label">Unpaid Dues (Type)</h4>
             <div className="payment-history-header">
               <span>Receipt No.</span>
               <span>Amount</span>
-              <span>Date</span>
+              <span>Due Date</span>
             </div>
-            <div className="space-y-2">
-              {paginatedData.map((payment, index) => (
-                <div key={index} className="payment-row">
-                  <span>{payment.receiptNo || "—"}</span>
-                  <span>{`₱ ${payment.amount}`}</span>
-                  <span>{payment.dueDate}</span>
-                </div>
-              ))}
+            <div className="space-y-2.5">
+              <div className="payment-row">
+                <span>RI234</span>
+                <span>₱ 100.00</span>
+                <span>11/07/25</span>
+              </div>
+              <div className="payment-row">
+                <span>####</span>
+                <span>₱ 0.00</span>
+                <span>00/00/00</span>
+              </div>
+              <div className="payment-row">
+                <span>####</span>
+                <span>₱ 0.00</span>
+                <span>00/00/00</span>
+              </div>
             </div>
 
-            <Pagination className="pagination">
+            <Pagination className="pagination mt-4">
               <PaginationContent className="pagination-content">
                 <PaginationItem>
-                  <PaginationPrevious
-                    onClick={handlePrevious}
-                    className={page === 1 ? "disabled" : ""}
-                  />
+                  <PaginationPrevious disabled />
                 </PaginationItem>
-                <span className="pagination-page-text">
-                  {page} of {totalPages}
-                </span>
+                <span className="pagination-page-text">1 of 1</span>
                 <PaginationItem>
-                  <PaginationNext
-                    onClick={handleNext}
-                    className={page === totalPages ? "disabled" : ""}
-                  />
+                  <PaginationNext disabled />
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
+          </CardContent>
+        </Card>
+
+        {/* Payment History Table */}
+        <Card className="card">
+          <CardContent className="card-content">
+            <h4 className="card-label">Payment History (Type)</h4>
+            <div className="payment-history-header">
+              <span>Receipt No.</span>
+              <span>Amount</span>
+              <span>Date Paid</span>
+            </div>
+            <div className="space-y-2.5">
+              <div className="payment-row">
+                <span>####</span>
+                <span>₱ 0.00</span>
+                <span>00/00/00</span>
+              </div>
+              <div className="payment-row">
+                <span>####</span>
+                <span>₱ 0.00</span>
+                <span>00/00/00</span>
+              </div>
+              <div className="payment-row">
+                <span>####</span>
+                <span>₱ 0.00</span>
+                <span>00/00/00</span>
+              </div>
+            </div>
+
+            <Pagination className="pagination mt-4">
+              <PaginationContent className="pagination-content">
+                <PaginationItem>
+                  <PaginationPrevious disabled />
+                </PaginationItem>
+
+                <PaginationItem>
+                  <span className="pagination-page-text flex items-center">1 of 1</span>
+                </PaginationItem>
+
+                <PaginationItem>
+                  <PaginationNext disabled />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+
           </CardContent>
         </Card>
       </div>

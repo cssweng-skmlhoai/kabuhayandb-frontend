@@ -8,6 +8,7 @@ import ClearableInputField from "@/components/MemberCompts/ClearableInputField";
 import ClearableSelectField from "@/components/MemberCompts/ClearableSelectField";
 import CheckboxField from "@/components/MemberCompts/CheckboxField";
 import ConfirmDialog from "@/components/MemberCompts/ConfirmDialog";
+import { toast } from "sonner";
 import axios from "axios";
 import "./Members.css";
 
@@ -19,6 +20,7 @@ const HousingUtilities = ({ view }) => {
   const isEdit = view === "edit";
 
   const form = useForm({
+    mode: "all",
     defaultValues: {
       tct_no: "",
       block_no: "",
@@ -53,7 +55,7 @@ const HousingUtilities = ({ view }) => {
           tct_no: data.tct_no,
           block_no: data.block_no,
           lot_no: data.lot_no,
-          area: data.area || "",
+          area: data.area,
           open_space_share: data.open_space_share,
           total: data.total || "",
           confirmity_signature: data.confirmity_signature || "",
@@ -84,7 +86,7 @@ const HousingUtilities = ({ view }) => {
         tct_no: data.tct_no,
         block_no: data.block_no,
         lot_no: data.lot_no,
-        //area: data.area,
+        area: data.area,
         open_space_share: data.open_space_share,
         //total: data.total,
         condition_type: data.condition_type,
@@ -106,8 +108,10 @@ const HousingUtilities = ({ view }) => {
 
       setSavedData(data);
       navigate(`/memberView/${id}/housing-utilities`);
+      toast.success("Changes saved successfully!");
     } catch (err) {
       console.log(err);
+      toast.error("Something went wrong. Please try again!");
     }
   };
 
@@ -150,122 +154,59 @@ const HousingUtilities = ({ view }) => {
         <div className="info">
           <Card className="card">
             <CardContent className="card-content">
-              <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
-                <ClearableInputField
-                  control={form.control}
-                  name="tct_no"
-                  label="TCT No."
-                  isEdit={isEdit}
-                />
+              <div className="space-y-4 mt-4">
+
+                <ClearableInputField control={form.control} name="tct_no" label="TCT No." isEdit={isEdit} inputProps={{ placeholder: "000-0000000000" }} rules={{ required: "Please enter your TCT number" }} />
 
                 <div className="flex gap-4">
-                  <ClearableInputField
-                    control={form.control}
-                    name="block_no"
-                    label="Block No."
-                    className="w-1/2"
-                    isEdit={isEdit}
-                  />
-                  <ClearableInputField
-                    control={form.control}
-                    name="lot_no"
-                    label="Lot No."
-                    className="w-1/2"
-                    isEdit={isEdit}
-                  />
+                  <ClearableInputField control={form.control} name="block_no" label="Block No." className="w-1/2" isEdit={isEdit} inputProps={{ placeholder: "00" }} rules={{ required: "Please enter your block number" }} />
+                  <ClearableInputField control={form.control} name="lot_no" label="Lot No." className="w-1/2" isEdit={isEdit} inputProps={{ placeholder: "00" }} rules={{ required: "Please enter your lot number" }} />
                 </div>
 
-                <div className="flex gap-4">
-                  <ClearableInputField
-                    control={form.control}
-                    name="area"
-                    label="Area"
-                    className="w-1/2"
-                    isEdit={isEdit}
-                  />
-                  <ClearableInputField
-                    control={form.control}
-                    name="open_space_share"
-                    label="Share of Open Space"
-                    className="w-1/2"
-                    isEdit={isEdit}
-                  />
-                </div>
+                <ClearableInputField control={form.control} name="area" label="Area" isEdit={isEdit} inputProps={{ placeholder: "00" }} rules={{ required: "Please enter your area" }} />
+                <ClearableInputField control={form.control} name="open_space_share" label="Share of Open Space" isEdit={isEdit} inputProps={{ placeholder: "00" }} rules={{ required: "Please enter your share of open space" }} />
+                <ClearableInputField control={form.control} name="total" label="Total" isEdit={false} inputProps={{ readOnly: true, placeholder: "00" }} />
 
-                <ClearableInputField
-                  control={form.control}
-                  name="total"
-                  label="Total"
-                  isEdit={false}
-                  inputProps={{ readOnly: true }}
-                />
               </div>
             </CardContent>
-          </Card>
+          </Card >
 
           <Card className="card">
             <CardContent className="card-content">
-              <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
-                <ClearableInputField
-                  control={form.control}
-                  name="confirmity_signature"
-                  label="Conformity/ Signature"
-                  isEdit={isEdit}
-                />
-                <ClearableInputField
-                  control={form.control}
-                  name="remarks"
-                  label="Remarks"
-                  isEdit={isEdit}
-                />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ClearableInputField control={form.control} name="confirmity_signature" label="Conformity/ Signature" isEdit={isEdit} inputProps={{ placeholder: "----" }} />
+                <ClearableInputField control={form.control} name="remarks" label="Remarks" isEdit={isEdit} inputProps={{ placeholder: "Remarks" }} />
               </div>
             </CardContent>
-          </Card>
+          </Card >
 
           <Card className="card">
             <CardContent className="card-content space-y-4">
-              <ClearableSelectField
-                control={form.control}
-                name="condition_type"
-                label="Housing Condition/ Types"
-                isEdit={isEdit}
-                options={[
-                  "Needs minor repair",
-                  "Needs major repair",
-                  "Dilapidated/Condemned",
-                  "Under renovation/Being repaired",
-                  "Unfinished construction",
-                  "Under construction",
-                ]}
-              />
-
-              <div className="flex gap-6">
-                <CheckboxField
-                  control={form.control}
-                  name="Meralco"
-                  label="Meralco"
-                  isEdit={isEdit}
-                />
-                <CheckboxField
-                  control={form.control}
-                  name="Maynilad"
-                  label="Maynilad"
-                  isEdit={isEdit}
-                />
-                <CheckboxField
-                  control={form.control}
-                  name="Septic_Tank"
-                  label="Septic Tank"
-                  isEdit={isEdit}
-                />
-              </div>
+              <p className="text-xl font-medium"> Other Info </p>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <ClearableSelectField
-                  control={form.control}
-                  name="land_acquisition"
-                  label="Land Acquisition"
-                  isEdit={false}
+                <ClearableSelectField control={form.control} name="condition_type" label="Housing Condition/ Types" isEdit={isEdit}
+                  options={[
+                    "Needs minor repair",
+                    "Needs major repair",
+                    "Dilapidated/Condemned",
+                    "Under renovation/Being repaired",
+                    "Unfinished construction",
+                    "Under construction",
+                  ]}
+                  rules={{ required: "Please select from the options" }}
+                  className="pb-2 w-full"
+                />
+
+                <div className="sm:col-start-2">
+                  <div className="flex justify-center gap-6 pb-2">
+                    <CheckboxField control={form.control} name="Meralco" label="Meralco" isEdit={isEdit} className="text-black" />
+                    <CheckboxField control={form.control} name="Maynilad" label="Maynilad" isEdit={isEdit} className="text-black" />
+                    <CheckboxField control={form.control} name="Septic_Tank" label="Septic Tank" isEdit={isEdit} className="text-black" />
+                  </div>
+                </div>
+
+                <ClearableSelectField control={form.control} name="land_acquisition" label="Land Acquisition" isEdit={false}
                   options={[
                     "CMP",
                     "Direct Buying",
@@ -274,20 +215,16 @@ const HousingUtilities = ({ view }) => {
                     "Organized Community",
                     "Expropriation",
                   ]}
+                  rules={{ required: "Please select from the options" }}
+                  className="pb-2 w-full"
                 />
-                <ClearableSelectField
-                  control={form.control}
-                  name="status_of_occupancy"
-                  label="Status of Occupancy"
-                  isEdit={false}
-                  options={["Owner", "Sharer", "Renter"]}
-                />
+                <ClearableSelectField control={form.control} name="status_of_occupancy" label="Status of Occupancy" isEdit={false} options={["Owner", "Sharer", "Renter"]} className="w-full sm:col-span-2 sm:w-1/2" />
               </div>
             </CardContent>
-          </Card>
-        </div>
-      </Form>
-    </div>
+          </Card >
+        </div >
+      </Form >
+    </div >
   );
 };
 
