@@ -283,8 +283,7 @@ const MembersList = () => {
           ))
         )}
 
-        <div className="flex justify-between items-center mt-5 xl:mt-0">
-          {" "}
+        <div className={`flex justify-between items-center mt-5 xl:mt-0 ${members.length <= membersPerPage ? "hidden" : ""}`}>
           {/* for pagination */}
           <p className="text-sm text-gray-600">
             {members.length === 0

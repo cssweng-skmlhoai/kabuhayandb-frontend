@@ -11,6 +11,7 @@ import AddMember from "./pages/admin/AddMember";
 import MemberLayout from "./layouts/MemberLayout";
 import SelectView from "./pages/SelectView";
 import ProtectedRoute from "./layouts/ProtectedRoute";
+import SearchMember from "./pages/admin/SearchMember";
 
 const App = () => {
   return (
@@ -21,12 +22,13 @@ const App = () => {
       <Route path="/select" element={<SelectView />} />
 
       {/* Admin-only routes */}
-      <Route element={<ProtectedRoute adminOnly={true} />}>
+      <Route>
         <Route path="/members" element={<AllMembers />} />
         <Route path="/members/add" element={<AddMember />} />
         <Route path="/members/:id" element={<MemberForms view="view" />} />
         <Route path="/members/:id/edit" element={<MemberForms view="edit" />} />
-        <Route path="/dues" element={<Dues />} />
+        <Route path="/searchMember" element={<SearchMember />} />
+        <Route path="/dues/:id" element={<Dues />} />
         <Route path="/certification" element={<Certificate />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
