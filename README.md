@@ -11,11 +11,19 @@ git clone https://github.com/cssweng-skmlhoai/kabuhayandb-frontend.git
 cd kabuhayandb-frontend
 ```
 
-2. Install dependencies
+3. Switch to this branch
+
+```bash
+git checkout combined_views
+```
+
+3. Install dependencies
 
 ```bash
 npm install
 ```
+
+4. Copy `.env.example` and create a `.env` file with the correct variables
 
 ## Development
 
