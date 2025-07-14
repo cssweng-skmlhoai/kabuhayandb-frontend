@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const SearchMember = () => {
+const SearchMember = ({ purpose }) => {
   const [members, setMembers] = useState([]);
   const [searched, setSearched] = useState("");
 
@@ -53,8 +53,8 @@ const SearchMember = () => {
               {" "}
               {/* desktop only/separate component */}
               <div className="flex flex-col">
-                <p className="font-semibold text-3xl">Search Member</p>
-                <p>Select a Member to check their <span className="font-semibold">Dues</span></p>
+                <p className="font-semibold text-3xl">Search Member ({`${purpose === "dues" ? "Dues" : "Certification"}`})</p>
+                <p>Select a Member to {`${purpose === "dues" ? "Manage" : "Issue"}`} their <span className="font-semibold">{`${purpose === "dues" ? "Dues" : "Certificate"}`}</span></p>
               </div>
             </div>
 
@@ -84,7 +84,7 @@ const SearchMember = () => {
                 currentMembers.map((member) => (
                   <Link
                     key={member.member_id}
-                    to={`/dues/${member.member_id}`}
+                    to={`/${purpose}/${member.member_id}`}
                     className="bg-customgray2 px-4 py-7 flex flex-col rounded-md hover:bg-customgray1 xl:relative xl:py-5 xl:mb-0 duration-200"
                   >
 

@@ -81,7 +81,7 @@ const Sidebar = () => {
             )}
           </Link>
           <Link
-            to="/searchMember"
+            to="/searchMemberDues"
             className="flex items-center gap-2 hover:bg-gray-300 p-2 rounded"
           >
             <div className="min-w-[24px] flex justify-center items-center">
@@ -96,7 +96,7 @@ const Sidebar = () => {
             )}
           </Link>
           <Link
-            to="/certification"
+            to="/searchMemberCert"
             className="flex items-center gap-2 hover:bg-gray-300 p-2 rounded"
           >
             <div className="min-w-[24px] flex justify-center items-center">

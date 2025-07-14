@@ -22,13 +22,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { IoIosArrowRoundBack } from "react-icons/io";
 
 const Dues = () => {
   const { id } = useParams();
 
   const [dues, setDues] = useState([]);
   const [balances, setBalances] = useState({});
-  const [selectedType, setSelectedType] = useState("dues");
+  const [selectedType, setSelectedType] = useState("");
   const [filteredPaid, setFilteredPaid] = useState([]);
   const [filteredUnpaid, setFilteredUnpaid] = useState([]);
 
@@ -57,7 +59,6 @@ const Dues = () => {
       const { dues, balances } = res.data;
       setDues(dues);
       setBalances(balances);
-      console.log(res.data);
       applyFilters(dues, selectedType);
     }).catch((err) => {
       console.log(err);
@@ -68,7 +69,7 @@ const Dues = () => {
     if (!addDueDialog && !updateDueDialog) {
       setDueDate("");
       setAmount("");
-      setStatus("Unpaid");
+      setStatus("");
       setSelectedDueId(null);
     }
   }, [addDueDialog, updateDueDialog]);
@@ -101,7 +102,11 @@ const Dues = () => {
         Authorization: `Bearer ${API_SECRET}`,
       },
     }).then((res) => {
-      // update current dues
+      const newDue = res.data;
+      const updatedDues = [...dues, newDue];
+      setDues(updatedDues);
+      applyFilters(updatedDues, selectedType);
+      setAddDueDialog(false);
     }).catch((err) => {
       console.log(err);
     });
@@ -123,11 +128,23 @@ const Dues = () => {
         Authorization: `Bearer ${API_SECRET}`,
       },
     }).then((res) => {
-      // update current dues
+      const updatedDue = res.data;
+      const updatedDues = dues.map(d => d.dues_id === updatedDue.dues_id ? updatedDue : d);
+      setDues(updatedDues);
+      applyFilters(updatedDues, selectedType);
+      setUpdateDueDialog(false);
     }).catch((err) => {
       console.log(err);
     });
   }
+
+  const openUpdateForm = (due) => {
+    setSelectedDueId(due.dues_id);
+    setDueDate(due.due_date);
+    setAmount(due.amount);
+    setStatus(due.status);
+    setUpdateDueDialog(true);
+  };
 
   return (
     <div>
@@ -152,38 +169,48 @@ const Dues = () => {
             </div>
 
             <div className="flex flex-col gap-5 xl:flex xl:border xl:border-black xl:mr-3 xl:mt-3 xl:mb-10 xl:rounded-lg xl:flex-col xl:gap-10 xl:px-40 xl:py-10">
+              <Link
+                to="/searchMemberDues"
+                className="cursor-pointer px-3 rounded-md border border-black flex items-center gap-2 w-30 md:w-40 md:gap-8"
+              >
+                <IoIosArrowRoundBack className="size-10" />
+                <p className="font-poppins text-lg">Back</p>
+              </Link>
+
               <p className="font-semibold text-center text-xl xl:text-2xl">Member1's Dues</p>
 
-              <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm xl:flex-row xl:justify-center">
-                <p className="font-medium">Select Type of Due:</p>
-                <Select onValueChange={(val) => {
-                  setSelectedType(val);
-                  applyFilters(dues, val);
-                }}>
-                  <SelectTrigger className="bg-customgray2 w-[80%] !py-1 !h-auto rounded-md border border-black xl:w-1/3 xl:!py-1.5">
-                    <SelectValue placeholder="Options" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="amortization">
+              <form className="flex flex-col gap-5" onSubmit={() => setAddDueDialog(true)}>
+                <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm xl:flex-row xl:justify-center">
+                  <p className="font-medium">Select Type of Due:</p>
+                  <select name="" id="" required
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setSelectedType(value);
+                      applyFilters(dues, value);
+                    }}
+                    className="bg-customgray2 w-[80%] py-1 rounded-md border border-black xl:w-1/3 xl:py-[5px]"
+                  >
+                    <option value="" disabled hidden></option>
+                    <option value="Monthly Amortization">
                       Monthly Amortization
-                    </SelectItem>
-                    <SelectItem value="dues">Monthly Dues</SelectItem>
-                    <SelectItem value="taxes">Taxes</SelectItem>
-                    <SelectItem value="penalties">Penalties</SelectItem>
-                    <SelectItem value="others">Others</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex flex-col items-center justify-center gap-5 xl:gap-0 xl:flex-row">
-                <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm w-full xl:w-1/2 xl:flex-row xl:justify-center">
-                  <p className="font-medium w-full text-center">Outstanding Balance {selectedType}</p>
-                  <input
-                    className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black" type="text" name="" id="" placeholder="₱ 0.00" readOnly value={`₱ ${Number(balances[selectedType] || 0).toFixed(2)}`} />
+                    </option>
+                    <option value="Monthly Dues">Monthly Dues</option>
+                    <option value="Taxes">Taxes</option>
+                    <option value="Penalties">Penalties</option>
+                    <option value="Others">Others</option>
+                  </select>
                 </div>
 
-                <Button className="bg-blue-button w-full rounded-sm !py-5 xl:!py-3 xl:!h-auto xl:w-1/5" onClick={() => setAddDueDialog(true)}>Add New Due</Button>
-              </div>
+                <div className="flex flex-col items-center justify-center gap-5 xl:gap-0 xl:flex-row">
+                  <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm w-full xl:w-1/2 xl:flex-row xl:justify-center">
+                    <p className="font-medium w-full text-center">Outstanding Balance ({selectedType})</p>
+                    <input
+                      className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black" type="text" name="" id="" placeholder="₱ 0.00" readOnly value={`₱ ${Number(balances[selectedType] || 0)}`} />
+                  </div>
+
+                  <Button className="bg-blue-button w-full rounded-sm !py-5 xl:!py-3 xl:!h-auto xl:w-1/5" type="submit">Add New Due</Button>
+                </div>
+              </form>
 
               <div className="p-5 bg-white flex flex-col items-center rounded-sm gap-3 xl:gap-5 xl:border xl:border-black xl:px-15">
                 <p className="font-medium">Unpaid Dues (Type)</p>
@@ -195,7 +222,7 @@ const Dues = () => {
                           Receipt No.
                         </th>
                         <th className="px-4 py-2">Amount</th>
-                        <th className="px-4 py-2 rounded-tr-md">Date</th>
+                        <th className="px-4 py-2 rounded-tr-md">Due Date</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -208,12 +235,12 @@ const Dues = () => {
                       ) : (
                         paginatedUnpaid.map((due) => (
                           <tr
-                            key={due.dues_id}
+                            key={due.id}
                             className="bg-customgray2 rounded-md cursor-pointer"
                             onClick={() => setUpdateDueDialog(true)}
                           >
                             <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
-                            <td className="px-4 py-2">₱ {due.amount.toFixed(2)}</td>
+                            <td className="px-4 py-2">₱ {due.amount}</td>
                             <td className="px-4 py-2 rounded-r-md">{new Date(due.due_date).toLocaleDateString()}</td>
                           </tr>
                         ))
@@ -249,11 +276,11 @@ const Dues = () => {
                           Receipt No.
                         </th>
                         <th className="px-4 py-2">Amount</th>
-                        <th className="px-4 py-2 rounded-tr-md">Date</th>
+                        <th className="px-4 py-2 rounded-tr-md">Paid Date</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {paginatedUnpaid.length === 0 ? (
+                      {paginatedPaid.length === 0 ? (
                         <tr>
                           <td colSpan="3" className="text-center py-4 text-gray-500">
                             No unpaid dues for this type.
@@ -262,9 +289,9 @@ const Dues = () => {
                       ) : (
                         paginatedPaid.map((due) => (
                           <tr
-                            key={due.dues_id}
+                            key={due.id}
                             className="bg-customgray2 rounded-md cursor-pointer"
-                            onClick={() => setUpdateDueDialog(true)}
+                            onClick={() => openUpdateForm(due)}
                           >
                             <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
                             <td className="px-4 py-2">₱ {due.amount.toFixed(2)}</td>
@@ -295,10 +322,10 @@ const Dues = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* dialog for adding dues */}
-      <Dialog open={addDueDialog} onOpenChange={setAddDueDialog}>
+      <Dialog Dialog open={addDueDialog} onOpenChange={setAddDueDialog} >
         <DialogContent className="w-[80%]">
           <form onSubmit={handleAddDue}>
             <DialogHeader>
@@ -360,7 +387,7 @@ const Dues = () => {
       </Dialog>
 
       {/* dialog for updating dues */}
-      <Dialog open={updateDueDialog} onOpenChange={setUpdateDueDialog}>
+      <Dialog Dialog open={updateDueDialog} onOpenChange={setUpdateDueDialog} >
         <DialogContent className="w-[80%]">
           <form onSubmit={handleUpdateDue}>
             <DialogHeader>

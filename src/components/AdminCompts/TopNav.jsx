@@ -40,7 +40,7 @@ const TopNav = () => {
             </Link>
           </li>
           <li>
-            <Link to="/searchMember">
+            <Link to="/searchMemberDues">
               <div className="flex flex-col items-center justify-center hover:bg-gray-300 p-1 rounded-sm cursor-pointer">
                 <PiWallet className="size-6" />
                 <p className="font-poppins text-sm">Dues</p>
@@ -48,7 +48,7 @@ const TopNav = () => {
             </Link>
           </li>
           <li>
-            <Link to="/certification">
+            <Link to="/searchMemberCert">
               <div className="flex flex-col items-center justify-center hover:bg-gray-300 p-1 rounded-sm cursor-pointer">
                 <GrDocumentUser className="size-6" />
                 <p className="font-poppins text-sm">Certification</p>
