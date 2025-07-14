@@ -13,6 +13,7 @@ const Certificate = () => {
   const { id } = useParams();
 
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [loadError, setLoadError] = useState(false);
 
   const fillPdf = async (member) => {
     const formPdfBytes = await fetch(certification_form).then((res) =>
@@ -90,7 +91,7 @@ const Certificate = () => {
                   <p className="font-poppins text-lg">Back</p>
                 </Link>
 
-                <button className="text-lg cursor-pointer px-3 py-2 rounded-md border border-black flex items-center gap-2 w-30 md:w-40 md:gap-8">
+                <button className="text-lg cursor-pointer px-3 py-2 rounded-md border border-black flex items-center gap-2 w-30 md:w-40 md:gap-8" onClick={handlePrint}>
                   <LiaFileDownloadSolid className="size-7" />
                   <p>Print</p>
                 </button>
@@ -98,19 +99,30 @@ const Certificate = () => {
 
               <div>
                 {pdfUrl ? (
-                  <object
-                    data={pdfUrl}
-                    type="application/pdf"
-                    width="100%"
-                    height="600"
-                  >
-                    <p className="text-center mt-5">Preview not supported. <span onClick={() => window.open(pdfUrl, "_blank")} className="text-blue-500 hover:text-blue-800 cursor-pointer">Open PDF</span></p>
-                  </object>
+                  loadError ? (
+                    <div className="text-center mt-5">
+                      Preview not supported.{" "}
+                      <span
+                        onClick={() => window.open(pdfUrl, "_blank")}
+                        className="text-blue-500 hover:text-blue-800 cursor-pointer"
+                      >
+                        Open PDF
+                      </span>
+                    </div>
+                  ) : (
+                    <iframe
+                      id="pdf-frame"
+                      src={pdfUrl}
+                      width="100%"
+                      height="600"
+                      title="Filled PDF"
+                      onError={() => setLoadError(true)}
+                    />
+                  )
                 ) : (
                   <div className="text-gray-500">Loading PDF…</div>
                 )}
               </div>
-
             </div>
           </div>
         </div>

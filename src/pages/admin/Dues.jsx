@@ -2,13 +2,6 @@ import React, { useEffect, useState } from "react";
 import TopNav from "@/components/AdminCompts/TopNav";
 import { LiaFileDownloadSolid } from "react-icons/lia";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import Sidebar from "@/components/AdminCompts/Sidebar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
@@ -38,6 +31,7 @@ const Dues = () => {
   const [amount, setAmount] = useState("");
   const [status, setStatus] = useState("Unpaid");
   const [selectedDueId, setSelectedDueId] = useState(null);
+  const [paidDate, setPaidDate] = useState(null);
 
   const [addDueDialog, setAddDueDialog] = useState(false);
   const [updateDueDialog, setUpdateDueDialog] = useState(false);
@@ -59,6 +53,8 @@ const Dues = () => {
       const { dues, balances } = res.data;
       setDues(dues);
       setBalances(balances);
+      console.log(dues);
+      console.log(balances);
       applyFilters(dues, selectedType);
     }).catch((err) => {
       console.log(err);
@@ -94,7 +90,7 @@ const Dues = () => {
       amount,
       status,
       due_type: selectedType,
-      member_id,
+      member_id: id,
     };
 
     axios.post(`${API_URL}/dues`, payload, {
@@ -103,6 +99,7 @@ const Dues = () => {
       },
     }).then((res) => {
       const newDue = res.data;
+      console.log(newDue);
       const updatedDues = [...dues, newDue];
       setDues(updatedDues);
       applyFilters(updatedDues, selectedType);
@@ -120,16 +117,31 @@ const Dues = () => {
       amount,
       status,
       due_type: selectedType,
-      member_id,
+      member_id: id,
     };
 
-    axios.put(`${API_URL}/dues/${id}`, payload, {
+    axios.put(`${API_URL}/dues/${selectedDueId}`, payload, {
       headers: {
         Authorization: `Bearer ${API_SECRET}`,
       },
     }).then((res) => {
-      const updatedDue = res.data;
-      const updatedDues = dues.map(d => d.dues_id === updatedDue.dues_id ? updatedDue : d);
+      let updatedDue = res.data;
+
+      const originalDue = dues.find(d => d.id === updatedDue.id);
+
+      if (status === "Paid") {
+        updatedDue = {
+          ...updatedDue,
+          date_paid: originalDue?.date_paid ?? new Date().toISOString(),
+        };
+      } else if (status === "Unpaid") {
+        updatedDue = {
+          ...updatedDue,
+          date_paid: null,
+        };
+      }
+
+      const updatedDues = dues.map(d => d.id === updatedDue.id ? updatedDue : d);
       setDues(updatedDues);
       applyFilters(updatedDues, selectedType);
       setUpdateDueDialog(false);
@@ -139,10 +151,11 @@ const Dues = () => {
   }
 
   const openUpdateForm = (due) => {
-    setSelectedDueId(due.dues_id);
-    setDueDate(due.due_date);
+    setSelectedDueId(due.id);
+    setDueDate(due.due_date.slice(0, 10));
     setAmount(due.amount);
     setStatus(due.status);
+    setPaidDate(due.date_paid);
     setUpdateDueDialog(true);
   };
 
@@ -179,10 +192,11 @@ const Dues = () => {
 
               <p className="font-semibold text-center text-xl xl:text-2xl">Member1's Dues</p>
 
-              <form className="flex flex-col gap-5" onSubmit={() => setAddDueDialog(true)}>
+              <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); setAddDueDialog(true) }}>
                 <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm xl:flex-row xl:justify-center">
                   <p className="font-medium">Select Type of Due:</p>
                   <select name="" id="" required
+                    value={selectedType}
                     onChange={(e) => {
                       const value = e.target.value;
                       setSelectedType(value);
@@ -202,7 +216,7 @@ const Dues = () => {
                 </div>
 
                 <div className="flex flex-col items-center justify-center gap-5 xl:gap-0 xl:flex-row">
-                  <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm w-full xl:w-1/2 xl:flex-row xl:justify-center">
+                  <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm xl:w-1/2 xl:flex-row xl:justify-center">
                     <p className="font-medium w-full text-center">Outstanding Balance ({selectedType})</p>
                     <input
                       className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black" type="text" name="" id="" placeholder="₱ 0.00" readOnly value={`₱ ${Number(balances[selectedType] || 0)}`} />
@@ -236,8 +250,8 @@ const Dues = () => {
                         paginatedUnpaid.map((due) => (
                           <tr
                             key={due.id}
-                            className="bg-customgray2 rounded-md cursor-pointer"
-                            onClick={() => setUpdateDueDialog(true)}
+                            className="bg-customgray2 rounded-md cursor-pointer hover:bg-customgray1 duration-200"
+                            onClick={() => openUpdateForm(due)}
                           >
                             <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
                             <td className="px-4 py-2">₱ {due.amount}</td>
@@ -290,7 +304,7 @@ const Dues = () => {
                         paginatedPaid.map((due) => (
                           <tr
                             key={due.id}
-                            className="bg-customgray2 rounded-md cursor-pointer"
+                            className="bg-customgray2 rounded-md cursor-pointer hover:bg-customgray1 duration-200"
                             onClick={() => openUpdateForm(due)}
                           >
                             <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>

@@ -22,7 +22,7 @@ const App = () => {
       <Route path="/select" element={<SelectView />} />
 
       {/* Admin-only routes */}
-      <Route>
+      <Route element={<ProtectedRoute adminOnly={true} />}>
         <Route path="/members" element={<AllMembers />} />
         <Route path="/members/add" element={<AddMember />} />
         <Route path="/members/:id" element={<MemberForms view="view" />} />
@@ -35,7 +35,7 @@ const App = () => {
       </Route>
 
       {/* Member-only routes */}
-      <Route>
+      <Route element={<ProtectedRoute />}>
         <Route path="/memberView/*" element={<MemberLayout />} />
         {/* Optional redirect to auto-navigate to /memberView/:id */}
         {/* <Route path="/memberViews" element={<NavigateToMemberView />} /> */}
