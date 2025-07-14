@@ -34,7 +34,7 @@ const App = () => {
       </Route>
 
       {/* Member-only routes */}
-      <Route element={<ProtectedRoute />}>
+      <Route>
         <Route path="/memberView/*" element={<MemberLayout />} />
         {/* Optional redirect to auto-navigate to /memberView/:id */}
         {/* <Route path="/memberViews" element={<NavigateToMemberView />} /> */}
