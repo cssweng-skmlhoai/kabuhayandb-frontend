@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,13 +15,12 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
-import axios from "axios";
 import "./Members.css";
 
 const MemberDues = () => {
-  const { id } = useParams();
+  // const { id } = useParams();
 
-  const [selectedDue, setSelectedDue] = useState("");
+  // const [selectedDue, setSelectedDue] = useState("");
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
