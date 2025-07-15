@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,9 +11,10 @@ import ConfirmDialog from "@/components/MemberCompts/ConfirmDialog";
 import { toast } from "sonner";
 import axios from "axios";
 import "./Members.css";
+import useAuthStore from "@/authStore";
 
 const HousingUtilities = ({ view }) => {
-  const { id } = useParams();
+  const { memberId } = useAuthStore();
   const navigate = useNavigate();
 
   const [savedData, setSavedData] = useState(null);
@@ -44,7 +45,7 @@ const HousingUtilities = ({ view }) => {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/members/info/${id}`, {
+      .get(`${API_URL}/members/info/${memberId}`, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
         },
@@ -72,7 +73,7 @@ const HousingUtilities = ({ view }) => {
         form.reset(household);
       })
       .catch((err) => console.log(err));
-  }, [form, id, API_SECRET]);
+  }, [form, memberId, API_SECRET]);
 
   // function to update housing & utilities details
   const handleUpdates = async (data) => {
@@ -100,14 +101,14 @@ const HousingUtilities = ({ view }) => {
     };
 
     try {
-      await axios.put(`${API_URL}/members/info/${id}`, payload, {
+      await axios.put(`${API_URL}/members/info/${memberId}`, payload, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
         },
       });
 
       setSavedData(data);
-      navigate(`/memberView/${id}/housing-utilities`);
+      navigate(`/memberView/housing-utilities`);
       toast.success("Changes saved successfully!");
     } catch (err) {
       console.log(err);
@@ -126,7 +127,7 @@ const HousingUtilities = ({ view }) => {
                 if (savedData) {
                   form.reset(savedData);
                 }
-                navigate(`/memberView/${id}/housing-utilities`);
+                navigate(`/memberView/housing-utilities`);
               }}
             >
               Cancel
@@ -142,7 +143,7 @@ const HousingUtilities = ({ view }) => {
         ) : (
           <Button
             variant="edit_details"
-            onClick={() => navigate(`/memberView/${id}/housing-utilities/edit`)}
+            onClick={() => navigate(`/memberView/housing-utilities/edit`)}
           >
             {" "}
             Edit Details{" "}

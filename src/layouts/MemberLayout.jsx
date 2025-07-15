@@ -11,14 +11,14 @@ import Settings from "@/pages/Settings";
 
 const MemberLayout = () => {
   const [member, setMember] = useState([]);
-  const { member_id } = useAuthStore();
+  const { memberId } = useAuthStore();
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/members/${member_id}`, {
+      .get(`${API_URL}/members/${memberId}`, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
         },
@@ -27,20 +27,20 @@ const MemberLayout = () => {
         setMember(res.data);
       })
       .catch((err) => console.log(err));
-  }, [API_SECRET, member_id]);
+  }, [API_SECRET, memberId]);
 
   return (
     <>
-      <MemberNavbar member={member} />
+      <MemberNavbar member={member || {}} />
       <Routes>
-        <Route path=":id" element={<HHMembers view="view" />} />
-        <Route path=":id/edit" element={<HHMembers view="edit" />} />
+        <Route path="" element={<HHMembers view="view" />} />
+        <Route path="edit" element={<HHMembers view="edit" />} />
         <Route
-          path=":id/housing-utilities"
+          path="housing-utilities"
           element={<HousingUtilities view="view" />}
         />
         <Route
-          path=":id/housing-utilities/edit"
+          path="housing-utilities/edit"
           element={<HousingUtilities view="edit" />}
         />
         <Route path="dues" element={<MemberDues />} />

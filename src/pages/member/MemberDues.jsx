@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { format } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -20,9 +19,10 @@ import {
 } from "@/components/ui/pagination";
 import axios from "axios";
 import "./Members.css";
+import useAuthStore from "@/authStore";
 
 const MemberDues = () => {
-  const { id } = useParams();
+  const { memberId } = useAuthStore();
 
   const [dues, setDues] = useState([]);
   const [balances, setBalances] = useState({});
@@ -39,7 +39,7 @@ const MemberDues = () => {
   const API_URL = "https://kabuhayandb-backend.onrender.com";
 
   useEffect(() => {
-    axios.get(`${API_URL}/dues/member/${id}`, {
+    axios.get(`${API_URL}/dues/member/${memberId}`, {
       headers: {
         Authorization: `Bearer ${API_SECRET}`,
       },
@@ -51,7 +51,7 @@ const MemberDues = () => {
     }).catch((err) => {
       console.error(err);
     });
-  }, [id]);
+  }, [memberId]);
 
   const applyFilters = (allDues, type) => {
     const normalizedType = type.toLowerCase();

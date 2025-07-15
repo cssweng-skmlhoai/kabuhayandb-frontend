@@ -1,5 +1,5 @@
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,9 +21,10 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import axios from "axios";
 import "./Members.css";
+import useAuthStore from "@/authStore";
 
 const HHMembers = ({ view }) => {
-  const { id } = useParams();
+  const { memberId } = useAuthStore();
   const navigate = useNavigate();
 
   const [savedData, setSavedData] = useState(null);
@@ -90,7 +91,7 @@ const HHMembers = ({ view }) => {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/members/info/${id}`, {
+      .get(`${API_URL}/members/info/${memberId}`, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
         },
@@ -124,7 +125,7 @@ const HHMembers = ({ view }) => {
         form.reset(normalizedData);
       })
       .catch((err) => console.log(err));
-  }, [form, id, API_SECRET]);
+  }, [form, memberId, API_SECRET]);
 
   // function for the deletion of a family member from the form
   const handleDeleteFamilyMember = (indexToRemove) => {
@@ -173,14 +174,14 @@ const HHMembers = ({ view }) => {
     };
 
     try {
-      await axios.put(`${API_URL}/members/info/${id}`, payload, {
+      await axios.put(`${API_URL}/members/info/${memberId}`, payload, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
         },
       });
 
       setSavedData(data);
-      navigate(`/memberView/${id}`);
+      navigate(`/memberView`);
       toast.success("Changes saved successfully!");
     } catch (err) {
       console.log(err);
@@ -200,7 +201,7 @@ const HHMembers = ({ view }) => {
                   if (savedData) {
                     form.reset(savedData);
                   }
-                  navigate(`/memberView/${id}`);
+                  navigate(`/memberView`);
                 }}>
                 Cancel
               </Button>
@@ -216,7 +217,7 @@ const HHMembers = ({ view }) => {
           ) : (
             <Button
               variant="edit_details"
-              onClick={() => navigate(`/memberView/${id}/edit`)}
+              onClick={() => navigate(`/memberView/edit`)}
             >
               {" "}
               Edit Details{" "}

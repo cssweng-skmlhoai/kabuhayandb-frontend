@@ -7,7 +7,7 @@ const useAuthStore = create(
     (set) => ({
       isAuth: false,
       isAdmin: false,
-      memeberId: null,
+      memberId: null,
 
       login: async (username, password) => {
         const API_SECRET = import.meta.env.VITE_API_SECRET;
