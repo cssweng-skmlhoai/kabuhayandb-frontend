@@ -6,6 +6,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import "./MemberNavbar.css";
 import useAuthStore from "@/authStore";
+import { Link } from "react-router-dom";
 
 const MemberNavbar = ({ member }) => {
   const location = useLocation();
@@ -28,10 +29,10 @@ const MemberNavbar = ({ member }) => {
             <span className="greeting"> Mabuhay, {member?.first_name || "member"}!</span>
           </div>
           <div className="actions">
-            <div className="icon-label">
+            <Link to="/settings" className="icon-label">
               <Settings />
               <span>Settings</span>
-            </div>
+            </Link>
             <div className="icon-label" onClick={handleLogout}>
               <LogOut />
               <span>Log Out</span>
