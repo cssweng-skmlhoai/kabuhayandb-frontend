@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import { IoIosArrowRoundBack } from "react-icons/io";
 
 const Dues = () => {
-  const { id } = useParams();
+  const { id, name } = useParams();
 
   const [dues, setDues] = useState([]);
   const [balances, setBalances] = useState({});
@@ -32,12 +32,13 @@ const Dues = () => {
   const [status, setStatus] = useState("Unpaid");
   const [selectedDueId, setSelectedDueId] = useState(null);
   const [paidDate, setPaidDate] = useState(null);
+  const [householdId, setHouseholdId] = useState(null);
 
   const [addDueDialog, setAddDueDialog] = useState(false);
   const [updateDueDialog, setUpdateDueDialog] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 5;
   const paginatedUnpaid = filteredUnpaid.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const paginatedPaid = filteredPaid.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -88,7 +89,7 @@ const Dues = () => {
     const payload = {
       due_date: dueDate,
       amount,
-      status,
+      status: "Unpaid",
       due_type: selectedType,
       member_id: id,
     };
@@ -101,6 +102,13 @@ const Dues = () => {
       const newDue = res.data;
       console.log(newDue);
       const updatedDues = [...dues, newDue];
+      const newBalance = (balances[dueTypeBalances(selectedType)] || 0) + parseFloat(amount);
+
+      setBalances(prev => ({
+        ...prev,
+        [dueTypeBalances(selectedType)]: newBalance,
+      }));
+
       setDues(updatedDues);
       applyFilters(updatedDues, selectedType);
       setAddDueDialog(false);
@@ -117,7 +125,7 @@ const Dues = () => {
       amount,
       status,
       due_type: selectedType,
-      member_id: id,
+      household_id: householdId,
     };
 
     axios.put(`${API_URL}/dues/${selectedDueId}`, payload, {
@@ -128,11 +136,12 @@ const Dues = () => {
       let updatedDue = res.data;
 
       const originalDue = dues.find(d => d.id === updatedDue.id);
+      const originalStatus = originalDue?.status;
 
       if (status === "Paid") {
         updatedDue = {
           ...updatedDue,
-          date_paid: originalDue?.date_paid ?? new Date().toISOString(),
+          date_paid: paidDate ?? new Date().toISOString(),
         };
       } else if (status === "Unpaid") {
         updatedDue = {
@@ -141,14 +150,34 @@ const Dues = () => {
         };
       }
 
+      const balanceKey = dueTypeBalances(selectedType);
+      const amountValue = parseFloat(amount);
+
+      if (originalStatus !== status) {
+        setBalances(prev => {
+          let newBalance = prev[balanceKey] || 0;
+
+          if (originalStatus === "Unpaid" && status === "Paid") {
+            newBalance -= amountValue;
+          } else if (originalStatus === "Paid" && status === "Unpaid") {
+            newBalance += amountValue;
+          }
+
+          return {
+            ...prev,
+            [balanceKey]: newBalance,
+          };
+        });
+      }
+
       const updatedDues = dues.map(d => d.id === updatedDue.id ? updatedDue : d);
       setDues(updatedDues);
-      applyFilters(updatedDues, selectedType);
+      applyFilters(updatedDues, updatedDue.due_type);
       setUpdateDueDialog(false);
     }).catch((err) => {
       console.log(err);
     });
-  }
+  };
 
   const openUpdateForm = (due) => {
     setSelectedDueId(due.id);
@@ -156,8 +185,17 @@ const Dues = () => {
     setAmount(due.amount);
     setStatus(due.status);
     setPaidDate(due.date_paid);
+    setHouseholdId(due.household_id);
     setUpdateDueDialog(true);
   };
+
+  const dueTypeBalances = (type) => {
+    if (type === "Monthly Amortization") return "amortization";
+    if (type === "Monthly Dues") return "monthly";
+    if (type === "Taxes") return "taxes";
+    if (type === "Penalties") return "penalties";
+    if (type === "Others") return "others";
+  }
 
   return (
     <div>
@@ -166,7 +204,7 @@ const Dues = () => {
       <div className="flex flex-col xl:flex-row flex-1 relative">
         <Sidebar />
         <div className="flex-1 relative">
-          <div className="py-5 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-screen xl:bg-white xl:gap-0 xl:px-5">
+          <div className="py-5 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-max xl:bg-white xl:gap-0 xl:px-5">
             <div className="hidden xl:flex justify-between w-full items-end p-5">
               {/* desktop only/separate component */}
               <div className="flex flex-col">
@@ -190,7 +228,7 @@ const Dues = () => {
                 <p className="font-poppins text-lg">Back</p>
               </Link>
 
-              <p className="font-semibold text-center text-xl xl:text-2xl">Member1's Dues</p>
+              <p className="font-semibold text-center text-xl xl:text-2xl">{name}'s Dues</p>
 
               <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); setAddDueDialog(true) }}>
                 <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm xl:flex-row xl:justify-center">
@@ -202,7 +240,7 @@ const Dues = () => {
                       setSelectedType(value);
                       applyFilters(dues, value);
                     }}
-                    className="bg-customgray2 w-[80%] py-1 rounded-md border border-black xl:w-1/3 xl:py-[5px]"
+                    className="bg-customgray2 w-[80%] py-1 rounded-md border border-black md:w-[50%] xl:w-1/3 xl:py-[5px]"
                   >
                     <option value="" disabled hidden></option>
                     <option value="Monthly Amortization">
@@ -219,10 +257,10 @@ const Dues = () => {
                   <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm xl:w-1/2 xl:flex-row xl:justify-center">
                     <p className="font-medium w-full text-center">Outstanding Balance ({selectedType})</p>
                     <input
-                      className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black" type="text" name="" id="" placeholder="₱ 0.00" readOnly value={`₱ ${Number(balances[selectedType] || 0)}`} />
+                      className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black" type="text" name="" id="" placeholder="₱ 0.00" readOnly value={`₱ ${Number(balances[dueTypeBalances(selectedType)] || 0)}`} />
                   </div>
 
-                  <Button className="bg-blue-button w-full rounded-sm !py-5 xl:!py-3 xl:!h-auto xl:w-1/5" type="submit">Add New Due</Button>
+                  <Button className="bg-blue-button w-full rounded-sm !py-5 md:w-1/2 xl:!py-3 xl:!h-auto xl:w-1/5" type="submit">Add New Due</Button>
                 </div>
               </form>
 
@@ -263,9 +301,9 @@ const Dues = () => {
                   </table>
                 </div>
 
-                <div className={`flex items-center gap-5 ${filteredPaid.length <= 3 ? "hidden" : ""}`}>
+                <div className={`flex items-center gap-7 ${filteredUnpaid.length <= 5 ? "hidden" : ""}`}>
                   <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}>
-                    <ChevronLeft />
+                    <ChevronLeft className="size-8 hover:bg-gray-300 rounded-md duration-200" />
                   </button>
                   <p>{currentPage}</p>
                   <button
@@ -275,7 +313,7 @@ const Dues = () => {
                       )
                     }
                   >
-                    <ChevronRight />
+                    <ChevronRight className="size-8 hover:bg-gray-300 rounded-md duration-200" />
                   </button>
                 </div>
               </div>
@@ -308,7 +346,7 @@ const Dues = () => {
                             onClick={() => openUpdateForm(due)}
                           >
                             <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
-                            <td className="px-4 py-2">₱ {due.amount.toFixed(2)}</td>
+                            <td className="px-4 py-2">₱ {due.amount}</td>
                             <td className="px-4 py-2 rounded-r-md">{new Date(due.due_date).toLocaleDateString()}</td>
                           </tr>
                         ))
@@ -317,9 +355,9 @@ const Dues = () => {
                   </table>
                 </div>
 
-                <div className={`flex items-center gap-5 ${filteredPaid.length <= 3 ? "hidden" : ""}`}>
+                <div className={`flex items-center gap-5 ${filteredPaid.length <= 5 ? "hidden" : ""}`}>
                   <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}>
-                    <ChevronLeft />
+                    <ChevronLeft className="size-8 hover:bg-gray-300 rounded-md duration-200" />
                   </button>
                   <p>{currentPage}</p>
                   <button
@@ -329,7 +367,7 @@ const Dues = () => {
                       )
                     }
                   >
-                    <ChevronRight />
+                    <ChevronRight className="size-8 hover:bg-gray-300 rounded-md duration-200" />
                   </button>
                 </div>
               </div>
@@ -373,19 +411,6 @@ const Dues = () => {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                 />
-
-                <label htmlFor="Status">Status</label>
-                <select
-                  name="" id=""
-                  required
-                  className="bg-customgray2 p-2 text-md rounded-sm"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                >
-                  <option value="" disabled hidden></option>
-                  <option value="Paid">Paid</option>
-                  <option value="Unpaid">Unpaid</option>
-                </select>
               </div>
             </div>
             <DialogFooter className="flex flex-row">

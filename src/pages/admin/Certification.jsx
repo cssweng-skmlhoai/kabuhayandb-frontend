@@ -72,7 +72,7 @@ const Certificate = () => {
       <div className="flex flex-col xl:flex-row flex-1 relative">
         <Sidebar />
         <div className="flex-1 relative">
-          <div className="py-5 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-[700px] xl:bg-white xl:gap-0 xl:px-5">
+          <div className="py-5 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-max xl:bg-white xl:gap-0 xl:px-5">
             <div className="hidden xl:flex justify-between w-full items-end p-5">
               {/* desktop only/separate component */}
               <div className="flex flex-col">
