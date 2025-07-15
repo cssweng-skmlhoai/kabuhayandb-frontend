@@ -12,6 +12,7 @@ import MemberLayout from "./layouts/MemberLayout";
 import SelectView from "./pages/SelectView";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import SearchMember from "./pages/admin/SearchMember";
+import MonthlyDues from "./pages/admin/MonthlyDues";
 
 const App = () => {
   return (
@@ -29,7 +30,8 @@ const App = () => {
         <Route path="/members/:id/edit" element={<MemberForms view="edit" />} />
         <Route path="/searchMemberDues" element={<SearchMember purpose={"dues"} />} />
         <Route path="/searchMemberCert" element={<SearchMember purpose={"certification"} />} />
-        <Route path="/dues/:id" element={<Dues />} />
+        <Route path="/dues/:id/:name" element={<Dues />} />
+        <Route path="/monthlyDuesReport/" element={<MonthlyDues />} />
         <Route path="/certification/:id" element={<Certification />} />
         <Route path="/settings" element={<Settings />} />
       </Route>

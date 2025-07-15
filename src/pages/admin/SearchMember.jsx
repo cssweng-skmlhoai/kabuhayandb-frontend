@@ -5,6 +5,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const SearchMember = ({ purpose }) => {
   const [members, setMembers] = useState([]);
@@ -59,9 +60,15 @@ const SearchMember = ({ purpose }) => {
             </div>
 
             <div className="flex flex-col gap-5 xl:flex xl:border xl:border-black xl:mr-3 xl:mt-3 xl:mb-10 xl:rounded-lg xl:flex-col xl:px-60 xl:py-10">
+              {purpose === "dues" && (
+                <Link to="/monthlyDuesReport" className="self-center">
+                  <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
+                </Link>
+              )}
+
               <div className="flex flex-col text-center xl:hidden">
-                <p className="font-semibold text-2xl">Search Member</p>
-                <p>Select a Member to check their <span className="font-semibold">Dues</span></p>
+                <p className="font-semibold text-2xl">Search Member ({`${purpose === "dues" ? "Dues" : "Certification"}`})</p>
+                <p>Select a Member to {`${purpose === "dues" ? "Manage" : "Issue"}`} their <span className="font-semibold">{`${purpose === "dues" ? "Dues" : "Certificate"}`}</span></p>
               </div>
 
               <div className="relative">
@@ -84,7 +91,7 @@ const SearchMember = ({ purpose }) => {
                 currentMembers.map((member) => (
                   <Link
                     key={member.member_id}
-                    to={`/${purpose}/${member.member_id}`}
+                    to={`/${purpose}/${member.member_id}${purpose === "dues" ? `/${member.fullname}` : ""}`}
                     className="bg-customgray2 px-4 py-7 flex flex-col rounded-md hover:bg-customgray1 xl:relative xl:py-5 xl:mb-0 duration-200"
                   >
 
