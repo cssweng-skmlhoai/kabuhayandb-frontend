@@ -114,7 +114,7 @@ const Certificate = () => {
                       id="pdf-frame"
                       src={pdfUrl}
                       width="100%"
-                      height="600"
+                      height="800"
                       title="Filled PDF"
                       onError={() => setLoadError(true)}
                     />

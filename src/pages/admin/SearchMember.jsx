@@ -133,7 +133,7 @@ const SearchMember = ({ purpose }) => {
                     <ChevronLeft />
                   </button>
                   <p className="text-sm">
-                    {currentPage}/{totalPages}
+                    Page {currentPage} of {totalPages}
                   </p>
                   <button
                     onClick={() =>
