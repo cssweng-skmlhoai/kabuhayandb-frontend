@@ -26,6 +26,7 @@ const Dues = () => {
   const [selectedType, setSelectedType] = useState("");
   const [filteredPaid, setFilteredPaid] = useState([]);
   const [filteredUnpaid, setFilteredUnpaid] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [dueDate, setDueDate] = useState("");
   const [amount, setAmount] = useState("");
@@ -37,10 +38,13 @@ const Dues = () => {
   const [addDueDialog, setAddDueDialog] = useState(false);
   const [updateDueDialog, setUpdateDueDialog] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [unpaidPage, setUnpaidPage] = useState(1);
+  const [paidPage, setPaidPage] = useState(1);
   const itemsPerPage = 5;
-  const paginatedUnpaid = filteredUnpaid.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  const paginatedPaid = filteredPaid.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedUnpaid = filteredUnpaid.slice((unpaidPage - 1) * itemsPerPage, unpaidPage * itemsPerPage);
+  const paginatedPaid = filteredPaid.slice((paidPage - 1) * itemsPerPage, paidPage * itemsPerPage);
+  const totalUnpaidPages = Math.ceil(filteredUnpaid.length / itemsPerPage);
+  const totalPaidPages = Math.ceil(filteredPaid.length / itemsPerPage);
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
@@ -54,13 +58,11 @@ const Dues = () => {
       const { dues, balances } = res.data;
       setDues(dues);
       setBalances(balances);
-      console.log(dues);
-      console.log(balances);
       applyFilters(dues, selectedType);
     }).catch((err) => {
       console.log(err);
     });
-  }, []);
+  }, [refreshKey]);
 
   useEffect(() => {
     if (!addDueDialog && !updateDueDialog) {
@@ -74,13 +76,14 @@ const Dues = () => {
   const applyFilters = (allDues, type) => {
     const filtered = allDues.filter(d => d.due_type === type);
 
-    const unpaid = filtered.filter(d => d.status === "Unpaid").sort((a, b) => new Date(b.due_date) - new Date(a.due_date));
+    const unpaid = filtered.filter(d => d.status === "Unpaid").sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
 
     const paid = filtered.filter(d => d.status === "Paid").sort((a, b) => new Date(b.due_date) - new Date(a.due_date));
 
     setFilteredUnpaid(unpaid);
     setFilteredPaid(paid);
-    setCurrentPage(1);
+    setUnpaidPage(1);
+    setPaidPage(1);
   };
 
   const handleAddDue = (e) => {
@@ -89,7 +92,7 @@ const Dues = () => {
     const payload = {
       due_date: dueDate,
       amount,
-      status: "Unpaid",
+      status,
       due_type: selectedType,
       member_id: id,
     };
@@ -100,9 +103,18 @@ const Dues = () => {
       },
     }).then((res) => {
       const newDue = res.data;
-      console.log(newDue);
       const updatedDues = [...dues, newDue];
-      const newBalance = (balances[dueTypeBalances(selectedType)] || 0) + parseFloat(amount);
+
+      let newBalance = 0.0;
+      if (status === "Unpaid") {
+        newBalance = (balances[dueTypeBalances(selectedType)] || 0) + parseFloat(amount);
+      }
+      else if (status === "Paid" && balances[dueTypeBalances(selectedType)] == 0) {
+        newBalance = 0.0;
+      }
+      else {
+        newBalance = (balances[dueTypeBalances(selectedType)] || 0) - parseFloat(amount);
+      }
 
       setBalances(prev => ({
         ...prev,
@@ -133,47 +145,8 @@ const Dues = () => {
         Authorization: `Bearer ${API_SECRET}`,
       },
     }).then((res) => {
-      let updatedDue = res.data;
-
-      const originalDue = dues.find(d => d.id === updatedDue.id);
-      const originalStatus = originalDue?.status;
-
-      if (status === "Paid") {
-        updatedDue = {
-          ...updatedDue,
-          date_paid: paidDate ?? new Date().toISOString(),
-        };
-      } else if (status === "Unpaid") {
-        updatedDue = {
-          ...updatedDue,
-          date_paid: null,
-        };
-      }
-
-      const balanceKey = dueTypeBalances(selectedType);
-      const amountValue = parseFloat(amount);
-
-      if (originalStatus !== status) {
-        setBalances(prev => {
-          let newBalance = prev[balanceKey] || 0;
-
-          if (originalStatus === "Unpaid" && status === "Paid") {
-            newBalance -= amountValue;
-          } else if (originalStatus === "Paid" && status === "Unpaid") {
-            newBalance += amountValue;
-          }
-
-          return {
-            ...prev,
-            [balanceKey]: newBalance,
-          };
-        });
-      }
-
-      const updatedDues = dues.map(d => d.id === updatedDue.id ? updatedDue : d);
-      setDues(updatedDues);
-      applyFilters(updatedDues, updatedDue.due_type);
       setUpdateDueDialog(false);
+      setRefreshKey(prev => prev + 1);
     }).catch((err) => {
       console.log(err);
     });
@@ -257,7 +230,7 @@ const Dues = () => {
                   <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm xl:w-1/2 xl:flex-row xl:justify-center">
                     <p className="font-medium w-full text-center">Outstanding Balance ({selectedType})</p>
                     <input
-                      className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black" type="text" name="" id="" placeholder="₱ 0.00" readOnly value={`₱ ${Number(balances[dueTypeBalances(selectedType)] || 0)}`} />
+                      className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black" type="text" name="" id="" placeholder="₱ 0.00" readOnly value={`₱ ${parseFloat(balances[dueTypeBalances(selectedType)] || 0).toLocaleString("en-US")}`} />
                   </div>
 
                   <Button className="bg-blue-button w-full rounded-sm !py-5 md:w-1/2 xl:!py-3 xl:!h-auto xl:w-1/5" type="submit">Add New Due</Button>
@@ -292,7 +265,7 @@ const Dues = () => {
                             onClick={() => openUpdateForm(due)}
                           >
                             <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
-                            <td className="px-4 py-2">₱ {due.amount}</td>
+                            <td className="px-4 py-2">₱ {parseFloat(due.amount).toLocaleString("en-US")}</td>
                             <td className="px-4 py-2 rounded-r-md">{new Date(due.due_date).toLocaleDateString()}</td>
                           </tr>
                         ))
@@ -302,13 +275,13 @@ const Dues = () => {
                 </div>
 
                 <div className={`flex items-center gap-7 ${filteredUnpaid.length <= 5 ? "hidden" : ""}`}>
-                  <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}>
+                  <button onClick={() => setUnpaidPage(p => Math.max(p - 1, 1))}>
                     <ChevronLeft className="size-8 hover:bg-gray-300 rounded-md duration-200" />
                   </button>
-                  <p>{currentPage}</p>
+                  <p>Page {unpaidPage} of {totalUnpaidPages}</p>
                   <button
                     onClick={() =>
-                      setCurrentPage(p =>
+                      setUnpaidPage(p =>
                         Math.min(p + 1, Math.ceil(filteredUnpaid.length / itemsPerPage))
                       )
                     }
@@ -346,7 +319,7 @@ const Dues = () => {
                             onClick={() => openUpdateForm(due)}
                           >
                             <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
-                            <td className="px-4 py-2">₱ {due.amount}</td>
+                            <td className="px-4 py-2">₱ {parseFloat(due.amount).toLocaleString("en-US")}</td>
                             <td className="px-4 py-2 rounded-r-md">{new Date(due.due_date).toLocaleDateString()}</td>
                           </tr>
                         ))
@@ -356,13 +329,13 @@ const Dues = () => {
                 </div>
 
                 <div className={`flex items-center gap-5 ${filteredPaid.length <= 5 ? "hidden" : ""}`}>
-                  <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}>
+                  <button onClick={() => setPaidPage(p => Math.max(p - 1, 1))}>
                     <ChevronLeft className="size-8 hover:bg-gray-300 rounded-md duration-200" />
                   </button>
-                  <p>{currentPage}</p>
+                  <p>Page {paidPage} of {totalPaidPages}</p>
                   <button
                     onClick={() =>
-                      setCurrentPage(p =>
+                      setPaidPage(p =>
                         Math.min(p + 1, Math.ceil(filteredPaid.length / itemsPerPage))
                       )
                     }
@@ -411,6 +384,19 @@ const Dues = () => {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                 />
+
+                <label htmlFor="Status">Status</label>
+                <select
+                  name="" id=""
+                  required
+                  className="bg-customgray2 p-2 text-md rounded-sm"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="" disabled hidden></option>
+                  <option value="Paid">Paid</option>
+                  <option value="Unpaid">Unpaid</option>
+                </select>
               </div>
             </div>
             <DialogFooter className="flex flex-row">

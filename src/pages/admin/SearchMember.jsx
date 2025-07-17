@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 const SearchMember = ({ purpose }) => {
   const [members, setMembers] = useState([]);
   const [searched, setSearched] = useState("");
+  const [searchSelected, setSearchSelected] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const membersPerPage = 5;
@@ -55,20 +56,37 @@ const SearchMember = ({ purpose }) => {
               {/* desktop only/separate component */}
               <div className="flex flex-col">
                 <p className="font-semibold text-3xl">Search Member ({`${purpose === "dues" ? "Dues" : "Certification"}`})</p>
-                <p>Select a Member to {`${purpose === "dues" ? "Manage" : "Issue"}`} their <span className="font-semibold">{`${purpose === "dues" ? "Dues" : "Certificate"}`}</span></p>
+                <p>
+                  {purpose === "dues" && (
+                    <>
+                      Check <span className="font-semibold">Monthly Dues Report</span> or{" "}
+                    </>
+                  )}
+                  Select a Member to {purpose === "dues" ? "Manage" : "Issue"} their{" "}
+                  <span className="font-semibold">
+                    {purpose === "dues" ? "Dues" : "Certificate"}
+                  </span>
+                </p>
               </div>
+              <Link to="/monthlyDuesReport">
+                <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
+              </Link>
             </div>
 
             <div className="flex flex-col gap-5 xl:flex xl:border xl:border-black xl:mr-3 xl:mt-3 xl:mb-10 xl:rounded-lg xl:flex-col xl:px-60 xl:py-10">
-              {purpose === "dues" && (
-                <Link to="/monthlyDuesReport" className="self-center">
-                  <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
-                </Link>
-              )}
-
               <div className="flex flex-col text-center xl:hidden">
                 <p className="font-semibold text-2xl">Search Member ({`${purpose === "dues" ? "Dues" : "Certification"}`})</p>
-                <p>Select a Member to {`${purpose === "dues" ? "Manage" : "Issue"}`} their <span className="font-semibold">{`${purpose === "dues" ? "Dues" : "Certificate"}`}</span></p>
+                <p>
+                  {purpose === "dues" && (
+                    <>
+                      Check <span className="font-semibold">Monthly Dues Report</span> or{" "}
+                    </>
+                  )}
+                  Select a Member to {purpose === "dues" ? "Manage" : "Issue"} their{" "}
+                  <span className="font-semibold">
+                    {purpose === "dues" ? "Dues" : "Certificate"}
+                  </span>
+                </p>
               </div>
 
               <div className="relative">
@@ -129,6 +147,12 @@ const SearchMember = ({ purpose }) => {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="bg-customgray2 py-5 fixed bottom-0 w-full flex justify-center border-t border-black xl:hidden">
+            <Link to="/monthlyDuesReport">
+              <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
+            </Link>
           </div>
         </div>
       </div>
