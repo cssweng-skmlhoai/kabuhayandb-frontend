@@ -90,7 +90,6 @@ const MemberForms = ({ view }) => {
       .then((res) => {
         const data = res.data;
         setAllDetails(data);
-        console.log(data);
 
         setMemberData({
           last_name: data.last_name,
@@ -163,7 +162,6 @@ const MemberForms = ({ view }) => {
       households: householdData,
       family_members: cleanedFamilyMembers,
     };
-    console.log(payload);
 
     axios
       .put(`${API_URL}/members/info/${id}`, payload, {

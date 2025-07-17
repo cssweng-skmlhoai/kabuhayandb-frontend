@@ -54,7 +54,6 @@ const Certificate = () => {
         Authorization: `Bearer ${API_SECRET}`,
       }
     }).then((res) => {
-      console.log(res.data);
       fillPdf(res.data);
     }).catch(err => console.log(err));
   }, [API_SECRET, id]);
@@ -110,9 +109,9 @@ const Certificate = () => {
                       </span>
                     </div>
                   ) : (
-                    <iframe
+                    <embed
                       id="pdf-frame"
-                      src={`https://drive.google.com/file/d/1Z93hBxng_SMT9_uDpjvTbEe96WWO5Oha/view?usp=sharing`}
+                      src={pdfUrl}
                       width="100%"
                       height="800"
                       type="application/pdf"
