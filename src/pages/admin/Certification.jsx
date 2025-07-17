@@ -110,9 +110,9 @@ const Certificate = () => {
                       </span>
                     </div>
                   ) : (
-                    <embed
+                    <iframe
                       id="pdf-frame"
-                      src={pdfUrl}
+                      src={`https://drive.google.com/file/d/1Z93hBxng_SMT9_uDpjvTbEe96WWO5Oha/view?usp=sharing`}
                       width="100%"
                       height="800"
                       type="application/pdf"
