@@ -130,31 +130,29 @@ const MembersList = () => {
           </div>
         </div>
 
-        <div className="relative w-[80%] xl:hidden">
-          <IoSearchOutline
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer size-5"
-            onClick={searchUser}
-          />
+        <div className="flex items-center gap-3 w-[90%] xl:hidden">
           <input
             type="text"
             placeholder="Search Member Name"
-            className="border border-gray-300 rounded-md pl-10 pr-3 py-3 w-full bg-white"
+            className="border border-gray-300 rounded-md p-3 w-full bg-white"
             value={searched}
             onChange={(e) => setSearched(e.target.value)}
           />
+          <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10" onClick={searchUser}>Search</Button>
         </div>
-        <div className="flex justify-around w-[80%] xl:hidden">
-          <Button className="rounded-sm bg-white border-1 border-black w-[30%] hover:bg-gray-300 text-customgray3 cursor-pointer">
+
+        <div className="flex justify-around w-[90%] xl:hidden">
+          <Button className="rounded-sm bg-white border-1 border-black w-[30%] hover:bg-gray-300 text-customgray3 cursor-pointer py-5">
             <IoFilterOutline className="size-5" />
             <p>Filter</p>
           </Button>
 
-          <Button className="rounded-sm bg-white border-1 border-black w-[30%] hover:bg-gray-300 text-customgray3 cursor-pointer">
+          <Button className="rounded-sm bg-white border-1 border-black w-[30%] hover:bg-gray-300 text-customgray3 cursor-pointer py-5">
             <TbArrowsSort className="size-5" />
             <p>Sort</p>
           </Button>
 
-          <Button className="rounded-sm bg-white border-1 border-black w-[30%] hover:bg-gray-300 text-customgray3 cursor-pointer">
+          <Button className="rounded-sm bg-white border-1 border-black w-[30%] hover:bg-gray-300 text-customgray3 cursor-pointer py-5">
             <LiaFileDownloadSolid className="size-5" />
             <p>Export</p>
           </Button>
@@ -283,8 +281,7 @@ const MembersList = () => {
           ))
         )}
 
-        <div className="flex justify-between items-center mt-5 xl:mt-0">
-          {" "}
+        <div className={`flex justify-between items-center mt-5 xl:mt-0 ${members.length <= membersPerPage ? "hidden" : ""}`}>
           {/* for pagination */}
           <p className="text-sm text-gray-600">
             {members.length === 0
@@ -300,7 +297,7 @@ const MembersList = () => {
               <ChevronLeft />
             </button>
             <p className="text-sm">
-              {currentPage}/{totalPages}
+              Page {currentPage} of {totalPages}
             </p>
             <button
               onClick={() =>

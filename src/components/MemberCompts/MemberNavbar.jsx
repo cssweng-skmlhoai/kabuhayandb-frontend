@@ -6,11 +6,12 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import "./MemberNavbar.css";
 import useAuthStore from "@/authStore";
+import { Link } from "react-router-dom";
 
 const MemberNavbar = ({ member }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout, member_id } = useAuthStore();
+  const { logout } = useAuthStore();
 
   const handleLogout = () => {
     logout();
@@ -25,13 +26,13 @@ const MemberNavbar = ({ member }) => {
             <Avatar>
               <AvatarImage src="/SKMLHOAI_Logo.png" />
             </Avatar>
-            <span className="greeting"> Mabuhay, {member?.first_name}!</span>
+            <span className="greeting"> Mabuhay, {member?.first_name || "member"}!</span>
           </div>
           <div className="actions">
-            <div className="icon-label">
+            <Link to="/settings" className="icon-label">
               <Settings />
               <span>Settings</span>
-            </div>
+            </Link>
             <div className="icon-label" onClick={handleLogout}>
               <LogOut />
               <span>Log Out</span>
@@ -49,12 +50,8 @@ const MemberNavbar = ({ member }) => {
           onValueChange={(path) => navigate(path)}
         >
           <TabsList className="w-fit">
-            <TabsTrigger value={`/memberView/${member_id}`}>
-              Household Members
-            </TabsTrigger>
-            <TabsTrigger value={`/memberView/${member_id}/housing-utilities`}>
-              Housing & Utilities
-            </TabsTrigger>
+            <TabsTrigger value="/memberView">Household Members</TabsTrigger>
+            <TabsTrigger value="/memberView/housing-utilities">Housing & Utilities</TabsTrigger>
             <TabsTrigger value="/memberView/dues">Dues</TabsTrigger>
           </TabsList>
         </Tabs>
