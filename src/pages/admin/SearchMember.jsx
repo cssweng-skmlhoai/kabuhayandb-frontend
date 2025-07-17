@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 const SearchMember = ({ purpose }) => {
   const [members, setMembers] = useState([]);
   const [searched, setSearched] = useState("");
-  const [searchSelected, setSearchSelected] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const membersPerPage = 5;
@@ -21,6 +20,10 @@ const SearchMember = ({ purpose }) => {
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
+
+  useEffect(() => {
+    searchUser();
+  }, []);
 
   const searchUser = () => {
     axios
@@ -89,18 +92,15 @@ const SearchMember = ({ purpose }) => {
                 </p>
               </div>
 
-              <div className="relative">
-                <IoSearchOutline
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer size-5"
-                  onClick={searchUser}
-                />
+              <div className="flex items-center gap-3">
                 <input
                   type="text"
                   placeholder="Search Member Name"
-                  className="border border-gray-300 bg-customgray2 rounded-md pl-10 pr-3 py-3 w-full"
+                  className="border border-gray-300 bg-customgray2 rounded-md p-3 w-full"
                   value={searched}
                   onChange={(e) => setSearched(e.target.value)}
                 />
+                <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10" onClick={searchUser}>Search</Button>
               </div>
 
               {members.length === 0 ? (
