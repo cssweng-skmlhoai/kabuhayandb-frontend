@@ -149,11 +149,13 @@ const SearchMember = ({ purpose }) => {
             </div>
           </div>
 
-          <div className="bg-customgray2 py-5 fixed bottom-0 w-full flex justify-center border-t border-black xl:hidden">
-            <Link to="/monthlyDuesReport">
-              <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
-            </Link>
-          </div>
+          {purpose === "dues" && (
+            <div className="bg-customgray2 py-5 fixed bottom-0 w-full flex justify-center border-t border-black xl:hidden">
+              <Link to="/monthlyDuesReport">
+                <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
