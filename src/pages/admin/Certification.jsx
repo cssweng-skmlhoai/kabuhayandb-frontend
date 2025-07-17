@@ -59,9 +59,10 @@ const Certificate = () => {
   }, [API_SECRET, id]);
 
   const handlePrint = () => {
-    const iframe = document.getElementById("pdf-frame");
-    iframe.contentWindow.focus();
-    iframe.contentWindow.print();
+    // const iframe = document.getElementById("pdf-frame");
+    // iframe.contentWindow.focus();
+    // iframe.contentWindow.print();
+    window.open(pdfUrl, "_blank");
   };
 
   return (
