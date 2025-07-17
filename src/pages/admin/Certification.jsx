@@ -110,11 +110,12 @@ const Certificate = () => {
                       </span>
                     </div>
                   ) : (
-                    <iframe
+                    <embed
                       id="pdf-frame"
                       src={pdfUrl}
                       width="100%"
                       height="800"
+                      type="application/pdf"
                       title="Filled PDF"
                       onError={() => setLoadError(true)}
                     />
