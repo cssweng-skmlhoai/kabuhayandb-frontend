@@ -18,7 +18,7 @@ const Login = () => {
       if (isAdmin) {
         navigate("/members");
       } else {
-        navigate(`/memberView/${memberId}`);
+        navigate(`/memberView`);
       }
     }
   }, [isAuth, isAdmin, memberId, navigate]);
@@ -28,12 +28,12 @@ const Login = () => {
 
     try {
       await login(username, password);
-      const { isAdmin, memberId } = useAuthStore.getState();
+      const { isAdmin } = useAuthStore.getState();
 
       if (isAdmin) {
         navigate("/members");
       } else {
-        navigate(`/memberView/${memberId}`);
+        navigate(`/memberView`);
       }
     } catch (error) {
       console.log(error);
