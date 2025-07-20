@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 
 const AllMembers = () => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-35 xl:pb-0">
       <TopNav />
 
       <div className="flex flex-col xl:flex-row flex-1 relative">
@@ -27,7 +27,7 @@ const AllMembers = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="size-12 rounded-full text-3xl font-normal fixed bottom-17 right-5 bg-blue-button xl:hidden">
+              <Button className="size-12 rounded-full text-3xl font-normal fixed bottom-26 right-5 bg-blue-button xl:hidden">
                 +
               </Button>
             </DropdownMenuTrigger>

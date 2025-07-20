@@ -8,6 +8,7 @@ const useAuthStore = create(
       isAuth: false,
       isAdmin: false,
       memberId: null,
+      pfp: null,
 
       login: async (username, password) => {
         const API_SECRET = import.meta.env.VITE_API_SECRET;
@@ -32,6 +33,7 @@ const useAuthStore = create(
             isAuth: true,
             isAdmin: user.is_admin,
             memberId: user.member_id,
+            pfp: user.pfp,
           });
         } catch (error) {
           console.log(error);

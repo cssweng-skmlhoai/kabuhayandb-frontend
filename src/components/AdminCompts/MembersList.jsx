@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { IoSearchOutline } from "react-icons/io5";
+import { IoPersonCircleSharp, IoSearchOutline } from "react-icons/io5";
 import { IoFilterOutline } from "react-icons/io5";
 import { TbArrowsSort } from "react-icons/tb";
 import { LiaFileDownloadSolid } from "react-icons/lia";
@@ -107,7 +107,7 @@ const MembersList = () => {
 
   return (
     <div>
-      <div className="p-5 bg-customgray1 flex flex-col items-center justify-center gap-4 font-poppins xl:bg-white xl:flex-row xl:px-10 xl:pt-10 xl:pb-5">
+      <div className="px-5 pb-5 pt-8 bg-customgray1 flex flex-col items-center justify-center gap-4 font-poppins xl:bg-white xl:flex-row xl:px-10 xl:pt-10 xl:pb-5">
         <div className="hidden xl:flex justify-between w-full items-end">
           {" "}
           {/* desktop only/separate component */}
@@ -258,11 +258,16 @@ const MembersList = () => {
 
               <div className="flex justify-between items-center font-poppins">
                 <div className="flex items-center gap-4">
-                  <img
-                    src={member.imageUrl || "/path/to/default.jpg"}
-                    alt="Profile"
-                    className="hidden xl:block size-12 rounded-full bg-gray-300"
-                  />
+                  {member.imageUrl ? (
+                    <img
+                      src={member.imageUrl || "/path/to/default.jpg"}
+                      alt="Profile"
+                      className="hidden xl:block size-12 rounded-full bg-gray-300"
+                    />
+                  ) : (
+                    <IoPersonCircleSharp className="hidden xl:block size-15 text-gray-400" />
+                  )}
+
                   <div className="flex flex-col gap-1.5">
                     <p className="font-semibold">{member.fullname}</p>
                     <div className="xl:flex gap-20">
@@ -282,7 +287,6 @@ const MembersList = () => {
         )}
 
         <div className={`flex justify-between items-center mt-5 xl:mt-0 ${members.length <= membersPerPage ? "hidden" : ""}`}>
-          {/* for pagination */}
           <p className="text-sm text-gray-600">
             {members.length === 0
               ? "0 results"

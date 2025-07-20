@@ -9,7 +9,6 @@ import Login from "./pages/Login";
 import Settings from "./pages/Settings";
 import AddMember from "./pages/admin/AddMember";
 import MemberLayout from "./layouts/MemberLayout";
-import SelectView from "./pages/SelectView";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import SearchMember from "./pages/admin/SearchMember";
 import MonthlyDues from "./pages/admin/MonthlyDues";
@@ -20,7 +19,6 @@ const App = () => {
       {/* Public routes */}
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/select" element={<SelectView />} />
 
       {/* Admin-only routes */}
       <Route element={<ProtectedRoute adminOnly={true} />}>
@@ -39,8 +37,6 @@ const App = () => {
       {/* Member-only routes */}
       <Route element={<ProtectedRoute />}>
         <Route path="/memberView/*" element={<MemberLayout />} />
-        {/* Optional redirect to auto-navigate to /memberView/:id */}
-        {/* <Route path="/memberViews" element={<NavigateToMemberView />} /> */}
       </Route>
     </Routes>
   );

@@ -23,17 +23,19 @@ const Dues = () => {
 
   const [dues, setDues] = useState([]);
   const [balances, setBalances] = useState({});
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedType, setSelectedType] = useState("All");
   const [filteredPaid, setFilteredPaid] = useState([]);
   const [filteredUnpaid, setFilteredUnpaid] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const [receiptNumber, setReceiptNumber] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [amount, setAmount] = useState("");
   const [status, setStatus] = useState("Unpaid");
   const [selectedDueId, setSelectedDueId] = useState(null);
-  const [paidDate, setPaidDate] = useState(null);
+  // const [paidDate, setPaidDate] = useState(null);
   const [householdId, setHouseholdId] = useState(null);
+  const [dueTypeInput, setDueTypeInput] = useState("");
 
   const [addDueDialog, setAddDueDialog] = useState(false);
   const [updateDueDialog, setUpdateDueDialog] = useState(false);
@@ -62,7 +64,7 @@ const Dues = () => {
     }).catch((err) => {
       console.log(err);
     });
-  }, [refreshKey]);
+  }, [refreshKey, API_SECRET, id, selectedType]);
 
   useEffect(() => {
     if (!addDueDialog && !updateDueDialog) {
@@ -74,7 +76,7 @@ const Dues = () => {
   }, [addDueDialog, updateDueDialog]);
 
   const applyFilters = (allDues, type) => {
-    const filtered = allDues.filter(d => d.due_type === type);
+    const filtered = type === "All" ? allDues : allDues.filter(d => d.due_type === type);
 
     const unpaid = filtered.filter(d => d.status === "Unpaid").sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
 
@@ -136,7 +138,7 @@ const Dues = () => {
       due_date: dueDate,
       amount,
       status,
-      due_type: selectedType,
+      due_type: dueTypeInput,
       household_id: householdId,
     };
 
@@ -144,7 +146,7 @@ const Dues = () => {
       headers: {
         Authorization: `Bearer ${API_SECRET}`,
       },
-    }).then((res) => {
+    }).then(() => {
       setUpdateDueDialog(false);
       setRefreshKey(prev => prev + 1);
     }).catch((err) => {
@@ -153,11 +155,13 @@ const Dues = () => {
   };
 
   const openUpdateForm = (due) => {
+    setReceiptNumber(due.receipt_number);
     setSelectedDueId(due.id);
     setDueDate(due.due_date.slice(0, 10));
     setAmount(due.amount);
     setStatus(due.status);
-    setPaidDate(due.date_paid);
+    setDueTypeInput(due.due_type);
+    // setPaidDate(due.date_paid);
     setHouseholdId(due.household_id);
     setUpdateDueDialog(true);
   };
@@ -170,14 +174,21 @@ const Dues = () => {
     if (type === "Others") return "others";
   }
 
+  const getOutstandingBalance = (type) => {
+    if (type === "All") {
+      return Object.values(balances).reduce((acc, val) => acc + parseFloat(val || 0), 0);
+    }
+    return parseFloat(balances[dueTypeBalances(type)] || 0);
+  };
+
   return (
-    <div>
+    <div className="pb-35 bg-customgray1 xl:pb-0">
       <TopNav />
 
       <div className="flex flex-col xl:flex-row flex-1 relative">
         <Sidebar />
         <div className="flex-1 relative">
-          <div className="py-5 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-max xl:bg-white xl:gap-0 xl:px-5">
+          <div className="pb-5 pt-8 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-max xl:bg-white xl:gap-0 xl:px-5 xl:pt-5">
             <div className="hidden xl:flex justify-between w-full items-end p-5">
               {/* desktop only/separate component */}
               <div className="flex flex-col">
@@ -215,7 +226,7 @@ const Dues = () => {
                     }}
                     className="bg-customgray2 w-[80%] py-1 rounded-md border border-black md:w-[50%] xl:w-1/3 xl:py-[5px]"
                   >
-                    <option value="" disabled hidden></option>
+                    <option value="All">All Dues</option>
                     <option value="Monthly Amortization">
                       Monthly Amortization
                     </option>
@@ -228,17 +239,18 @@ const Dues = () => {
 
                 <div className="flex flex-col items-center justify-center gap-5 xl:gap-0 xl:flex-row">
                   <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm xl:w-1/2 xl:flex-row xl:justify-center">
-                    <p className="font-medium w-full text-center">Outstanding Balance ({selectedType})</p>
+                    <p className="font-medium w-full text-center">Outstanding Balance ({selectedType === "All" ? "All Types" : selectedType})</p>
                     <input
-                      className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black" type="text" name="" id="" placeholder="₱ 0.00" readOnly value={`₱ ${parseFloat(balances[dueTypeBalances(selectedType)] || 0).toLocaleString("en-US")}`} />
+                      className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black" type="text" name="" id="" placeholder="₱ 0.00" readOnly value={`₱ ${getOutstandingBalance(selectedType).toLocaleString("en-US")}`} />
                   </div>
 
                   <Button className="bg-blue-button w-full rounded-sm !py-5 md:w-1/2 xl:!py-3 xl:!h-auto xl:w-1/5" type="submit">Add New Due</Button>
                 </div>
               </form>
 
-              <div className="p-5 bg-white flex flex-col items-center rounded-sm gap-3 xl:gap-5 xl:border xl:border-black xl:px-15">
-                <p className="font-medium">Unpaid Dues (Type)</p>
+              <div className="p-5 bg-white flex flex-col items-center rounded-sm gap-3 xl:border xl:border-black xl:px-15">
+                <p className="font-medium">Unpaid Dues</p>
+                <p className="text-sm text-gray-500 italic">Tap on a Due to Update It</p>
                 <div className="w-full overflow-x-auto">
                   <table className="w-full table-auto border-separate border-spacing-y-2 text-sm">
                     <thead>
@@ -246,6 +258,7 @@ const Dues = () => {
                         <th className="px-4 py-2 rounded-tl-md">
                           Receipt No.
                         </th>
+                        <th className="px-4 py-2 rounded-tr-md">Due Type</th>
                         <th className="px-4 py-2">Amount</th>
                         <th className="px-4 py-2 rounded-tr-md">Due Date</th>
                       </tr>
@@ -261,12 +274,14 @@ const Dues = () => {
                         paginatedUnpaid.map((due) => (
                           <tr
                             key={due.id}
-                            className="bg-customgray2 rounded-md cursor-pointer hover:bg-customgray1 duration-200"
+                            className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md"
                             onClick={() => openUpdateForm(due)}
                           >
                             <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
+                            <td className="px-4 py-2">{due.due_type}</td>
                             <td className="px-4 py-2">₱ {parseFloat(due.amount).toLocaleString("en-US")}</td>
-                            <td className="px-4 py-2 rounded-r-md">{new Date(due.due_date).toLocaleDateString()}</td>
+                            <td className="px-4 py-2">{new Date(due.due_date).toLocaleDateString()}</td>
+                            <td className="text-gray-500 text-2xl font-light rounded-r-md pr-2">&rsaquo;</td>
                           </tr>
                         ))
                       )}
@@ -291,8 +306,9 @@ const Dues = () => {
                 </div>
               </div>
 
-              <div className="p-5 bg-white flex flex-col items-center rounded-sm gap-3 xl:gap-5 xl:border xl:border-black xl:px-15">
-                <p className="font-medium">Payment History (Type)</p>
+              <div className="p-5 bg-white flex flex-col items-center rounded-sm gap-3 xl:border xl:border-black xl:px-15">
+                <p className="font-medium">Payment History</p>
+                <p className="text-sm text-gray-500 italic">Tap on a Due to Update It</p>
                 <div className="w-full overflow-x-auto">
                   <table className="w-full table-auto border-separate border-spacing-y-2 text-sm">
                     <thead>
@@ -300,6 +316,7 @@ const Dues = () => {
                         <th className="px-4 py-2 rounded-tl-md">
                           Receipt No.
                         </th>
+                        <th className="px-4 py-2">Due Type</th>
                         <th className="px-4 py-2">Amount</th>
                         <th className="px-4 py-2 rounded-tr-md">Paid Date</th>
                       </tr>
@@ -315,12 +332,14 @@ const Dues = () => {
                         paginatedPaid.map((due) => (
                           <tr
                             key={due.id}
-                            className="bg-customgray2 rounded-md cursor-pointer hover:bg-customgray1 duration-200"
+                            className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md"
                             onClick={() => openUpdateForm(due)}
                           >
                             <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
+                            <td className="px-4 py-2">{due.due_type}</td>
                             <td className="px-4 py-2">₱ {parseFloat(due.amount).toLocaleString("en-US")}</td>
-                            <td className="px-4 py-2 rounded-r-md">{new Date(due.due_date).toLocaleDateString()}</td>
+                            <td className="px-4 py-2 ">{new Date(due.due_date).toLocaleDateString()}</td>
+                            <td className="text-gray-500 text-2xl font-light rounded-r-md pr-2">&rsaquo;</td>
                           </tr>
                         ))
                       )}
@@ -424,6 +443,18 @@ const Dues = () => {
             </DialogHeader>
             <div className="flex flex-col gap-3 my-5">
               <div className="flex flex-col gap-2">
+                <label htmlFor="receipt">Receipt Number</label>
+                <input
+                  className="bg-customgray2 p-2 text-md rounded-sm"
+                  type="number"
+                  name=""
+                  id=""
+                  placeholder="e.g. 0001"
+                  required
+                  value={receiptNumber}
+                  onChange={(e) => setReceiptNumber(e.target.value)}
+                />
+
                 <label htmlFor="duedate">Due Date</label>
                 <input
                   className="bg-customgray2 p-2 text-md rounded-sm"

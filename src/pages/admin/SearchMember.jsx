@@ -47,13 +47,13 @@ const SearchMember = ({ purpose }) => {
   };
 
   return (
-    <div>
+    <div className="pb-35 xl:pb-0">
       <TopNav />
 
       <div className="flex flex-col xl:flex-row flex-1 relative">
         <Sidebar />
         <div className="flex-1 relative">
-          <div className="py-5 px-7 flex flex-col gap-10 font-poppins xl:bg-white xl:gap-0 xl:px-5">
+          <div className={`pb-5 ${purpose === "dues" ? "pt-30" : "pt-8"} px-7 flex flex-col gap-10 font-poppins xl:bg-white xl:gap-0 xl:px-5 xl:pt-5`}>
             <div className="hidden xl:flex justify-between w-full items-end p-5">
               {" "}
               {/* desktop only/separate component */}
@@ -71,9 +71,11 @@ const SearchMember = ({ purpose }) => {
                   </span>
                 </p>
               </div>
-              <Link to="/monthlyDuesReport">
-                <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
-              </Link>
+              {purpose === "dues" && (
+                <Link to="/monthlyDuesReport">
+                  <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
+                </Link>
+              )}
             </div>
 
             <div className="flex flex-col gap-5 xl:flex xl:border xl:border-black xl:mr-3 xl:mt-3 xl:mb-10 xl:rounded-lg xl:flex-col xl:px-60 xl:py-10">
@@ -149,11 +151,13 @@ const SearchMember = ({ purpose }) => {
             </div>
           </div>
 
-          <div className="bg-customgray2 py-5 fixed bottom-0 w-full flex justify-center border-t border-black xl:hidden">
-            <Link to="/monthlyDuesReport">
-              <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
-            </Link>
-          </div>
+          {purpose === "dues" && (
+            <div className="bg-customgray2 py-5 fixed top-0 w-full flex justify-center border-b border-black xl:hidden">
+              <Link to="/monthlyDuesReport">
+                <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

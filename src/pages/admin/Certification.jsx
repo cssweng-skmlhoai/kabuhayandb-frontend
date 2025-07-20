@@ -26,6 +26,7 @@ const Certificate = () => {
     try {
       const fullname = `${member.first_name} ${member.middle_name} ${member.last_name}`.trim();
 
+      form.getTextField("crn").setText("");
       form.getTextField("name").setText(fullname || "");
       form.getTextField("age").setText(member.age.toString() || "");
       form.getTextField("block").setText(member.block_no.toString() || "");
@@ -57,7 +58,7 @@ const Certificate = () => {
       console.log(res.data);
       fillPdf(res.data);
     }).catch(err => console.log(err));
-  }, []);
+  }, [API_SECRET, id]);
 
   const handlePrint = () => {
     const iframe = document.getElementById("pdf-frame");
@@ -66,13 +67,13 @@ const Certificate = () => {
   };
 
   return (
-    <div>
+    <div className="pb-35 xl:pb-0">
       <TopNav />
 
       <div className="flex flex-col xl:flex-row flex-1 relative">
         <Sidebar />
         <div className="flex-1 relative">
-          <div className="py-5 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-max xl:bg-white xl:gap-0 xl:px-5">
+          <div className="pb-5 pt-8 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-max xl:bg-white xl:gap-0 xl:px-5 xl:pt-5">
             <div className="hidden xl:flex justify-between w-full items-end p-5">
               {/* desktop only/separate component */}
               <div className="flex flex-col">

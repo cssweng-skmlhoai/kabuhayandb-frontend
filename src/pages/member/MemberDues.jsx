@@ -26,7 +26,7 @@ const MemberDues = () => {
 
   const [dues, setDues] = useState([]);
   const [balances, setBalances] = useState({});
-  const [selectedType, setSelectedType] = useState("dues"); 
+  const [selectedType, setSelectedType] = useState("dues");
   const [filteredPaid, setFilteredPaid] = useState([]);
   const [filteredUnpaid, setFilteredUnpaid] = useState([]);
 
@@ -51,7 +51,7 @@ const MemberDues = () => {
     }).catch((err) => {
       console.error(err);
     });
-  }, [memberId]);
+  }, [memberId, API_SECRET, selectedType]);
 
   const applyFilters = (allDues, type) => {
     const normalizedType = type.toLowerCase();
@@ -122,7 +122,7 @@ const MemberDues = () => {
             <Label className="card-label">Unpaid Dues ({selectedType})</Label>
 
             {paginatedUnpaid.length === 0 ? (
-                <p className="text-center text-sm italic">You have no unpaid dues for this type as of {format(new Date(), "MMMM d, yyyy")}.</p>
+              <p className="text-center text-sm italic">You have no unpaid dues for this type as of {format(new Date(), "MMMM d, yyyy")}.</p>
             ) : (
               <>
                 <div className="payment-history-header">
@@ -165,25 +165,25 @@ const MemberDues = () => {
           <CardContent className="card-content">
             <Label className="card-label">Payment History ({selectedType})</Label>
             {paginatedPaid.length === 0 ? (
-                <p className="text-center text-sm italic">You have no payment history for this type as of {format(new Date(), "MMMM d, yyyy")}.</p>
+              <p className="text-center text-sm italic">You have no payment history for this type as of {format(new Date(), "MMMM d, yyyy")}.</p>
             ) : (
-                <>
-                  <div className="payment-history-header">
-                    <span>Receipt No.</span>
-                    <span>Amount</span>
-                    <span>Date Paid</span>
-                  </div>
-                  <div className="space-y-2.5">
-                    {paginatedPaid.map((due) => (
-                      <div key={due.id} className="payment-row">
-                        <span>{due.receipt_number}</span>
-                        <span>₱ {Number(due.amount).toFixed(2)}</span>
-                        <span>{format(new Date(due.due_date), "MMMM d, yyyy")}</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
+              <>
+                <div className="payment-history-header">
+                  <span>Receipt No.</span>
+                  <span>Amount</span>
+                  <span>Date Paid</span>
+                </div>
+                <div className="space-y-2.5">
+                  {paginatedPaid.map((due) => (
+                    <div key={due.id} className="payment-row">
+                      <span>{due.receipt_number}</span>
+                      <span>₱ {Number(due.amount).toFixed(2)}</span>
+                      <span>{format(new Date(due.due_date), "MMMM d, yyyy")}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
 
             {filteredPaid.length > itemsPerPage && (
               <Pagination className="pagination mt-4">

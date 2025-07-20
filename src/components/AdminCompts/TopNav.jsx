@@ -28,8 +28,8 @@ const TopNav = () => {
   };
 
   return (
-    <div className="xl:hidden">
-      <nav className="p-3 mt-5">
+    <div className="fixed bottom-0 left-0 w-full bg-white shadow-md border-t border-gray-500 z-50 xl:hidden">
+      <nav className="px-3 py-4">
         <ul className="flex justify-around items-center">
           <li>
             <Link to="/members">

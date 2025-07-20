@@ -27,16 +27,16 @@ const MonthlyDues = () => {
     }).catch((err) => {
       console.log(err);
     });
-  }, []);
+  }, [API_SECRET]);
 
   return (
-    <div>
+    <div className='pb-35 xl:pb-0'>
       <TopNav />
 
       <div className="flex flex-col xl:flex-row flex-1 relative">
         <Sidebar />
         <div className="flex-1 relative">
-          <div className="py-5 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-max xl:bg-white xl:gap-0 xl:px-5">
+          <div className="pb-5 pt-8 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-max xl:bg-white xl:gap-0 xl:px-5 xl:pt-5">
             <div className="hidden xl:flex justify-between w-full items-end p-5">
               {/* desktop only/separate component */}
               <div className="flex flex-col">
@@ -115,6 +115,7 @@ const MonthlyDues = () => {
                       <tr>
                         <th className="border-r border-b border-black px-4 py-2 font-semibold">Block #</th>
                         <th className="border-r border-b border-black px-4 py-2">Lot #</th>
+                        <th className="border-r border-b border-black px-4 py-2">Member Name</th>
                         <th className="border-b border-r border-black px-4 py-2">Total Dues</th>
                         <th className="border-b border-r border-black px-4 py-2">Total Amount (₱)</th>
                         <th className="border-b border-black px-4 py-2">Status</th>
@@ -127,6 +128,7 @@ const MonthlyDues = () => {
                         >
                           <td className="border-r border-b border-black px-4 py-2 bg-white">{due.block_no}</td>
                           <td className="border-r border-b border-black px-4 py-2 bg-white">{due.lot_no}</td>
+                          <td className="border-r border-b border-black px-4 py-2 bg-white">{due.member_name || ""}</td>
                           <td className="border-r border-b border-black px-4 py-2 bg-white">{Number(due.total_dues).toLocaleString("en-US")}</td>
                           <td className="border-r border-b border-black px-4 py-2 bg-white">{parseFloat(due.total_amount).toLocaleString("en-US")}</td>
                           <td className="border-b border-black px-4 py-2 bg-white">{due.payment_status}</td>
@@ -157,40 +159,13 @@ const MonthlyDues = () => {
                         <td className="border-b border-black px-4 py-2 bg-white">₱ {parseFloat(totalUnpaid.total_unpaid_amount).toLocaleString("en-US")}</td>
                       </tr>
                       <tr>
-                        <td className="border-r border-b border-black px-4 py-2 bg-white">Number of Affected Households</td>
+                        <td className="border-r border-b border-black px-4 py-2 bg-white">Number of Affected Members</td>
                         <td className="border-b border-black px-4 py-2 bg-white">{totalUnpaid.affected_households}</td>
                       </tr>
                       <tr>
                         <td className="border-r border-b border-black px-4 py-2 bg-white">Average Unpaid per Household</td>
                         <td className="border-b border-black px-4 py-2 bg-white">₱ {parseFloat(totalUnpaid.average_unpaid_per_household).toLocaleString("en-US")}</td>
                       </tr>
-
-                      {/* <tr className="bg-customgray2">
-                        <td className="border-b border-r border-black px-4 py-2 font-semibold">Breakdown by Due Type</td>
-                        <td className="border-b border-black px-4 py-2 font-semibold"></td>
-                      </tr>
-
-                      <tr>
-                        <td className="border-r border-b border-black px-4 py-2 bg-white">Monthly Amortization</td>
-                        <td className="border-b border-black px-4 py-2 bg-white">₱ 6,000.00</td>
-                      </tr>
-                      <tr>
-                        <td className="border-r border-b border-black px-4 py-2 bg-white">Monthly Dues</td>
-                        <td className="border-b border-black px-4 py-2 bg-white">₱ 25,000.00</td>
-                      </tr>
-                      <tr>
-                        <td className="border-r border-b border-black px-4 py-2 bg-white">Taxes</td>
-                        <td className="border-b border-black px-4 py-2 bg-white">₱ 20,000.00</td>
-                      </tr>
-                      <tr>
-                        <td className="border-r border-b border-black px-4 py-2 bg-white">Penalties</td>
-                        <td className="border-b border-black px-4 py-2 bg-white">₱ 15,000.00</td>
-                      </tr>
-                      <tr>
-                        <td className="border-r border-black px-4 py-2 bg-white">Others</td>
-                        <td className="border-black px-4 py-2 bg-white">₱ 2,500.00</td>
-                      </tr> */}
-
                     </tbody>
                   </table>
                 </div>
