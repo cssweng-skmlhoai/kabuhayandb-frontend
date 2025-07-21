@@ -6,10 +6,24 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 const SearchMember = ({ purpose }) => {
   const [members, setMembers] = useState([]);
   const [searched, setSearched] = useState("");
+
+  const [certRecDialog, setCertRecDialog] = useState(false);
+  const [crn, setCrn] = useState("");
+  const [memberName, setMemberName] = useState("");
+  const [datePrinted, setDatePrinted] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const membersPerPage = 5;
@@ -23,6 +37,8 @@ const SearchMember = ({ purpose }) => {
 
   useEffect(() => {
     searchUser();
+
+
   }, []);
 
   const searchUser = () => {
@@ -46,6 +62,17 @@ const SearchMember = ({ purpose }) => {
       });
   };
 
+  const deleteCertRecord = () => {
+
+  }
+
+  const openCertRecDialog = (record) => {
+    setCrn(record.crn);
+    setMemberName(record.member_name);
+    setDatePrinted(record.date_printed);
+    setCertRecDialog(true);
+  }
+
   return (
     <div className="pb-35 xl:pb-0">
       <TopNav />
@@ -53,7 +80,7 @@ const SearchMember = ({ purpose }) => {
       <div className="flex flex-col xl:flex-row flex-1 relative">
         <Sidebar />
         <div className="flex-1 relative">
-          <div className={`pb-5 ${purpose === "dues" ? "pt-30" : "pt-8"} px-7 flex flex-col gap-10 font-poppins xl:bg-white xl:gap-0 xl:px-5 xl:pt-5`}>
+          <div className="pb-5 pt-8 px-7 flex flex-col gap-10 font-poppins xl:bg-white xl:gap-0 xl:px-5 xl:pt-5">
             <div className="hidden xl:flex justify-between w-full items-end p-5">
               {" "}
               {/* desktop only/separate component */}
@@ -78,88 +105,142 @@ const SearchMember = ({ purpose }) => {
               )}
             </div>
 
-            <div className="flex flex-col gap-5 xl:flex xl:border xl:border-black xl:mr-3 xl:mt-3 xl:mb-10 xl:rounded-lg xl:flex-col xl:px-60 xl:py-10">
-              <div className="flex flex-col text-center xl:hidden">
-                <p className="font-semibold text-2xl">Search Member ({`${purpose === "dues" ? "Dues" : "Certification"}`})</p>
-                <p>
-                  {purpose === "dues" && (
-                    <>
-                      Check <span className="font-semibold">Monthly Dues Report</span> or{" "}
-                    </>
-                  )}
-                  Select a Member to {purpose === "dues" ? "Manage" : "Issue"} their{" "}
-                  <span className="font-semibold">
-                    {purpose === "dues" ? "Dues" : "Certificate"}
-                  </span>
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  type="text"
-                  placeholder="Search Member Name"
-                  className="border border-gray-300 bg-customgray2 rounded-md p-3 w-full"
-                  value={searched}
-                  onChange={(e) => setSearched(e.target.value)}
-                />
-                <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10" onClick={searchUser}>Search</Button>
-              </div>
-
-              {members.length === 0 ? (
-                <p className="text-center text-gray-500 mt-4 bg-customgray2 py-4">Search for a Member.</p>
-              ) : (
-                currentMembers.map((member) => (
-                  <Link
-                    key={member.member_id}
-                    to={`/${purpose}/${member.member_id}${purpose === "dues" ? `/${member.fullname}` : ""}`}
-                    className="bg-customgray2 px-4 py-7 flex flex-col rounded-md hover:bg-customgray1 xl:relative xl:py-5 xl:mb-0 duration-200"
-                  >
-
-                    <p className="font-semibold text-lg ml-3">{member.fullname}</p>
-                  </Link>
-                ))
-              )}
-
-              <div className={`flex justify-between items-center mt-5 xl:mt-0 ${members.length <= membersPerPage ? "hidden" : ""}`}>
-                <p className="text-sm text-gray-600">
-                  {members.length === 0
-                    ? "0 results"
-                    : `${indexOfFirstMember + 1}-${Math.min(indexOfLastMember, members.length)} of ${members.length}`}
-                </p>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className={`border border-gray-400 rounded hover:bg-gray-300 px-2 py-1 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
-                  >
-                    <ChevronLeft />
-                  </button>
-                  <p className="text-sm">
-                    Page {currentPage} of {totalPages}
+            <div className={`flex flex-col gap-8 xl:flex xl:border xl:border-black xl:mr-3 xl:mt-3 xl:mb-10 xl:rounded-lg xl:py-10 ${purpose === "certification" ? "xl:flex-row xl:px-25" : "xl:px-60"}`}>
+              <div className={`flex flex-col gap-5 ${purpose === "certification" ? "xl:w-3/4" : ""}`}>
+                <div className="flex flex-col text-center xl:hidden">
+                  <p className="font-semibold text-2xl">Search Member ({`${purpose === "dues" ? "Dues" : "Certification"}`})</p>
+                  <p>
+                    {purpose === "dues" && (
+                      <>
+                        Check <span className="font-semibold">Monthly Dues Report</span> or{" "}
+                      </>
+                    )}
+                    Select a Member to {purpose === "dues" ? "Manage" : "Issue"} their{" "}
+                    <span className="font-semibold">
+                      {purpose === "dues" ? "Dues" : "Certificate"}
+                    </span>
                   </p>
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                    className={`border border-gray-400 rounded hover:bg-gray-300 px-2 py-1 ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""}`}
-                  >
-                    <ChevronRight />
-                  </button>
+                  {purpose === "dues" && (
+                    <div className="py-5 flex justify-center xl:hidden">
+                      <Link to="/monthlyDuesReport">
+                        <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <input
+                    type="text"
+                    placeholder="Search Member Name"
+                    className="border border-gray-300 bg-customgray2 rounded-md p-3 w-full"
+                    value={searched}
+                    onChange={(e) => setSearched(e.target.value)}
+                  />
+                  <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10" onClick={searchUser}>Search</Button>
+                </div>
+
+                {members.length === 0 ? (
+                  <p className="text-center text-gray-500 mt-4 bg-customgray2 py-4">Search for a Member.</p>
+                ) : (
+                  currentMembers.map((member) => (
+                    <Link
+                      key={member.member_id}
+                      to={`/${purpose}/${member.member_id}${purpose === "dues" ? `/${member.fullname}` : ""}`}
+                      className="bg-customgray2 px-4 py-7 flex flex-col rounded-md hover:bg-customgray1 xl:relative xl:py-5 xl:mb-0 duration-200"
+                    >
+
+                      <p className="font-semibold text-lg ml-3">{member.fullname}</p>
+                    </Link>
+                  ))
+                )}
+
+                <div className={`flex justify-between items-center mt-5 xl:mt-0 ${members.length <= membersPerPage ? "hidden" : ""}`}>
+                  <p className="text-sm text-gray-600">
+                    {members.length === 0
+                      ? "0 results"
+                      : `${indexOfFirstMember + 1}-${Math.min(indexOfLastMember, members.length)} of ${members.length}`}
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                      className={`border border-gray-400 rounded hover:bg-gray-300 px-2 py-1 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      <ChevronLeft />
+                    </button>
+                    <p className="text-sm">
+                      Page {currentPage} of {totalPages}
+                    </p>
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      disabled={currentPage === totalPages}
+                      className={`border border-gray-400 rounded hover:bg-gray-300 px-2 py-1 ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      <ChevronRight />
+                    </button>
+                  </div>
                 </div>
               </div>
+
+              {purpose === "certification" && (
+                <div className="flex flex-col items-center gap-5">
+                  <p className="text-center font-medium text-xl">Recent Certification Requests</p>
+                  <p className="text-sm text-gray-500 italic">Tap on a Record to View It</p>
+                  <table className="w-full lg:w-3/4 table-auto text-sm">
+                    <thead>
+                      <tr className="text-center md:text-lg">
+                        <th className="px-4 py-2 rounded-tl-md">CRN</th>
+                        <th className="px-4 py-2">Member Name</th>
+                        <th className="px-4 py-2 rounded-tr-md">Date Printed</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md text-center"
+                        onClick={() => openCertRecDialog(record)}
+                      >
+                        <td className="p-4 rounded-l-md">123</td>
+                        <td className="p-4">duivbauin ewoiefnaieofioaenf</td>
+                        <td className="p-4 rounded-r-md">7/21/2025</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
-
-          {purpose === "dues" && (
-            <div className="bg-customgray2 py-5 fixed top-0 w-full flex justify-center border-b border-black xl:hidden">
-              <Link to="/monthlyDuesReport">
-                <Button className="font-normal px-10 py-6 bg-blue-button">Generate Monthly Dues Report</Button>
-              </Link>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* dialog for certificate request records */}
+      <Dialog Dialog open={certRecDialog} onOpenChange={setCertRecDialog} >
+        <DialogContent className="w-[80%]">
+          <DialogHeader>
+            <DialogTitle className="text-center font-semibold">
+              Certificate Request Record
+            </DialogTitle>
+            <DialogDescription className="text-md text-gray-700">
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 my-5">
+            <div className="flex flex-col gap-2">
+              <p>CRN: Hello</p>
+              <p>Member Name: Hello</p>
+              <p>Date: Hello</p>
+            </div>
+          </div>
+          <DialogFooter className="flex flex-row">
+            <DialogClose className="bg-white text-black rounded-md w-1/2 cursor-pointer border border-black hover:bg-gray-300 duration-200">
+              Cancel
+            </DialogClose>
+            <button className="bg-blue-button w-1/2 text-white py-3 rounded-md hover:bg-black duration-200" onClick={deleteCertRecord()}>
+              Delete Record
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

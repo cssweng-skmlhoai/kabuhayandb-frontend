@@ -266,7 +266,7 @@ const Dues = () => {
                     <tbody>
                       {paginatedUnpaid.length === 0 ? (
                         <tr>
-                          <td colSpan="3" className="text-center py-4 text-gray-500">
+                          <td colSpan="4" className="text-center py-4 text-gray-500">
                             No unpaid dues for this type.
                           </td>
                         </tr>
@@ -324,7 +324,7 @@ const Dues = () => {
                     <tbody>
                       {paginatedPaid.length === 0 ? (
                         <tr>
-                          <td colSpan="3" className="text-center py-4 text-gray-500">
+                          <td colSpan="4" className="text-center py-4 text-gray-500">
                             No unpaid dues for this type.
                           </td>
                         </tr>
