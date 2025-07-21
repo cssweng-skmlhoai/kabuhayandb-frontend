@@ -55,15 +55,15 @@ const Certificate = () => {
         Authorization: `Bearer ${API_SECRET}`,
       }
     }).then((res) => {
-      console.log(res.data);
       fillPdf(res.data);
     }).catch(err => console.log(err));
   }, [API_SECRET, id]);
 
   const handlePrint = () => {
-    const iframe = document.getElementById("pdf-frame");
-    iframe.contentWindow.focus();
-    iframe.contentWindow.print();
+    // const iframe = document.getElementById("pdf-frame");
+    // iframe.contentWindow.focus();
+    // iframe.contentWindow.print();
+    window.open(pdfUrl, "_blank");
   };
 
   return (
@@ -111,11 +111,12 @@ const Certificate = () => {
                       </span>
                     </div>
                   ) : (
-                    <iframe
+                    <embed
                       id="pdf-frame"
                       src={pdfUrl}
                       width="100%"
                       height="800"
+                      type="application/pdf"
                       title="Filled PDF"
                       onError={() => setLoadError(true)}
                     />

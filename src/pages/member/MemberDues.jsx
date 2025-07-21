@@ -17,9 +17,9 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
-import axios from "axios";
 import "./Members.css";
 import useAuthStore from "@/authStore";
+import axios from "axios";
 
 const MemberDues = () => {
   const { memberId } = useAuthStore();

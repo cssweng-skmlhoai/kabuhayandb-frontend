@@ -21,9 +21,9 @@ const SearchMember = ({ purpose }) => {
   const [searched, setSearched] = useState("");
 
   const [certRecDialog, setCertRecDialog] = useState(false);
-  const [crn, setCrn] = useState("");
-  const [memberName, setMemberName] = useState("");
-  const [datePrinted, setDatePrinted] = useState("");
+  // const [crn, setCrn] = useState("");
+  // const [memberName, setMemberName] = useState("");
+  // const [datePrinted, setDatePrinted] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const membersPerPage = 5;
@@ -66,10 +66,10 @@ const SearchMember = ({ purpose }) => {
 
   }
 
-  const openCertRecDialog = (record) => {
-    setCrn(record.crn);
-    setMemberName(record.member_name);
-    setDatePrinted(record.date_printed);
+  const openCertRecDialog = (/*record*/) => {
+    //setCrn(record.crn);
+    //setMemberName(record.member_name);
+    //setDatePrinted(record.date_printed);
     setCertRecDialog(true);
   }
 
@@ -199,7 +199,7 @@ const SearchMember = ({ purpose }) => {
                     </thead>
                     <tbody>
                       <tr className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md text-center"
-                        onClick={() => openCertRecDialog(record)}
+                        onClick={() => openCertRecDialog(/*record*/)}
                       >
                         <td className="p-4 rounded-l-md">123</td>
                         <td className="p-4">duivbauin ewoiefnaieofioaenf</td>
@@ -241,7 +241,7 @@ const SearchMember = ({ purpose }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   )
 }
 

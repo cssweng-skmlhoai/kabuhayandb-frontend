@@ -75,7 +75,7 @@ const AddMember = () => {
       households: householdData,
       family_members: cleanedFamilyMembers,
     };
-    console.log(payload);
+
     axios
       .post(`${API_URL}/members/info`, payload, {
         headers: {
