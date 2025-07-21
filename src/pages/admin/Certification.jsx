@@ -60,11 +60,25 @@ const Certificate = () => {
   }, [API_SECRET, id]);
 
   const handlePrint = () => {
-    // const iframe = document.getElementById("pdf-frame");
-    // iframe.contentWindow.focus();
-    // iframe.contentWindow.print();
     window.open(pdfUrl, "_blank");
+
+    payload = {
+      member_id: id,
+      crn
+    };
+
+    axios.post(`${API_URL}/certifications`, payload, {
+      headers: {
+        Authorization: `Bearer ${API_SECRET}`,
+      }
+    }).then((res) => {
+      fillPdf(res.data);
+    }).catch(err => console.log(err));
   };
+
+  const handleCreateRecord = () => {
+
+  }
 
   return (
     <div className="pb-35 xl:pb-0">
@@ -92,7 +106,7 @@ const Certificate = () => {
                   <p className="font-poppins text-lg">Back</p>
                 </Link>
 
-                <button className="text-lg cursor-pointer px-3 py-2 rounded-md border border-black flex items-center gap-2 w-30 md:w-40 md:gap-8" onClick={handlePrint}>
+                <button className="text-lg cursor-pointer px-3 py-2 rounded-md border border-black flex items-center gap-2 w-30 md:w-40 md:gap-8" onClick={() => { handlePrint(); handleCreateRecord() }}>
                   <LiaFileDownloadSolid className="size-7" />
                   <p>Print</p>
                 </button>

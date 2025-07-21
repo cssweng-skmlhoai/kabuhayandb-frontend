@@ -156,7 +156,7 @@ const Sidebar = () => {
               </DialogHeader>
               <DialogDescription></DialogDescription>
               <DialogFooter className="flex flex-row justify-between gap-4">
-                <Link to="/login" className="w-full">
+                <Link to="/login" className="w-1/2">
                   <Button
                     className="w-full bg-red-500 hover:bg-red-700"
                     onClick={handleLogout}
@@ -164,7 +164,7 @@ const Sidebar = () => {
                     Logout
                   </Button>
                 </Link>
-                <DialogClose className="w-full bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
+                <DialogClose className="w-1/2 bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
                   Cancel
                 </DialogClose>
               </DialogFooter>

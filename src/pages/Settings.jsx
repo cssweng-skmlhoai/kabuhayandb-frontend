@@ -20,6 +20,8 @@ const Settings = () => {
   const { memberId } = useAuthStore();
 
   const [option, setOption] = useState("username");
+  const [credentialsId, setCredentialsId] = useState(null);
+  const [initialName, setInitialName] = useState("");
   const [username, setUsername] = useState("");
   const [currentPass, setCurrentPass] = useState("");
   const [newPass, setNewPass] = useState("");
@@ -33,27 +35,56 @@ const Settings = () => {
   const API_URL = "https://kabuhayandb-backend.onrender.com";
 
   useEffect(() => {
-    axios.get(`${API_URL}/credentials/${3}`, {
+    axios.get(`${API_URL}/credentials/member/${memberId}`, {
       headers: {
         Authorization: `Bearer ${API_SECRET}`,
       },
-    }).then(() => {
+    }).then((res) => {
+      setCredentialsId(res.data.id);
+      setInitialName(res.data.username);
 
+      if (res.data.pfp?.data) {
+        const imageSrc = bufferToBase64Image(res.data.pfp.data);
+        setPfp(imageSrc);
+      }
     }).catch((err) => {
       console.log(err);
     });
   }, [API_SECRET]);
+
+  const bufferToBase64Image = (bufferData) => {
+    if (!bufferData) return null;
+
+    const binary = new Uint8Array(bufferData).reduce(
+      (acc, byte) => acc + String.fromCharCode(byte),
+      ""
+    );
+    const base64 = btoa(binary);
+    const mimeTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+    for (let mime of mimeTypes) {
+      const testSrc = `data:${mime};base64,${base64}`;
+      const img = new Image();
+      img.src = testSrc;
+      if (img.complete || img.width > 0) {
+        return testSrc;
+      }
+    }
+
+    return null;
+  };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
 
     try {
       if (option === "username") {
-        await axios.put(`${API_URL}/credentials/${memberId}`, { username }, {
+        await axios.put(`${API_URL}/credentials/${credentialsId}`, { username }, {
           headers: { Authorization: `Bearer ${API_SECRET}` },
         });
         setDialogOpen(true);
-        setDialogMsg("Username")
+        setDialogMsg("Username");
+        setInitialName(username);
       }
 
       if (option === "password") {
@@ -62,7 +93,7 @@ const Settings = () => {
           return;
         }
 
-        await axios.put(`${API_URL}/credentials/${memberId}`, {
+        await axios.put(`${API_URL}/credentials/${credentialsId}`, {
           current_password: currentPass,
           new_password: newPass,
         }, {
@@ -88,7 +119,7 @@ const Settings = () => {
         const formData = new FormData();
         formData.append("pfp", pfp);
 
-        await axios.post(`${API_URL}/credentials/${memberId}`, formData, {
+        await axios.post(`${API_URL}/uploads/member/${memberId}`, formData, {
           headers: {
             Authorization: `Bearer ${API_SECRET}`,
             "Content-Type": "multipart/form-data",
@@ -98,7 +129,8 @@ const Settings = () => {
         setDialogMsg("Profile Picture");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Something went wrong");
+      console.log(err);
+      toast.error(err.response?.data?.error || "Something went wrong");
     }
   };
 
@@ -148,7 +180,7 @@ const Settings = () => {
           </Button>
           {option === "username" && (
             <div className="flex flex-col gap-10 xl:px-7">
-              <p>Current Username: member01</p>
+              <p>Current Username: {initialName}</p>
               <div className="flex flex-col gap-2">
                 <label htmlFor="username">New Username</label>
                 <input
@@ -242,7 +274,7 @@ const Settings = () => {
             <div className="flex flex-col gap-8 items-center xl:px-7">
               {pfp ? (
                 <img className="size-36 md:size-40 lg:size-44 rounded-full bg-gray-400 object-cover"
-                  src={URL.createObjectURL(pfp)}
+                  src={typeof pfp === "string" ? pfp : URL.createObjectURL(pfp)}
                   alt="Profile Picture"
                 />
               ) : (

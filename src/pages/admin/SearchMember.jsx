@@ -19,11 +19,12 @@ import {
 const SearchMember = ({ purpose }) => {
   const [members, setMembers] = useState([]);
   const [searched, setSearched] = useState("");
+  const [certs, setCerts] = useState([]);
 
   const [certRecDialog, setCertRecDialog] = useState(false);
-  // const [crn, setCrn] = useState("");
-  // const [memberName, setMemberName] = useState("");
-  // const [datePrinted, setDatePrinted] = useState("");
+  const [crn, setCrn] = useState("");
+  const [memberName, setMemberName] = useState("");
+  const [datePrinted, setDatePrinted] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const membersPerPage = 5;
@@ -38,7 +39,20 @@ const SearchMember = ({ purpose }) => {
   useEffect(() => {
     searchUser();
 
-
+    if (purpose === "certification") {
+      axios
+        .get(`${API_URL}/certifications/member/1`, {
+          headers: {
+            Authorization: `Bearer ${API_SECRET}`,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, []);
 
   const searchUser = () => {
@@ -66,10 +80,10 @@ const SearchMember = ({ purpose }) => {
 
   }
 
-  const openCertRecDialog = (/*record*/) => {
-    //setCrn(record.crn);
-    //setMemberName(record.member_name);
-    //setDatePrinted(record.date_printed);
+  const openCertRecDialog = (cert) => {
+    setCrn(cert.crn);
+    setMemberName(cert.member_name);
+    setDatePrinted(cert.created_at);
     setCertRecDialog(true);
   }
 
@@ -198,13 +212,24 @@ const SearchMember = ({ purpose }) => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md text-center"
-                        onClick={() => openCertRecDialog(/*record*/)}
-                      >
-                        <td className="p-4 rounded-l-md">123</td>
-                        <td className="p-4">duivbauin ewoiefnaieofioaenf</td>
-                        <td className="p-4 rounded-r-md">7/21/2025</td>
-                      </tr>
+                      {certs.length === 0 ? (
+                        <tr>
+                          <td colSpan="3" className="text-center py-4 text-gray-500">
+                            No Certification Requests Found.
+                          </td>
+                        </tr>
+                      ) : (
+                        certs.map((cert) => (
+                          <tr className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md text-center"
+                            onClick={() => openCertRecDialog(cert)}
+                            key={cert.id}
+                          >
+                            <td className="p-4 rounded-l-md">123</td>
+                            <td className="p-4">duivbauin ewoiefnaieofioaenf</td>
+                            <td className="p-4 rounded-r-md">{cert.created_at}</td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -241,7 +266,7 @@ const SearchMember = ({ purpose }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div >
+    </div>
   )
 }
 

@@ -649,6 +649,7 @@ const MemberForms = ({ view }) => {
                       {isEdit && (
                         <Button
                           className="w-1/4 self-center bg-blue-button xl:w-2/5"
+                          type="button"
                           onClick={() =>
                             confirmRemoveFamilyMember(
                               key,
