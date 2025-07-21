@@ -15,6 +15,7 @@ const ConfirmDialog = ({
   title,
   description,
   onConfirm,
+  trigger,
   triggerLabel,
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
@@ -22,7 +23,11 @@ const ConfirmDialog = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="edit_details">{triggerLabel}</Button>
+        {trigger ? (
+          trigger
+        ) : (
+          <Button variant="edit_details">{triggerLabel}</Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
