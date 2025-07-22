@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import TopNav from "@/components/AdminCompts/TopNav";
 import Sidebar from "@/components/AdminCompts/Sidebar";
-import { IoSearchOutline } from "react-icons/io5";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +16,8 @@ import {
 } from "@/components/ui/dialog";
 
 const SearchMember = ({ purpose }) => {
+  const navigate = useNavigate();
+
   const [members, setMembers] = useState([]);
   const [searched, setSearched] = useState("");
   const [certs, setCerts] = useState([]);
@@ -25,6 +26,10 @@ const SearchMember = ({ purpose }) => {
   const [crn, setCrn] = useState("");
   const [memberName, setMemberName] = useState("");
   const [datePrinted, setDatePrinted] = useState("");
+  const [recordId, setRecordId] = useState(null);
+
+  const [addCertDialog, setAddCertDialog] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const membersPerPage = 5;
@@ -41,13 +46,15 @@ const SearchMember = ({ purpose }) => {
 
     if (purpose === "certification") {
       axios
-        .get(`${API_URL}/certifications/member/1`, {
+        .get(`${API_URL}/certifications`, {
           headers: {
             Authorization: `Bearer ${API_SECRET}`,
           },
         })
         .then((res) => {
-          console.log(res);
+          const certificates = res.data;
+          const filteredCerts = certificates.sort((a, b) => new Date(b.due_date) - new Date(a.due_date));
+          setCerts(filteredCerts);
         })
         .catch((err) => {
           console.log(err);
@@ -77,15 +84,58 @@ const SearchMember = ({ purpose }) => {
   };
 
   const deleteCertRecord = () => {
-
+    axios
+      .delete(`${API_URL}/certifications/${recordId}`, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setCerts((prev) => prev.filter((c) => c.id !== recordId));
+        setCertRecDialog(false);
+        setRecordId(null);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   const openCertRecDialog = (cert) => {
     setCrn(cert.crn);
-    setMemberName(cert.member_name);
+    setMemberName(`${cert.first_name} ${cert.last_name}`);
     setDatePrinted(cert.created_at);
+    setRecordId(cert.id);
     setCertRecDialog(true);
   }
+
+  const createCertRecord = (member_id) => {
+    axios
+      .post(`${API_URL}/certifications`, { member_id }, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setAddCertDialog(false);
+        navigate(`/certification/${selectedMember}`);
+        setSelectedMember(null);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const openAddCertDialog = (id) => {
+    setSelectedMember(id);
+    setAddCertDialog(true);
+  }
+
+  const formatDate = (isoDate) => {
+    if (!isoDate) return "";
+    return new Date(isoDate).toISOString().split("T")[0];
+  };
 
   return (
     <div className="pb-35 xl:pb-0">
@@ -96,7 +146,6 @@ const SearchMember = ({ purpose }) => {
         <div className="flex-1 relative">
           <div className="pb-5 pt-8 px-7 flex flex-col gap-10 font-poppins xl:bg-white xl:gap-0 xl:px-5 xl:pt-5">
             <div className="hidden xl:flex justify-between w-full items-end p-5">
-              {" "}
               {/* desktop only/separate component */}
               <div className="flex flex-col">
                 <p className="font-semibold text-3xl">Search Member ({`${purpose === "dues" ? "Dues" : "Certification"}`})</p>
@@ -120,7 +169,7 @@ const SearchMember = ({ purpose }) => {
             </div>
 
             <div className={`flex flex-col gap-8 xl:flex xl:border xl:border-black xl:mr-3 xl:mt-3 xl:mb-10 xl:rounded-lg xl:py-10 ${purpose === "certification" ? "xl:flex-row xl:px-25" : "xl:px-60"}`}>
-              <div className={`flex flex-col gap-5 ${purpose === "certification" ? "xl:w-3/4" : ""}`}>
+              <div className={`flex flex-col gap-5 ${purpose === "certification" ? "xl:w-3/5" : ""}`}>
                 <div className="flex flex-col text-center xl:hidden">
                   <p className="font-semibold text-2xl">Search Member ({`${purpose === "dues" ? "Dues" : "Certification"}`})</p>
                   <p>
@@ -158,14 +207,14 @@ const SearchMember = ({ purpose }) => {
                   <p className="text-center text-gray-500 mt-4 bg-customgray2 py-4">Search for a Member.</p>
                 ) : (
                   currentMembers.map((member) => (
-                    <Link
+                    <div
                       key={member.member_id}
-                      to={`/${purpose}/${member.member_id}${purpose === "dues" ? `/${member.fullname}` : ""}`}
-                      className="bg-customgray2 px-4 py-7 flex flex-col rounded-md hover:bg-customgray1 xl:relative xl:py-5 xl:mb-0 duration-200"
+                      className="bg-customgray1 px-4 py-7 flex flex-col rounded-md hover:bg-gray-300 xl:relative xl:py-5 xl:mb-0 duration-200 shadow-md"
+                      onClick={purpose === "certification" ? () => openAddCertDialog(member.member_id) : () => navigate(`/${purpose}/${member.member_id}/${member.fullname}`)}
                     >
 
                       <p className="font-semibold text-lg ml-3">{member.fullname}</p>
-                    </Link>
+                    </div>
                   ))
                 )}
 
@@ -200,15 +249,15 @@ const SearchMember = ({ purpose }) => {
               </div>
 
               {purpose === "certification" && (
-                <div className="flex flex-col items-center gap-5">
-                  <p className="text-center font-medium text-xl">Recent Certification Requests</p>
+                <div className="flex flex-col items-center gap-3 xl:w-2/5">
+                  <p className="text-center font-medium text-xl">Certification Requests</p>
                   <p className="text-sm text-gray-500 italic">Tap on a Record to View It</p>
-                  <table className="w-full lg:w-3/4 table-auto text-sm">
+                  <table className="w-full table-auto text-sm border-separate border-spacing-y-3">
                     <thead>
-                      <tr className="text-center md:text-lg">
+                      <tr className="text-center">
                         <th className="px-4 py-2 rounded-tl-md">CRN</th>
                         <th className="px-4 py-2">Member Name</th>
-                        <th className="px-4 py-2 rounded-tr-md">Date Printed</th>
+                        <th className="px-4 py-2 rounded-tr-md">Date Requested <div className="!font-normal">(yyyy-mm-dd)</div></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -224,9 +273,10 @@ const SearchMember = ({ purpose }) => {
                             onClick={() => openCertRecDialog(cert)}
                             key={cert.id}
                           >
-                            <td className="p-4 rounded-l-md">123</td>
-                            <td className="p-4">duivbauin ewoiefnaieofioaenf</td>
-                            <td className="p-4 rounded-r-md">{cert.created_at}</td>
+                            <td className="p-4 rounded-l-md">{cert.crn}</td>
+                            <td className="p-4">{cert.first_name} {cert.last_name}</td>
+                            <td className="p-4">{formatDate(cert.created_at)}</td>
+                            <td className="text-gray-500 text-2xl font-light rounded-r-md py-4 pr-2">&rsaquo;</td>
                           </tr>
                         ))
                       )}
@@ -250,19 +300,42 @@ const SearchMember = ({ purpose }) => {
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 my-5">
-            <div className="flex flex-col gap-2">
-              <p>CRN: Hello</p>
-              <p>Member Name: Hello</p>
-              <p>Date: Hello</p>
+            <div className="flex flex-col gap-2 font-medium text-lg">
+              <p>CRN: <span className="font-normal">{crn}</span></p>
+              <p>Member Name: <span className="font-normal">{memberName}</span></p>
+              <p>Date Requested (yyyy-mm-dd): <span className="font-normal">{formatDate(datePrinted)}</span></p>
             </div>
           </div>
           <DialogFooter className="flex flex-row">
+            <button className="bg-red-700 w-1/2 text-white py-3 rounded-md hover:bg-red-900 duration-200" onClick={deleteCertRecord}>
+              Delete Record
+            </button>
             <DialogClose className="bg-white text-black rounded-md w-1/2 cursor-pointer border border-black hover:bg-gray-300 duration-200">
               Cancel
             </DialogClose>
-            <button className="bg-blue-button w-1/2 text-white py-3 rounded-md hover:bg-black duration-200" onClick={deleteCertRecord()}>
-              Delete Record
-            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog for proceeding to member certification */}
+      <Dialog open={addCertDialog} onOpenChange={setAddCertDialog}>
+        <DialogContent className="w-[70%]">
+          <DialogHeader>
+            <DialogTitle className="text-left">Member Certification</DialogTitle>
+            <DialogDescription className="text-md text-gray-700">
+              This will create a certification request record and will proceed to the selected member's certification
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-row justify-between gap-4">
+            <Button
+              className="w-1/2 bg-blue-button "
+              onClick={() => createCertRecord(selectedMember)}
+            >
+              Proceed
+            </Button>
+            <DialogClose className="w-1/2 bg-white rounded-md text-black cursor-pointer border border-black hover:bg-gray-300 duration-200">
+              Cancel
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

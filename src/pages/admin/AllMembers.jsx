@@ -27,7 +27,7 @@ const AllMembers = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="size-12 rounded-full text-3xl font-normal fixed bottom-26 right-5 bg-blue-button xl:hidden">
+              <Button className="size-12 rounded-full text-3xl font-normal fixed bottom-25 right-5 bg-blue-button xl:hidden">
                 +
               </Button>
             </DropdownMenuTrigger>

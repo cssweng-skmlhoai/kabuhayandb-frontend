@@ -24,6 +24,7 @@ const Dues = () => {
   const [dues, setDues] = useState([]);
   const [balances, setBalances] = useState({});
   const [selectedType, setSelectedType] = useState("All");
+  const [addDueType, setAddDueType] = useState("");
   const [filteredPaid, setFilteredPaid] = useState([]);
   const [filteredUnpaid, setFilteredUnpaid] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -91,11 +92,16 @@ const Dues = () => {
   const handleAddDue = (e) => {
     e.preventDefault();
 
+    let dueType = selectedType;
+    if (dueType === "All") {
+      dueType = addDueType;
+    }
+
     const payload = {
       due_date: dueDate,
       amount,
       status,
-      due_type: selectedType,
+      due_type: dueType,
       member_id: id,
     };
 
@@ -109,22 +115,22 @@ const Dues = () => {
 
       let newBalance = 0.0;
       if (status === "Unpaid") {
-        newBalance = (balances[dueTypeBalances(selectedType)] || 0) + parseFloat(amount);
+        newBalance = (balances[dueTypeBalances(dueType)] || 0) + parseFloat(amount);
       }
-      else if (status === "Paid" && balances[dueTypeBalances(selectedType)] == 0) {
+      else if (status === "Paid" && balances[dueTypeBalances(dueType)] == 0) {
         newBalance = 0.0;
       }
       else {
-        newBalance = (balances[dueTypeBalances(selectedType)] || 0) - parseFloat(amount);
+        newBalance = (balances[dueTypeBalances(dueType)] || 0) - parseFloat(amount);
       }
 
       setBalances(prev => ({
         ...prev,
-        [dueTypeBalances(selectedType)]: newBalance,
+        [dueTypeBalances(dueType)]: newBalance,
       }));
 
       setDues(updatedDues);
-      applyFilters(updatedDues, selectedType);
+      applyFilters(updatedDues, dueType);
       setAddDueDialog(false);
     }).catch((err) => {
       console.log(err);
@@ -140,6 +146,7 @@ const Dues = () => {
       status,
       due_type: dueTypeInput,
       household_id: householdId,
+      receipt_number: receiptNumber
     };
 
     axios.put(`${API_URL}/dues/${selectedDueId}`, payload, {
@@ -252,7 +259,7 @@ const Dues = () => {
                 <p className="font-medium">Unpaid Dues</p>
                 <p className="text-sm text-gray-500 italic">Tap on a Due to Update It</p>
                 <div className="w-full overflow-x-auto">
-                  <table className="w-full table-auto border-separate border-spacing-y-2 text-sm">
+                  <table className="w-full table-auto border-separate border-spacing-y-3 text-sm">
                     <thead>
                       <tr className="text-left">
                         <th className="px-4 py-2 rounded-tl-md">
@@ -310,7 +317,7 @@ const Dues = () => {
                 <p className="font-medium">Payment History</p>
                 <p className="text-sm text-gray-500 italic">Tap on a Due to Update It</p>
                 <div className="w-full overflow-x-auto">
-                  <table className="w-full table-auto border-separate border-spacing-y-2 text-sm">
+                  <table className="w-full table-auto border-separate border-spacing-y-3 text-sm">
                     <thead>
                       <tr className="text-left">
                         <th className="px-4 py-2 rounded-tl-md">
@@ -370,8 +377,8 @@ const Dues = () => {
 
       {/* dialog for adding dues */}
       <Dialog Dialog open={addDueDialog} onOpenChange={setAddDueDialog} >
-        <DialogContent className="w-[80%]">
-          <form onSubmit={handleAddDue}>
+        <DialogContent className="w-[80%] flex items-center justify-center">
+          <form onSubmit={handleAddDue} className="w-[95%]">
             <DialogHeader>
               <DialogTitle className="text-center font-semibold">
                 Add New Due
@@ -381,6 +388,25 @@ const Dues = () => {
             </DialogHeader>
             <div className="flex flex-col gap-3 my-5">
               <div className="flex flex-col gap-2">
+                {selectedType === "All" && (<>
+                  <label htmlFor="dueType">Due Type</label>
+                  <select
+                    name="" id=""
+                    required
+                    className="bg-customgray2 p-2 text-md rounded-sm "
+                    value={addDueType}
+                    onChange={(e) => setAddDueType(e.target.value)}
+                  >
+                    <option value="Monthly Amortization">
+                      Monthly Amortization
+                    </option>
+                    <option value="Monthly Dues">Monthly Dues</option>
+                    <option value="Taxes">Taxes</option>
+                    <option value="Penalties">Penalties</option>
+                    <option value="Others">Others</option>
+                  </select>
+                </>)}
+
                 <label htmlFor="duedate">Due Date</label>
                 <input
                   className="bg-customgray2 p-2 text-md rounded-sm"
@@ -419,12 +445,12 @@ const Dues = () => {
               </div>
             </div>
             <DialogFooter className="flex flex-row">
-              <DialogClose className="bg-white text-black rounded-md w-1/2 cursor-pointer border border-black hover:bg-gray-300 duration-200">
-                Cancel
-              </DialogClose>
               <button type="submit" className="bg-blue-button w-1/2 text-white py-3 rounded-md hover:bg-black duration-200">
                 Add Due
               </button>
+              <DialogClose className="bg-white text-black rounded-md w-1/2 cursor-pointer border border-black hover:bg-gray-300 duration-200">
+                Cancel
+              </DialogClose>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -432,8 +458,8 @@ const Dues = () => {
 
       {/* dialog for updating dues */}
       <Dialog Dialog open={updateDueDialog} onOpenChange={setUpdateDueDialog} >
-        <DialogContent className="w-[80%]">
-          <form onSubmit={handleUpdateDue}>
+        <DialogContent className="w-[80%] flex items-center justify-center">
+          <form onSubmit={handleUpdateDue} className="w-[95%]">
             <DialogHeader>
               <DialogTitle className="text-center font-semibold">
                 Update Due
@@ -493,12 +519,12 @@ const Dues = () => {
               </div>
             </div>
             <DialogFooter className="flex flex-row">
-              <DialogClose className="bg-white text-black rounded-md w-1/2 cursor-pointer border border-black hover:bg-gray-300 duration-200">
-                Cancel
-              </DialogClose>
               <button type="submit" className="bg-blue-button w-1/2 text-white py-3 rounded-md hover:bg-black duration-200">
                 Update Due
               </button>
+              <DialogClose className="bg-white text-black rounded-md w-1/2 cursor-pointer border border-black hover:bg-gray-300 duration-200">
+                Cancel
+              </DialogClose>
             </DialogFooter>
           </form>
         </DialogContent>

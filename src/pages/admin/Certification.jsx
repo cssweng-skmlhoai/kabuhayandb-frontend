@@ -24,13 +24,13 @@ const Certificate = () => {
     const form = pdfDoc.getForm();
 
     try {
-      const fullname = `${member.first_name} ${member.middle_name} ${member.last_name}`.trim();
+      const fullname = `${member.first_name} ${member.last_name}`.trim();
 
-      form.getTextField("crn").setText("");
+      form.getTextField("crn").setText(member?.crn.toString() || "");
       form.getTextField("name").setText(fullname || "");
-      form.getTextField("age").setText(member.age.toString() || "");
-      form.getTextField("block").setText(member.block_no.toString() || "");
-      form.getTextField("lot").setText(member.lot_no.toString() || "");
+      form.getTextField("age").setText(member.age?.toString() || "");
+      form.getTextField("block").setText(member.block_no?.toString() || "");
+      form.getTextField("lot").setText(member.lot_no?.toString() || "");
       form.getTextField("requestor").setText("");
       form.getTextField("purpose").setText("");
       form.getTextField("day").setText(new Date(Date.now()).getDate().toString() || "");
@@ -50,7 +50,7 @@ const Certificate = () => {
   const API_URL = "https://kabuhayandb-backend.onrender.com";
 
   useEffect(() => {
-    axios.get(`${API_URL}/members/info/${id}`, {
+    axios.get(`${API_URL}/certifications/member/${id}`, {
       headers: {
         Authorization: `Bearer ${API_SECRET}`,
       }
@@ -59,29 +59,8 @@ const Certificate = () => {
     }).catch(err => console.log(err));
   }, [API_SECRET, id]);
 
-  const handlePrint = () => {
-    window.open(pdfUrl, "_blank");
-
-    payload = {
-      member_id: id,
-      crn
-    };
-
-    axios.post(`${API_URL}/certifications`, payload, {
-      headers: {
-        Authorization: `Bearer ${API_SECRET}`,
-      }
-    }).then((res) => {
-      fillPdf(res.data);
-    }).catch(err => console.log(err));
-  };
-
-  const handleCreateRecord = () => {
-
-  }
-
   return (
-    <div className="pb-35 xl:pb-0">
+    <div className="pb-35 xl:pb-0 bg-customgray1">
       <TopNav />
 
       <div className="flex flex-col xl:flex-row flex-1 relative">
@@ -105,11 +84,6 @@ const Certificate = () => {
                   <IoIosArrowRoundBack className="size-10" />
                   <p className="font-poppins text-lg">Back</p>
                 </Link>
-
-                <button className="text-lg cursor-pointer px-3 py-2 rounded-md border border-black flex items-center gap-2 w-30 md:w-40 md:gap-8" onClick={() => { handlePrint(); handleCreateRecord() }}>
-                  <LiaFileDownloadSolid className="size-7" />
-                  <p>Print</p>
-                </button>
               </div>
 
               <div>

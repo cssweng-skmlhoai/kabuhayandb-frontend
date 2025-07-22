@@ -24,6 +24,7 @@ const MonthlyDues = () => {
       setSummaryDueType(res.data.summary_due_type);
       setSummaryDueHH(res.data.summary_due_household);
       setTotalUnpaid(res.data.total_unpaid_dues);
+      console.log(res.data);
     }).catch((err) => {
       console.log(err);
     });
@@ -128,7 +129,7 @@ const MonthlyDues = () => {
                         >
                           <td className="border-r border-b border-black px-4 py-2 bg-white">{due.block_no}</td>
                           <td className="border-r border-b border-black px-4 py-2 bg-white">{due.lot_no}</td>
-                          <td className="border-r border-b border-black px-4 py-2 bg-white">{due.member_name || ""}</td>
+                          <td className="border-r border-b border-black px-4 py-2 bg-white">{due.first_name} {due.last_name}</td>
                           <td className="border-r border-b border-black px-4 py-2 bg-white">{Number(due.total_dues).toLocaleString("en-US")}</td>
                           <td className="border-r border-b border-black px-4 py-2 bg-white">{parseFloat(due.total_amount).toLocaleString("en-US")}</td>
                           <td className="border-b border-black px-4 py-2 bg-white">{due.payment_status}</td>

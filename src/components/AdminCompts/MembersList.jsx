@@ -325,21 +325,19 @@ const MembersList = () => {
               All records related to{" "}
               <span className="font-bold">{memberToDeleteName}</span> will be
               permanently deleted from the database, including their family
-              members, their household, and dues.
+              members, their household, dues, and credentials.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <div className="w-full flex justify-between">
-              <Button
-                className="w-[45%] bg-red-500 hover:bg-red-700"
-                onClick={() => handleDelete(memberToDeleteId)}
-              >
-                Delete
-              </Button>
-              <DialogClose className="w-[45%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
-                Cancel
-              </DialogClose>
-            </div>
+          <DialogFooter className="flex flex-row justify-between gap-4">
+            <Button
+              className="w-1/2 bg-red-500 hover:bg-red-700"
+              onClick={() => handleDelete(memberToDeleteId)}
+            >
+              Delete
+            </Button>
+            <DialogClose className="w-1/2 bg-black rounded-md text-white cursor-pointer hover:bg-gray-800 duration-200">
+              Cancel
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -131,7 +131,7 @@ const AddMember = () => {
           <div className="bg-white p-5 flex flex-col rounded-md font-poppins font-normal">
             <label htmlFor="lastname">Last Name</label>
             <input
-              className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
               placeholder="Last Name"
               type="text"
               name=""
@@ -145,7 +145,7 @@ const AddMember = () => {
 
             <label htmlFor="firstname">First Name</label>
             <input
-              className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
               placeholder="First Name"
               type="text"
               name=""
@@ -159,7 +159,7 @@ const AddMember = () => {
 
             <label htmlFor="middlename">Middle Name</label>
             <input
-              className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
               placeholder="Middle Name"
               type="text"
               name=""
@@ -173,7 +173,7 @@ const AddMember = () => {
 
             <label htmlFor="birthdate">Date of Birth</label>
             <input
-              className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
               type="date"
               name=""
               id=""
@@ -194,7 +194,7 @@ const AddMember = () => {
               <div className="flex flex-col w-1/2">
                 <label htmlFor="age">Age</label>
                 <input
-                  className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+                  className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
                   placeholder="00"
                   type="number"
                   name=""
@@ -214,7 +214,7 @@ const AddMember = () => {
                   onChange={(e) =>
                     setMemberData({ ...memberData, gender: e.target.value })
                   }
-                  className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+                  className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
                 >
                   <option value="" disabled hidden></option>
                   <option value="Male">Male</option>
@@ -223,7 +223,7 @@ const AddMember = () => {
                 </select>
 
                 {!memberData.gender && (
-                  <span className="absolute left-3 top-[28px] text-sm opacity-50 pointer-events-none z-0">
+                  <span className="absolute left-3 top-[32px] text-sm opacity-50 pointer-events-none z-0">
                     Male/Female
                   </span>
                 )}
@@ -232,7 +232,7 @@ const AddMember = () => {
 
             <label htmlFor="position">Position</label>
             <input
-              className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
               placeholder="Position"
               type="text"
               name=""
@@ -246,7 +246,7 @@ const AddMember = () => {
 
             <label htmlFor="contact">Contact Number</label>
             <input
-              className="bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="bg-customgray2 p-2 text-sm rounded-sm"
               placeholder="Contact Number"
               type="number"
               name=""
@@ -262,7 +262,7 @@ const AddMember = () => {
           <div className="bg-white p-5 flex flex-col rounded-md font-poppins font-normal">
             <label htmlFor="tct">TCT No.</label>
             <input
-              className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
               placeholder="TCT Number"
               type="number"
               name=""
@@ -274,11 +274,11 @@ const AddMember = () => {
               }
             />
 
-            <div className="flex justify-between gap-4">
+            <div className="flex justify-between gap-4 w-[95%]">
               <div className="flex flex-col w-1/2">
                 <label htmlFor="block">Block No.</label>
                 <input
-                  className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+                  className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
                   placeholder="Block Number"
                   type="number"
                   name=""
@@ -297,7 +297,7 @@ const AddMember = () => {
               <div className="flex flex-col w-1/2">
                 <label htmlFor="lot">Lot No.</label>
                 <input
-                  className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+                  className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
                   placeholder="Lot Number"
                   type="number"
                   name=""
@@ -316,7 +316,7 @@ const AddMember = () => {
 
             <label htmlFor="openspace">Share of Open Space</label>
             <input
-              className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
               placeholder="Open Space Share"
               type="number"
               name=""
@@ -333,7 +333,7 @@ const AddMember = () => {
 
             <label htmlFor="area">Area</label>
             <input
-              className="bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="bg-customgray2 p-2 text-sm rounded-sm"
               placeholder="Area"
               type="number"
               name=""
@@ -348,12 +348,12 @@ const AddMember = () => {
         </div>
 
         <div className="flex flex-col gap-4 xl:col-start-2">
-          <div className="bg-white px-5 py-3 flex justify-between rounded-md font-poppins">
+          <div className="bg-white px-5 py-3 flex justify-between items-center rounded-md font-poppins">
             <p className="font-medium">
               Family Composition ({familyMembers.length})
             </p>
             <div
-              className="flex items-center gap-2 bg-customgray1 px-2 rounded-sm cursor-pointer hover:bg-gray-400 duration-300"
+              className="flex items-center gap-2 bg-customgray1 px-2 py-1.5 rounded-sm cursor-pointer hover:bg-gray-400 duration-300"
               onClick={handleAddFamilyMember}
               variant="outline"
             >
@@ -372,7 +372,7 @@ const AddMember = () => {
                   <AccordionContent className="flex flex-col bg-white px-5 pb-5 font-poppins rounded-b-sm">
                     <label htmlFor="famlastname">Last Name</label>
                     <input
-                      className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3"
+                      className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
                       placeholder="Last Name"
                       type="text"
                       name=""
@@ -390,7 +390,7 @@ const AddMember = () => {
 
                     <label htmlFor="famfirstname">First Name</label>
                     <input
-                      className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3"
+                      className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
                       placeholder="First Name"
                       type="text"
                       name=""
@@ -408,7 +408,7 @@ const AddMember = () => {
 
                     <label htmlFor="fammiddlename">Middle Name</label>
                     <input
-                      className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3"
+                      className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
                       placeholder="Middle Name"
                       type="text"
                       name=""
@@ -426,7 +426,7 @@ const AddMember = () => {
 
                     <label htmlFor="relation">Relation to Member</label>
                     <input
-                      className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3"
+                      className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
                       placeholder="Relation to Member"
                       type="text"
                       name=""
@@ -444,7 +444,7 @@ const AddMember = () => {
 
                     <label htmlFor="fambirthdate">Date of Birth</label>
                     <input
-                      className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3"
+                      className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
                       placeholder="Birth Date"
                       type="date"
                       name=""
@@ -464,7 +464,7 @@ const AddMember = () => {
                       <div className="flex flex-col w-1/2">
                         <label htmlFor="famage">Age</label>
                         <input
-                          className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3"
+                          className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
                           placeholder="Age"
                           type="number"
                           name=""
@@ -488,7 +488,7 @@ const AddMember = () => {
                               e.target.value
                             )
                           }
-                          className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+                          className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
                         >
                           <option value="" disabled hidden></option>
                           <option value="Male">Male</option>
@@ -497,7 +497,7 @@ const AddMember = () => {
                         </select>
 
                         {!member.gender && (
-                          <span className="absolute left-3 top-[24px] text-sm opacity-50 pointer-events-none z-0">
+                          <span className="absolute left-3 top-[29px] text-sm opacity-50 pointer-events-none z-0">
                             Male/Female
                           </span>
                         )}
@@ -506,7 +506,7 @@ const AddMember = () => {
 
                     <label htmlFor="education">Educational Attainment</label>
                     <input
-                      className="bg-customgray2 py-1 px-2 text-sm rounded-sm mb-3"
+                      className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
                       placeholder="Educational Attainment"
                       type="text"
                       name=""
@@ -541,7 +541,7 @@ const AddMember = () => {
           <div className="bg-white p-5 flex flex-col rounded-md font-poppins font-normal">
             <label htmlFor="signature">Confirmity/Signature</label>
             <input
-              className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
               placeholder="-----"
               type="text"
               name=""
@@ -557,7 +557,7 @@ const AddMember = () => {
 
             <label htmlFor="remarks">Remarks</label>
             <input
-              className="bg-customgray2 py-1 px-2 text-sm rounded-sm"
+              className="bg-customgray2 p-2 text-sm rounded-sm"
               placeholder="Remarks"
               type="text"
               name=""
@@ -585,7 +585,7 @@ const AddMember = () => {
                     condition_type: e.target.value,
                   })
                 }
-                className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm w-full"
+                className="mb-3 bg-customgray2 p-2 text-sm rounded-sm w-full"
               >
                 <option value="" disabled hidden></option>
                 <option value="Needs minor repair">Needs minor repair</option>
@@ -603,7 +603,7 @@ const AddMember = () => {
               </select>
 
               {!householdData.condition_type && (
-                <span className="absolute left-3 top-[4px] text-sm opacity-50 pointer-events-none z-0">
+                <span className="absolute left-3 top-[8px] text-sm opacity-50 pointer-events-none z-0">
                   Options
                 </span>
               )}
@@ -660,7 +660,7 @@ const AddMember = () => {
                     land_acquisition: e.target.value,
                   })
                 }
-                className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm w-full"
+                className="mb-3 bg-customgray2 p-2 text-sm rounded-sm w-full"
               >
                 <option value="" disabled hidden></option>
                 <option value="CMP">CMP</option>
@@ -672,7 +672,7 @@ const AddMember = () => {
               </select>
 
               {!familyData.land_acquisition && (
-                <span className="absolute left-3 top-[4px] text-sm opacity-50 pointer-events-none z-0">
+                <span className="absolute left-3 top-[8px] text-sm opacity-50 pointer-events-none z-0">
                   Options
                 </span>
               )}
@@ -691,7 +691,7 @@ const AddMember = () => {
                     status_of_occupancy: e.target.value,
                   })
                 }
-                className="mb-3 bg-customgray2 py-1 px-2 text-sm rounded-sm w-full"
+                className="mb-3 bg-customgray2 p-2 text-sm rounded-sm w-full"
               >
                 <option value="" disabled hidden></option>
                 <option value="Owner">Owner</option>
@@ -700,7 +700,7 @@ const AddMember = () => {
               </select>
 
               {!familyData.status_of_occupancy && (
-                <span className="absolute left-3 top-[4px] text-sm opacity-50 pointer-events-none z-0">
+                <span className="absolute left-3 top-[8px] text-sm opacity-50 pointer-events-none z-0">
                   Options
                 </span>
               )}

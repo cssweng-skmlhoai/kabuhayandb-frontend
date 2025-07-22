@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import { LuEye } from "react-icons/lu";
+import { LuEye, LuEyeOff } from "react-icons/lu";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +27,10 @@ const Settings = () => {
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
   const [pfp, setPfp] = useState(null);
+
+  const [showCurrentPass, setShowCurrentPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMsg, setDialogMsg] = useState("");
@@ -204,7 +208,7 @@ const Settings = () => {
                 <div className="relative">
                   <input
                     className="w-full border border-black p-2 pr-10 rounded-md bg-customgray2"
-                    type="text"
+                    type={showCurrentPass ? "text" : "password"}
                     name=""
                     id=""
                     placeholder="Enter Your Current Password"
@@ -215,9 +219,10 @@ const Settings = () => {
 
                   <button
                     type="button"
+                    onClick={() => setShowCurrentPass((prev) => !prev)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
                   >
-                    <LuEye className="size-5" />
+                    {showCurrentPass ? <LuEyeOff className="size-5" /> : <LuEye className="size-5" />}
                   </button>
                 </div>
               </div>
@@ -227,7 +232,7 @@ const Settings = () => {
                 <div className="relative">
                   <input
                     className="w-full border border-black p-2 pr-10 rounded-md bg-customgray2"
-                    type="text"
+                    type={showNewPass ? "text" : "password"}
                     name=""
                     id=""
                     placeholder="Enter Your New Password"
@@ -238,9 +243,10 @@ const Settings = () => {
 
                   <button
                     type="button"
+                    onClick={() => setShowNewPass((prev) => !prev)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
                   >
-                    <LuEye className="size-5" />
+                    {showNewPass ? <LuEyeOff className="size-5" /> : <LuEye className="size-5" />}
                   </button>
                 </div>
               </div>
@@ -250,7 +256,7 @@ const Settings = () => {
                 <div className="relative">
                   <input
                     className="w-full border border-black p-2 pr-10 rounded-md bg-customgray2"
-                    type="text"
+                    type={showNewPass ? "text" : "password"}
                     name=""
                     id=""
                     placeholder="Enter Your New Password Again"
@@ -261,9 +267,10 @@ const Settings = () => {
 
                   <button
                     type="button"
+                    onClick={() => setShowNewPass((prev) => !prev)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
                   >
-                    <LuEye className="size-5" />
+                    {showNewPass ? <LuEyeOff className="size-5" /> : <LuEye className="size-5" />}
                   </button>
                 </div>
               </div>
