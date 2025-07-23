@@ -4,6 +4,7 @@ import Sidebar from '@/components/AdminCompts/Sidebar';
 import { Link } from 'react-router-dom';
 import { IoIosArrowRoundBack } from 'react-icons/io';
 import axios from 'axios';
+import { toast } from 'sonner';
 
 const MonthlyDues = () => {
   const [collectionEff, setCollectionEff] = useState({});
@@ -24,9 +25,8 @@ const MonthlyDues = () => {
       setSummaryDueType(res.data.summary_due_type);
       setSummaryDueHH(res.data.summary_due_household);
       setTotalUnpaid(res.data.total_unpaid_dues);
-      console.log(res.data);
     }).catch((err) => {
-      console.log(err);
+      toast.error(err.response?.data?.error || "Something went wrong");
     });
   }, [API_SECRET]);
 

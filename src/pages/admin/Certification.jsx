@@ -7,7 +7,7 @@ import { PDFDocument } from "pdf-lib";
 import { Link, useParams } from "react-router-dom";
 import Sidebar from "@/components/AdminCompts/Sidebar";
 import axios from "axios";
-import { LiaFileDownloadSolid } from "react-icons/lia";
+import { toast } from "sonner";
 
 const Certificate = () => {
   const { id } = useParams();
@@ -56,7 +56,7 @@ const Certificate = () => {
       }
     }).then((res) => {
       fillPdf(res.data);
-    }).catch(err => console.log(err));
+    }).catch(err => toast.error(err.response?.data?.error || "Something went wrong"));
   }, [API_SECRET, id]);
 
   return (

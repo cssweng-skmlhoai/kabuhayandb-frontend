@@ -21,6 +21,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const AddMember = () => {
   const navigate = useNavigate();
@@ -97,8 +98,9 @@ const AddMember = () => {
       })
       .then(() => {
         navigate("/members");
+        toast.success("Member Successfully Added");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
   };
 
   const confirmRemoveFamilyMember = (index, fullName) => {

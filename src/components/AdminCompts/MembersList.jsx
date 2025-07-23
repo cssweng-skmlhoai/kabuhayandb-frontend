@@ -30,6 +30,7 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 const MembersList = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -64,7 +65,7 @@ const MembersList = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response?.data?.error || "Something went wrong");
       });
   }, [API_SECRET]);
 
@@ -86,7 +87,7 @@ const MembersList = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response?.data?.error || "Something went wrong");
       });
   };
 
@@ -101,8 +102,9 @@ const MembersList = () => {
       .then(() => {
         setMembers((prev) => prev.filter((m) => m.member_id !== id));
         setDialogOpen(false);
+        toast.success("Member Successfully Deleted");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
   };
 
   return (

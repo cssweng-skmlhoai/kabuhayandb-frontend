@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "sonner";
 
 const MemberForms = ({ view }) => {
   const { id } = useParams();
@@ -133,7 +134,7 @@ const MemberForms = ({ view }) => {
         setFamilyMembers(transformedFamilyMembers);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response?.data?.error || "Something went wrong");
       });
   }, [id, API_SECRET]);
 
@@ -171,8 +172,9 @@ const MemberForms = ({ view }) => {
       })
       .then(() => {
         navigate("/members");
+        toast.success("Member Successfully Updated");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
   };
 
   const formatDate = (isoDate) => {

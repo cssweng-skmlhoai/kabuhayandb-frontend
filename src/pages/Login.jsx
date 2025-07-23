@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import useAuthStore from "@/authStore";
+import { toast } from "sonner";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const { isAuth, isAdmin, memberId, login } = useAuthStore();
   const navigate = useNavigate();
@@ -36,8 +36,7 @@ const Login = () => {
         navigate(`/memberView`);
       }
     } catch (error) {
-      console.log(error);
-      setErrorMessage("Invalid username or password. Please try again.");
+      toast.error("Invalid username or password. Please try again.");
     }
   };
 
@@ -72,6 +71,7 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
+                name="password"
                 className="w-full border border-black p-3 pr-10 rounded-md"
                 placeholder="Enter your Password"
                 value={password}
@@ -95,12 +95,6 @@ const Login = () => {
             Forgot Password?
           </p>
         </div>
-
-        {errorMessage && (
-          <p className="text-red-500 text-sm w-3/5 lg:w-1/2 xl:w-2/5 text-center">
-            {errorMessage}
-          </p>
-        )}
 
         <div className="w-[65%] flex justify-center">
           <Button

@@ -17,6 +17,7 @@ import {
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { IoIosArrowRoundBack } from "react-icons/io";
+import { toast } from "sonner";
 
 const Dues = () => {
   const { id, name } = useParams();
@@ -64,7 +65,7 @@ const Dues = () => {
       setBalances(balances);
       applyFilters(dues, selectedType);
     }).catch((err) => {
-      console.log(err);
+      toast.error(err.response?.data?.error || "Something went wrong");
     });
   }, [refreshKey, API_SECRET, id, selectedType]);
 
@@ -133,8 +134,9 @@ const Dues = () => {
       setDues(updatedDues);
       applyFilters(updatedDues, dueType);
       setAddDueDialog(false);
+      toast.success("Due Successfully Added");
     }).catch((err) => {
-      console.log(err);
+      toast.error(err.response?.data?.error || "Something went wrong");
     });
   }
 
@@ -157,8 +159,9 @@ const Dues = () => {
     }).then(() => {
       setUpdateDueDialog(false);
       setRefreshKey(prev => prev + 1);
+      toast.success("Due Successfully Updated");
     }).catch((err) => {
-      console.log(err);
+      toast.error(err.response?.data?.error || "Something went wrong");
     });
   };
 
@@ -186,9 +189,10 @@ const Dues = () => {
         setUpdateDueDialog(false);
         setSelectedDueId(null);
         setRefreshKey(prev => prev + 1);
+        toast.success("Due Successfully Deleted");
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response?.data?.error || "Something went wrong");
       });
   }
 

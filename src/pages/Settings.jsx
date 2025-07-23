@@ -52,7 +52,7 @@ const Settings = () => {
         setPfp(imageSrc);
       }
     }).catch((err) => {
-      console.log(err);
+      toast.error(err.response?.data?.error || "Something went wrong");
     });
   }, [API_SECRET]);
 
@@ -108,7 +108,7 @@ const Settings = () => {
         setDialogMsg("Password");
         setCurrentPass("");
         setNewPass("");
-        setCurrentPass("");
+        setConfirmPass("");
       }
 
       if (option === "picture" && pfp) {
@@ -136,7 +136,6 @@ const Settings = () => {
         setDialogMsg("Profile Picture");
       }
     } catch (err) {
-      console.log(err);
       toast.error(err.response?.data?.error || "Something went wrong");
     }
   };

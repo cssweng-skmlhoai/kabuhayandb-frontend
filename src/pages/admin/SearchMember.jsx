@@ -14,6 +14,7 @@ import {
   DialogClose,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const SearchMember = ({ purpose }) => {
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ const SearchMember = ({ purpose }) => {
           setCerts(filteredCerts);
         })
         .catch((err) => {
-          console.log(err);
+          toast.error(err.response?.data?.error || "Something went wrong");
         });
     }
   }, []);
@@ -87,7 +88,7 @@ const SearchMember = ({ purpose }) => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response?.data?.error || "Something went wrong");
       });
   };
 
@@ -98,15 +99,15 @@ const SearchMember = ({ purpose }) => {
           Authorization: `Bearer ${API_SECRET}`,
         },
       })
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         setCerts((prev) => prev.filter((c) => c.id !== recordId));
         setDeleteCertReqDialog(false);
         setCertRecDialog(false);
         setRecordId(null);
+        toast.success("Certificate Request Record Successfully Deleted");
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response?.data?.error || "Something Went Wrong");
       });
   }
 
@@ -125,14 +126,14 @@ const SearchMember = ({ purpose }) => {
           Authorization: `Bearer ${API_SECRET}`,
         },
       })
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         setAddCertDialog(false);
         navigate(`/certification/${selectedMember}`);
         setSelectedMember(null);
+        toast.success("Successfully Created Certification Request Record")
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response?.data?.error || "Something Went Wrong");
       });
   };
 
