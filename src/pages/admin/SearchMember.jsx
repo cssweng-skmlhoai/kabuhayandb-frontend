@@ -29,6 +29,8 @@ const SearchMember = ({ purpose }) => {
   const [recordId, setRecordId] = useState(null);
 
   const [addCertDialog, setAddCertDialog] = useState(false);
+  const [deleteCertReqDialog, setDeleteCertReqDialog] = useState(false);
+  const [memberToDeleteId, setMemberToDeleteId] = useState(null);
   const [selectedMember, setSelectedMember] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -60,7 +62,7 @@ const SearchMember = ({ purpose }) => {
         })
         .then((res) => {
           const certificates = res.data;
-          const filteredCerts = certificates.sort((a, b) => new Date(b.due_date) - new Date(a.due_date));
+          const filteredCerts = certificates.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
           setCerts(filteredCerts);
         })
         .catch((err) => {
@@ -100,6 +102,7 @@ const SearchMember = ({ purpose }) => {
       .then((res) => {
         console.log(res);
         setCerts((prev) => prev.filter((c) => c.id !== recordId));
+        setDeleteCertReqDialog(false);
         setCertRecDialog(false);
         setRecordId(null);
       })
@@ -341,7 +344,7 @@ const SearchMember = ({ purpose }) => {
             </div>
           </div>
           <DialogFooter className="flex flex-row">
-            <button className="bg-red-700 w-1/2 text-white py-3 rounded-md hover:bg-red-900 duration-200" onClick={deleteCertRecord}>
+            <button className="bg-red-700 w-1/2 text-white py-3 rounded-md hover:bg-red-900 duration-200" onClick={() => setDeleteCertReqDialog(true)}>
               Delete Record
             </button>
             <DialogClose className="bg-white text-black rounded-md w-1/2 cursor-pointer border border-black hover:bg-gray-300 duration-200">
@@ -351,9 +354,36 @@ const SearchMember = ({ purpose }) => {
         </DialogContent>
       </Dialog>
 
+      {/* dialog for delete confirmation on certificate request record */}
+      <Dialog open={deleteCertReqDialog} onOpenChange={setDeleteCertReqDialog}>
+        <DialogContent className="w-[80%]">
+          <DialogHeader>
+            <DialogTitle className="text-left">
+              Delete This Certification Request Record?
+            </DialogTitle>
+            <DialogDescription className="text-md text-gray-700">
+              Are you sure you want to delete this certification request record? Double check before performing this action
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <div className="w-full flex justify-between font-normal">
+              <Button
+                className="w-[48%] bg-red-700 hover:bg-red-900 py-6 font-normal text-md"
+                onClick={deleteCertRecord}
+              >
+                Delete
+              </Button>
+              <DialogClose className="w-[48%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
+                Cancel
+              </DialogClose>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Dialog for proceeding to member certification */}
       <Dialog open={addCertDialog} onOpenChange={setAddCertDialog}>
-        <DialogContent className="w-[70%]">
+        <DialogContent className="w-[80%]">
           <DialogHeader>
             <DialogTitle className="text-left">Member Certification</DialogTitle>
             <DialogDescription className="text-md text-gray-700">
@@ -362,7 +392,7 @@ const SearchMember = ({ purpose }) => {
           </DialogHeader>
           <DialogFooter className="flex flex-row justify-between gap-4">
             <Button
-              className="w-1/2 bg-blue-button "
+              className="w-1/2 bg-blue-button py-6 font-normal text-md"
               onClick={() => createCertRecord(selectedMember)}
             >
               Proceed

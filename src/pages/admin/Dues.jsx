@@ -516,6 +516,13 @@ const Dues = () => {
                   <option value="Paid">Paid</option>
                   <option value="Unpaid">Unpaid</option>
                 </select>
+
+                <button
+                  type="button"
+                  className="bg-red-700 text-white text-sm w-1/4 py-1 rounded-md hover:bg-red-900 duration-200 self-center mt-3 mb-2"
+                >
+                  Delete Due
+                </button>
               </div>
             </div>
             <DialogFooter className="flex flex-row">

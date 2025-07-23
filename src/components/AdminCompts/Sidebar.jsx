@@ -148,7 +148,7 @@ const Sidebar = () => {
                 </span>
               )}
             </DialogTrigger>
-            <DialogContent className="w-[70%]">
+            <DialogContent className="w-[80%]">
               <DialogHeader>
                 <DialogTitle className="text-left">
                   Are you Sure You Want to Logout?
@@ -158,7 +158,7 @@ const Sidebar = () => {
               <DialogFooter className="flex flex-row justify-between gap-4">
                 <Link to="/login" className="w-1/2">
                   <Button
-                    className="w-full bg-red-500 hover:bg-red-700"
+                    className="w-full bg-red-700 hover:bg-red-900 py-6 font-normal text-md"
                     onClick={handleLogout}
                   >
                     Logout

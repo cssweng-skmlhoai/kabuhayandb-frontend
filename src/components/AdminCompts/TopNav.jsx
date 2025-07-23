@@ -71,7 +71,7 @@ const TopNav = () => {
                   <p className="font-poppins text-sm">Logout</p>
                 </div>
               </DialogTrigger>
-              <DialogContent className="w-[70%]">
+              <DialogContent className="w-[80%]">
                 <DialogHeader>
                   <DialogTitle className="text-left">
                     Are you Sure You Want to Logout?
@@ -80,7 +80,7 @@ const TopNav = () => {
                 <DialogDescription></DialogDescription>
                 <DialogFooter className="flex flex-row justify-between gap-4">
                   <Button
-                    className="w-1/2 bg-red-500 hover:bg-red-700"
+                    className="w-1/2 bg-red-700 hover:bg-red-900 py-6 font-normal text-md"
                     onClick={handleLogout}
                   >
                     Logout

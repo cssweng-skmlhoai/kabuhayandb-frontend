@@ -9,6 +9,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -24,6 +33,10 @@ const AddMember = () => {
     Septic_Tank: false,
   });
   const [familyMembers, setFamilyMembers] = useState([]);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [memberToDeleteId, setMemberToDeleteId] = useState(null);
+  const [memberToDeleteName, setMemberToDeleteName] = useState("");
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
@@ -86,6 +99,17 @@ const AddMember = () => {
         navigate("/members");
       })
       .catch((err) => console.log(err));
+  };
+
+  const confirmRemoveFamilyMember = (index, fullName) => {
+    setMemberToDeleteId(index);
+    setMemberToDeleteName(fullName);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirmed = () => {
+    handleRemoveFamilyMember(memberToDeleteId);
+    setDeleteDialogOpen(false);
   };
 
   function calculateAge(birthdateStr) {
@@ -524,7 +548,13 @@ const AddMember = () => {
 
                     <Button
                       className="w-1/4 self-center bg-blue-button xl:w-2/5"
-                      onClick={() => handleRemoveFamilyMember(index)}
+                      type="button"
+                      onClick={() =>
+                        confirmRemoveFamilyMember(
+                          index,
+                          `${member.first_name} ${member.last_name}`
+                        )
+                      }
                       variant="destructive"
                     >
                       <FaRegTrashAlt />
@@ -723,6 +753,35 @@ const AddMember = () => {
           </div>
         </div>
       </form>
+
+      {/* dialog for delete confirmation on family member */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="w-[80%]">
+          <DialogHeader>
+            <DialogTitle className="text-left">
+              Delete This Family Member?
+            </DialogTitle>
+            <DialogDescription className="text-md text-gray-700">
+              Are you sure you want to remove
+              <span className="font-bold">{memberToDeleteName}</span> as a
+              family member?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <div className="w-full flex justify-between">
+              <Button
+                className="w-[45%] bg-red-700 hover:bg-red-900 py-6 text-md font-normal"
+                onClick={handleDeleteConfirmed}
+              >
+                Delete
+              </Button>
+              <DialogClose className="w-[45%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
+                Cancel
+              </DialogClose>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

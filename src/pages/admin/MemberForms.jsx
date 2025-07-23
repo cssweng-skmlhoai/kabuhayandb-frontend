@@ -867,7 +867,7 @@ const MemberForms = ({ view }) => {
 
       {/* dialog for delete confirmation on family member */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="w-[70%]">
+        <DialogContent className="w-[80%]">
           <DialogHeader>
             <DialogTitle className="text-left">
               Delete This Family Member?
@@ -881,12 +881,12 @@ const MemberForms = ({ view }) => {
           <DialogFooter>
             <div className="w-full flex justify-between">
               <Button
-                className="w-[45%] bg-red-500 hover:bg-red-700"
+                className="w-[48%] bg-red-700 hover:bg-red-900 font-normal text-md py-6"
                 onClick={handleDeleteConfirmed}
               >
                 Delete
               </Button>
-              <DialogClose className="w-[45%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
+              <DialogClose className="w-[48%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
                 Cancel
               </DialogClose>
             </div>

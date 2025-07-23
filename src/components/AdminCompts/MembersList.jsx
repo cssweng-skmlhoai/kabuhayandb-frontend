@@ -318,7 +318,7 @@ const MembersList = () => {
 
       {/* Dialog for delete member confirmation */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="w-[70%]">
+        <DialogContent className="w-[80%]">
           <DialogHeader>
             <DialogTitle className="text-left">Delete This Member?</DialogTitle>
             <DialogDescription className="text-md text-gray-700">
@@ -330,7 +330,7 @@ const MembersList = () => {
           </DialogHeader>
           <DialogFooter className="flex flex-row justify-between gap-4">
             <Button
-              className="w-1/2 bg-red-500 hover:bg-red-700"
+              className="w-1/2 bg-red-700 hover:bg-red-900 font-normal text-md py-6"
               onClick={() => handleDelete(memberToDeleteId)}
             >
               Delete
