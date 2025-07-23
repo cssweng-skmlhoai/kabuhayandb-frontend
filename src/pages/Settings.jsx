@@ -89,23 +89,26 @@ const Settings = () => {
         setDialogOpen(true);
         setDialogMsg("Username");
         setInitialName(username);
+        setUsername("");
       }
 
       if (option === "password") {
         if (newPass !== confirmPass) {
-          toast.error("Current and New Password Do Not Match.");
+          toast.error("New Password and Confirm New Password Do Not Match.");
           return;
         }
 
         await axios.put(`${API_URL}/credentials/${credentialsId}`, {
-          current_password: currentPass,
-          new_password: newPass,
+          password: newPass,
         }, {
           headers: { Authorization: `Bearer ${API_SECRET}` },
         });
 
         setDialogOpen(true);
         setDialogMsg("Password");
+        setCurrentPass("");
+        setNewPass("");
+        setCurrentPass("");
       }
 
       if (option === "picture" && pfp) {
@@ -210,7 +213,7 @@ const Settings = () => {
                     className="w-full border border-black p-2 pr-10 rounded-md bg-customgray2"
                     type={showCurrentPass ? "text" : "password"}
                     name=""
-                    id=""
+                    id="currPass"
                     placeholder="Enter Your Current Password"
                     value={currentPass}
                     onChange={(e) => setCurrentPass(e.target.value)}
@@ -234,7 +237,7 @@ const Settings = () => {
                     className="w-full border border-black p-2 pr-10 rounded-md bg-customgray2"
                     type={showNewPass ? "text" : "password"}
                     name=""
-                    id=""
+                    id="newPass"
                     placeholder="Enter Your New Password"
                     value={newPass}
                     onChange={(e) => setNewPass(e.target.value)}
@@ -256,9 +259,9 @@ const Settings = () => {
                 <div className="relative">
                   <input
                     className="w-full border border-black p-2 pr-10 rounded-md bg-customgray2"
-                    type={showNewPass ? "text" : "password"}
+                    type={showConfirmPass ? "text" : "password"}
                     name=""
-                    id=""
+                    id="confirmPass"
                     placeholder="Enter Your New Password Again"
                     value={confirmPass}
                     onChange={(e) => setConfirmPass(e.target.value)}
@@ -267,10 +270,10 @@ const Settings = () => {
 
                   <button
                     type="button"
-                    onClick={() => setShowNewPass((prev) => !prev)}
+                    onClick={() => setShowConfirmPass((prev) => !prev)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
                   >
-                    {showNewPass ? <LuEyeOff className="size-5" /> : <LuEye className="size-5" />}
+                    {showConfirmPass ? <LuEyeOff className="size-5" /> : <LuEye className="size-5" />}
                   </button>
                 </div>
               </div>

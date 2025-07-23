@@ -38,6 +38,13 @@ const SearchMember = ({ purpose }) => {
   const currentMembers = members.slice(indexOfFirstMember, indexOfLastMember);
   const totalPages = Math.ceil(members.length / membersPerPage);
 
+  const [certCurrentPage, setCertCurrentPage] = useState(1);
+  const certsPerPage = 4;
+  const indexOfLastCert = certCurrentPage * certsPerPage;
+  const indexOfFirstCert = indexOfLastCert - certsPerPage;
+  const currentCerts = certs.slice(indexOfFirstCert, indexOfLastCert);
+  const certTotalPages = Math.ceil(certs.length / certsPerPage);
+
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
 
@@ -268,7 +275,7 @@ const SearchMember = ({ purpose }) => {
                           </td>
                         </tr>
                       ) : (
-                        certs.map((cert) => (
+                        currentCerts.map((cert) => (
                           <tr className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md text-center"
                             onClick={() => openCertRecDialog(cert)}
                             key={cert.id}
@@ -282,6 +289,33 @@ const SearchMember = ({ purpose }) => {
                       )}
                     </tbody>
                   </table>
+
+                  <div className={`flex justify-between items-center w-full ${certs.length <= certsPerPage ? "hidden" : ""}`}>
+                    <p className="text-sm text-gray-600">
+                      {certs.length === 0
+                        ? "0 results"
+                        : `${indexOfFirstCert + 1}-${Math.min(indexOfLastCert, certs.length)} of ${certs.length}`}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setCertCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={certCurrentPage === 1}
+                        className={`border border-gray-400 rounded hover:bg-gray-300 px-2 py-1 ${certCurrentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                      >
+                        <ChevronLeft />
+                      </button>
+                      <p className="text-sm">
+                        Page {certCurrentPage} of {certTotalPages}
+                      </p>
+                      <button
+                        onClick={() => setCertCurrentPage((prev) => Math.min(prev + 1, certTotalPages))}
+                        disabled={certCurrentPage === certTotalPages}
+                        className={`border border-gray-400 rounded hover:bg-gray-300 px-2 py-1 ${certCurrentPage === certTotalPages ? "opacity-50 cursor-not-allowed" : ""}`}
+                      >
+                        <ChevronRight />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
