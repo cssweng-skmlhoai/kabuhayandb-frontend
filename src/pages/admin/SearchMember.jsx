@@ -30,7 +30,6 @@ const SearchMember = ({ purpose }) => {
 
   const [addCertDialog, setAddCertDialog] = useState(false);
   const [deleteCertReqDialog, setDeleteCertReqDialog] = useState(false);
-  const [memberToDeleteId, setMemberToDeleteId] = useState(null);
   const [selectedMember, setSelectedMember] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -162,10 +161,10 @@ const SearchMember = ({ purpose }) => {
                 <p>
                   {purpose === "dues" && (
                     <>
-                      Check <span className="font-semibold">Monthly Dues Report</span> or{" "}
+                      Check <span className="font-semibold">Monthly Dues Report</span> or
                     </>
                   )}
-                  Select a Member to {purpose === "dues" ? "Manage" : "Issue"} their{" "}
+                  Select a Member to {purpose === "dues" ? "Manage" : "Issue"} their
                   <span className="font-semibold">
                     {purpose === "dues" ? "Dues" : "Certificate"}
                   </span>
@@ -185,10 +184,10 @@ const SearchMember = ({ purpose }) => {
                   <p>
                     {purpose === "dues" && (
                       <>
-                        Check <span className="font-semibold">Monthly Dues Report</span> or{" "}
+                        Check <span className="font-semibold">Monthly Dues Report</span> or
                       </>
                     )}
-                    Select a Member to {purpose === "dues" ? "Manage" : "Issue"} their{" "}
+                    Select a Member to {purpose === "dues" ? "Manage" : "Issue"} their
                     <span className="font-semibold">
                       {purpose === "dues" ? "Dues" : "Certificate"}
                     </span>

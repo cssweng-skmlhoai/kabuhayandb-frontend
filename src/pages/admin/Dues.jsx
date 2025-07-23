@@ -40,6 +40,7 @@ const Dues = () => {
 
   const [addDueDialog, setAddDueDialog] = useState(false);
   const [updateDueDialog, setUpdateDueDialog] = useState(false);
+  const [deleteDueDialog, setDeleteDueDialog] = useState(false);
 
   const [unpaidPage, setUnpaidPage] = useState(1);
   const [paidPage, setPaidPage] = useState(1);
@@ -172,6 +173,24 @@ const Dues = () => {
     setHouseholdId(due.household_id);
     setUpdateDueDialog(true);
   };
+
+  const handleDeleteDue = () => {
+    axios
+      .delete(`${API_URL}/dues/${selectedDueId}`, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET}`,
+        },
+      })
+      .then(() => {
+        setDeleteDueDialog(false);
+        setUpdateDueDialog(false);
+        setSelectedDueId(null);
+        setRefreshKey(prev => prev + 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   const dueTypeBalances = (type) => {
     if (type === "Monthly Amortization") return "amortization";
@@ -519,6 +538,7 @@ const Dues = () => {
 
                 <button
                   type="button"
+                  onClick={() => setDeleteDueDialog(true)}
                   className="bg-red-700 text-white text-sm w-1/4 py-1 rounded-md hover:bg-red-900 duration-200 self-center mt-3 mb-2"
                 >
                   Delete Due
@@ -536,7 +556,34 @@ const Dues = () => {
           </form>
         </DialogContent>
       </Dialog>
-    </div >
+
+      {/* dialog for delete confirmation on certificate request record */}
+      <Dialog open={deleteDueDialog} onOpenChange={setDeleteDueDialog}>
+        <DialogContent className="w-[80%]">
+          <DialogHeader>
+            <DialogTitle className="text-left">
+              Delete This Due?
+            </DialogTitle>
+            <DialogDescription className="text-md text-gray-700">
+              Are you sure you want to delete this due? Double check before performing this action
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <div className="w-full flex justify-between font-normal">
+              <Button
+                className="w-[48%] bg-red-700 hover:bg-red-900 py-6 font-normal text-md"
+                onClick={handleDeleteDue}
+              >
+                Delete
+              </Button>
+              <DialogClose className="w-[48%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
+                Cancel
+              </DialogClose>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 

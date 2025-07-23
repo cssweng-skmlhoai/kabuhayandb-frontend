@@ -90,7 +90,7 @@ const Certificate = () => {
                 {pdfUrl ? (
                   loadError ? (
                     <div className="text-center mt-5">
-                      Preview not supported.{" "}
+                      Preview not supported.
                       <span
                         onClick={() => window.open(pdfUrl, "_blank")}
                         className="text-blue-500 hover:text-blue-800 cursor-pointer"

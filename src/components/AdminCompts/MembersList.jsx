@@ -109,7 +109,6 @@ const MembersList = () => {
     <div>
       <div className="px-5 pb-5 pt-8 bg-customgray1 flex flex-col items-center justify-center gap-4 font-poppins xl:bg-white xl:flex-row xl:px-10 xl:pt-10 xl:pb-5">
         <div className="hidden xl:flex justify-between w-full items-end">
-          {" "}
           {/* desktop only/separate component */}
           <div className="flex flex-col">
             <p className="font-semibold text-3xl">All Members</p>
@@ -162,7 +161,6 @@ const MembersList = () => {
       {/* seen in default view */}
       <div className="px-8 py-6 xl:border xl:border-black xl:mr-10 xl:mt-3 xl:ml-5 xl:mb-10 xl:rounded-lg xl:flex xl:flex-col xl:gap-7">
         <div className="hidden xl:flex justify-between items-center">
-          {" "}
           {/* desktop only */}
           <div className="flex w-1/2 gap-3 items-center">
             <div className="p-1 rounded-md bg-customgray1">
@@ -322,8 +320,7 @@ const MembersList = () => {
           <DialogHeader>
             <DialogTitle className="text-left">Delete This Member?</DialogTitle>
             <DialogDescription className="text-md text-gray-700">
-              All records related to{" "}
-              <span className="font-bold">{memberToDeleteName}</span> will be
+              All records related to <span className="font-bold">{memberToDeleteName}</span> will be
               permanently deleted from the database, including their family
               members, their household, dues, and credentials.
             </DialogDescription>

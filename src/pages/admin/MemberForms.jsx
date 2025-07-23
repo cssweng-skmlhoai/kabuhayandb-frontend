@@ -873,8 +873,7 @@ const MemberForms = ({ view }) => {
               Delete This Family Member?
             </DialogTitle>
             <DialogDescription className="text-md text-gray-700">
-              Are you sure you want to remove{" "}
-              <span className="font-bold">{memberToDeleteName}</span> as a
+              Are you sure you want to remove <span className="font-bold">{memberToDeleteName}</span> as a
               family member?
             </DialogDescription>
           </DialogHeader>
