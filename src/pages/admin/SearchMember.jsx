@@ -69,7 +69,7 @@ const SearchMember = ({ purpose }) => {
           toast.error(err.response?.data?.error || "Something went wrong");
         });
     }
-  }, []);
+  }, [purpose]);
 
   const searchUser = () => {
     axios
@@ -162,10 +162,10 @@ const SearchMember = ({ purpose }) => {
                 <p>
                   {purpose === "dues" && (
                     <>
-                      Check <span className="font-semibold">Monthly Dues Report</span> or
+                      Check <span className="font-semibold">Monthly Dues Report</span> or{" "}
                     </>
                   )}
-                  Select a Member to {purpose === "dues" ? "Manage" : "Issue"} their
+                  Select a Member to {purpose === "dues" ? "Manage" : "Issue"} their{" "}
                   <span className="font-semibold">
                     {purpose === "dues" ? "Dues" : "Certificate"}
                   </span>
