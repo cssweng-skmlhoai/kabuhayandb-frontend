@@ -35,7 +35,6 @@ const Dues = () => {
   const [amount, setAmount] = useState("");
   const [status, setStatus] = useState("Unpaid");
   const [selectedDueId, setSelectedDueId] = useState(null);
-  // const [paidDate, setPaidDate] = useState(null);
   const [householdId, setHouseholdId] = useState(null);
   const [dueTypeInput, setDueTypeInput] = useState("");
 
@@ -83,7 +82,7 @@ const Dues = () => {
 
     const unpaid = filtered.filter(d => d.status === "Unpaid").sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
 
-    const paid = filtered.filter(d => d.status === "Paid").sort((a, b) => new Date(b.due_date) - new Date(a.due_date));
+    const paid = filtered.filter(d => d.status === "Paid").sort((a, b) => new Date(b.date_paid) - new Date(a.date_paid));
 
     setFilteredUnpaid(unpaid);
     setFilteredPaid(paid);
@@ -172,7 +171,6 @@ const Dues = () => {
     setAmount(due.amount);
     setStatus(due.status);
     setDueTypeInput(due.due_type);
-    // setPaidDate(due.date_paid);
     setHouseholdId(due.household_id);
     setUpdateDueDialog(true);
   };
@@ -224,12 +222,6 @@ const Dues = () => {
               <div className="flex flex-col">
                 <p className="font-semibold text-3xl">Member Dues</p>
                 <p>Update Member Dues</p>
-              </div>
-              <div className="flex gap-3">
-                <Button className="rounded-sm bg-white border-1 border-black hover:bg-gray-300 text-customgray3 cursor-pointer">
-                  <LiaFileDownloadSolid className="size-5" />
-                  <p>Export</p>
-                </Button>
               </div>
             </div>
 
@@ -368,7 +360,7 @@ const Dues = () => {
                             <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
                             <td className="px-4 py-2">{due.due_type}</td>
                             <td className="px-4 py-2">₱ {parseFloat(due.amount).toLocaleString("en-US")}</td>
-                            <td className="px-4 py-2 ">{new Date(due.due_date).toLocaleDateString()}</td>
+                            <td className="px-4 py-2 ">{new Date(due.date_paid).toLocaleDateString()}</td>
                             <td className="text-gray-500 text-2xl font-light rounded-r-md pr-2">&rsaquo;</td>
                           </tr>
                         ))

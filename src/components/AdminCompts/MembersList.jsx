@@ -109,20 +109,14 @@ const MembersList = () => {
 
   return (
     <div>
-      <div className="px-5 pb-5 pt-8 bg-customgray1 flex flex-col items-center justify-center gap-4 font-poppins xl:bg-white xl:flex-row xl:px-10 xl:pt-10 xl:pb-5">
+      <div className="px-5 pb-4 pt-8 bg-customgray1 flex flex-col items-center justify-center gap-4 font-poppins xl:bg-white xl:flex-row xl:px-10 xl:pt-10 xl:pb-5">
         <div className="hidden xl:flex justify-between w-full items-end">
-          {/* desktop only/separate component */}
           <div className="flex flex-col">
             <p className="font-semibold text-3xl">All Members</p>
             <p>View and Edit Member Details</p>
           </div>
           <div className="flex gap-3">
-            <Button className="rounded-sm bg-white border-1 border-black hover:bg-gray-300 text-customgray3 cursor-pointer">
-              <LiaFileDownloadSolid className="size-5" />
-              <p>Export</p>
-            </Button>
-
-            <Button className="bg-blue-button">
+            <Button className="bg-blue-button py-6">
               <Link to="/members/add" className="flex items-center gap-2">
                 <FaPlus />
                 Add Member
@@ -131,76 +125,39 @@ const MembersList = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 w-[90%] xl:hidden">
-          <input
-            type="text"
-            placeholder="Search Member Name"
-            className="border border-gray-300 rounded-md p-3 w-full bg-white"
-            value={searched}
-            onChange={(e) => setSearched(e.target.value)}
-          />
-          <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10" onClick={searchUser}>Search</Button>
-        </div>
-
-        <div className="flex justify-around w-[90%] xl:hidden">
-          <Button className="rounded-sm bg-white border-1 border-black w-[30%] hover:bg-gray-300 text-customgray3 cursor-pointer py-5">
-            <IoFilterOutline className="size-5" />
-            <p>Filter</p>
-          </Button>
-
-          <Button className="rounded-sm bg-white border-1 border-black w-[30%] hover:bg-gray-300 text-customgray3 cursor-pointer py-5">
-            <TbArrowsSort className="size-5" />
-            <p>Sort</p>
-          </Button>
-
-          <Button className="rounded-sm bg-white border-1 border-black w-[30%] hover:bg-gray-300 text-customgray3 cursor-pointer py-5">
-            <LiaFileDownloadSolid className="size-5" />
-            <p>Export</p>
-          </Button>
+        <div className="flex flex-col items-center gap-3 w-[90%] xl:hidden">
+          <div className="flex w-full gap-3">
+            <input
+              type="text"
+              placeholder="Search Member Name"
+              className="border border-gray-300 rounded-md p-3 w-full bg-white"
+              value={searched}
+              onChange={(e) => setSearched(e.target.value)}
+            />
+            <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10" onClick={searchUser}>Search</Button>
+          </div>
+          <p className="text-sm italic text-gray-500">Note: Empty the search bar and press 'Search' to show all members</p>
         </div>
       </div>
 
-      {/* seen in default view */}
       <div className="px-8 py-6 xl:border xl:border-black xl:mr-10 xl:mt-3 xl:ml-5 xl:mb-10 xl:rounded-lg xl:flex xl:flex-col xl:gap-7">
-        <div className="hidden xl:flex justify-between items-center">
-          {/* desktop only */}
-          <div className="flex w-1/2 gap-3 items-center">
-            <div className="p-1 rounded-md bg-customgray1">
-              <Button className="rounded-e-none bg-customgray1 text-black hover:bg-gray-400">
-                All
-              </Button>
-              <Button className="rounded-none bg-customgray1 text-black hover:bg-gray-400">
-                Members
-              </Button>
-              <Button className="rounded-s-none bg-customgray1 text-black hover:bg-gray-400">
-                Officers
-              </Button>
-            </div>
-            <Button className="rounded-sm bg-white border-1 border-black w-[20%] hover:bg-gray-300 text-customgray3 cursor-pointer">
-              <IoFilterOutline className="size-5" />
-              <p className="font-poppins">Filter</p>
-            </Button>
-          </div>
-          <div className="flex items-center w-1/2 justify-end gap-3">
-            <div className="relative w-1/2">
-              <IoSearchOutline
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer size-5"
-                onClick={searchUser}
-              />
-              <input
-                type="text"
-                placeholder="Search Member Name"
-                className="border border-black rounded-md pl-10 pr-3 py-1.5 w-full bg-white"
-                value={searched}
-                onChange={(e) => setSearched(e.target.value)}
-              />
-            </div>
+        <div className="hidden xl:flex flex-col justify-between gap-3">
+          <div className="flex items-center w-2/5 gap-3">
+            <input
+              type="text"
+              placeholder="Search Member Name"
+              className="border border-black rounded-md px-3 py-1.5 w-full bg-white"
+              value={searched}
+              onChange={(e) => setSearched(e.target.value)}
+            />
 
-            <Button className="rounded-sm bg-white border-1 border-black w-[20%] hover:bg-gray-300 text-customgray3 cursor-pointer">
-              <TbArrowsSort className="size-5" />
-              <p className="font-poppins">Sort</p>
+            <Button className="rounded-sm bg-blue-button text-white cursor-pointer w-1/4"
+              onClick={searchUser}
+            >
+              <p className="text-md font-normal">Search</p>
             </Button>
           </div>
+          <p className="text-sm italic text-gray-400">Note: Empty the search bar and press 'Search' to show all members</p>
         </div>
 
         {members.length === 0 ? (

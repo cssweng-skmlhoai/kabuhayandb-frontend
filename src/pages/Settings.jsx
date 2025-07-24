@@ -44,6 +44,7 @@ const Settings = () => {
         Authorization: `Bearer ${API_SECRET}`,
       },
     }).then((res) => {
+      console.log(memberId);
       setCredentialsId(res.data.id);
       setInitialName(res.data.username);
 

@@ -481,7 +481,7 @@ const MemberForms = ({ view }) => {
             )}
           </div>
 
-          <Accordion type="single" collapsible>
+          <Accordion type="multiple" collapsible>
             <div className="flex flex-col gap-4">
               {filteredMembers?.map((member, index) => {
                 const key = member.id ?? member.tempId;

@@ -35,7 +35,7 @@ const App = () => {
       </Route>
 
       {/* Member-only routes */}
-      <Route element={<ProtectedRoute />}>
+      <Route element={<ProtectedRoute memberOnly={true} />}>
         <Route path="/memberView/*" element={<MemberLayout />} />
       </Route>
     </Routes>

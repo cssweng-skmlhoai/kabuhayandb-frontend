@@ -388,7 +388,7 @@ const AddMember = () => {
             </div>
           </div>
 
-          <Accordion type="single" collapsible>
+          <Accordion type="multiple" collapsible>
             <div className="flex flex-col gap-4">
               {familyMembers.map((member, index) => (
                 <AccordionItem key={index} value={`member${index}`}>
