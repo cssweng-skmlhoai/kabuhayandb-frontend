@@ -202,15 +202,18 @@ const SearchMember = ({ purpose }) => {
                   )}
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <input
-                    type="text"
-                    placeholder="Search Member Name"
-                    className="border border-gray-300 bg-customgray2 rounded-md p-3 w-full"
-                    value={searched}
-                    onChange={(e) => setSearched(e.target.value)}
-                  />
-                  <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10" onClick={searchUser}>Search</Button>
+                <div className="flex flex-col items-center gap-3">
+                  <div className="flex w-full gap-3">
+                    <input
+                      type="text"
+                      placeholder="Search Member Name"
+                      className="border border-gray-300 bg-customgray2 rounded-md p-3 w-full"
+                      value={searched}
+                      onChange={(e) => setSearched(e.target.value)}
+                    />
+                    <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10" onClick={searchUser}>Search</Button>
+                  </div>
+                  <p className="text-sm italic text-gray-500">Note: Empty the search bar and press 'Search' to show all members</p>
                 </div>
 
                 {members.length === 0 ? (

@@ -75,7 +75,10 @@ const Dues = () => {
       setStatus("");
       setSelectedDueId(null);
     }
-  }, [addDueDialog, updateDueDialog]);
+    if (addDueDialog && selectedType === "All") {
+      setAddDueType("Monthly Amortization");
+    }
+  }, [addDueDialog, updateDueDialog, selectedType]);
 
   const applyFilters = (allDues, type) => {
     const filtered = type === "All" ? allDues : allDues.filter(d => d.due_type === type);
@@ -110,29 +113,9 @@ const Dues = () => {
       headers: {
         Authorization: `Bearer ${API_SECRET}`,
       },
-    }).then((res) => {
-      const newDue = res.data;
-      const updatedDues = [...dues, newDue];
-
-      let newBalance = 0.0;
-      if (status === "Unpaid") {
-        newBalance = (balances[dueTypeBalances(dueType)] || 0) + parseFloat(amount);
-      }
-      else if (status === "Paid" && balances[dueTypeBalances(dueType)] == 0) {
-        newBalance = 0.0;
-      }
-      else {
-        newBalance = (balances[dueTypeBalances(dueType)] || 0) - parseFloat(amount);
-      }
-
-      setBalances(prev => ({
-        ...prev,
-        [dueTypeBalances(dueType)]: newBalance,
-      }));
-
-      setDues(updatedDues);
-      applyFilters(updatedDues, dueType);
+    }).then(() => {
       setAddDueDialog(false);
+      setRefreshKey(prev => prev + 1);
       toast.success("Due Successfully Added");
     }).catch((err) => {
       toast.error(err.response?.data?.error || "Something went wrong");

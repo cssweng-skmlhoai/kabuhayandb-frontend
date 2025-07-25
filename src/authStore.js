@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
-import { toast } from "sonner";
 
 const useAuthStore = create(
   persist(
@@ -35,7 +34,6 @@ const useAuthStore = create(
             memberId: user.member_id,
           });
         } catch (error) {
-          toast.error(error.response?.data?.error || "Something went wrong");
           set({
             isAuth: false,
             isAdmin: false,

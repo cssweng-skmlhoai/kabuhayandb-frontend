@@ -36,7 +36,7 @@ const Login = () => {
         navigate(`/memberView`);
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || "Something went wrong");
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 

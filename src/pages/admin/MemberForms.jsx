@@ -92,6 +92,28 @@ const MemberForms = ({ view }) => {
         const data = res.data;
         setAllDetails(data);
 
+        const bufferToBase64Image = (bufferData) => {
+          if (!bufferData) return null;
+
+          const binary = new Uint8Array(bufferData).reduce(
+            (acc, byte) => acc + String.fromCharCode(byte),
+            ""
+          );
+          const base64 = btoa(binary);
+          const mimeTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+          for (let mime of mimeTypes) {
+            const testSrc = `data:${mime};base64,${base64}`;
+            const img = new Image();
+            img.src = testSrc;
+            if (img.complete || img.width > 0) {
+              return testSrc;
+            }
+          }
+
+          return null;
+        };
+
         const signatureImage = bufferToBase64Image(data.confirmity_signature?.data);
 
         setMemberData({
@@ -140,28 +162,6 @@ const MemberForms = ({ view }) => {
       });
   }, [id, API_SECRET]);
 
-  const bufferToBase64Image = (bufferData) => {
-    if (!bufferData) return null;
-
-    const binary = new Uint8Array(bufferData).reduce(
-      (acc, byte) => acc + String.fromCharCode(byte),
-      ""
-    );
-    const base64 = btoa(binary);
-    const mimeTypes = ["image/jpeg", "image/jpg", "image/png"];
-
-    for (let mime of mimeTypes) {
-      const testSrc = `data:${mime};base64,${base64}`;
-      const img = new Image();
-      img.src = testSrc;
-      if (img.complete || img.width > 0) {
-        return testSrc;
-      }
-    }
-
-    return null;
-  };
-
   useEffect(() => {
     const area = parseFloat(householdData.area) || 0;
     const openSpace = parseFloat(householdData.open_space_share) || 0;
@@ -178,27 +178,37 @@ const MemberForms = ({ view }) => {
     e.preventDefault();
 
     const formData = new FormData();
+    let confirmityFile = memberData.confirmity_signature;
 
-    if (memberData.confirmity_signature instanceof File) {
+    if (typeof confirmityFile === "string") {
+      confirmityFile = base64ToFile(confirmityFile, "signature.png"); // or .jpg
+    }
+
+    if (confirmityFile instanceof File) {
       const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-      if (!validTypes.includes(memberData.confirmity_signature.type)) {
+      if (!validTypes.includes(confirmityFile.type)) {
         toast.error("Only JPG, JPEG, or PNG files are allowed.");
         return;
       }
 
-      if (memberData.confirmity_signature.size > 16 * 1024 * 1024) {
+      if (confirmityFile.size > 16 * 1024 * 1024) {
         toast.error("Signature image must be under 16MB.");
         return;
       }
 
-      formData.append("confirmity_signature", memberData.confirmity_signature);
+      formData.append("confirmity_signature", confirmityFile);
     }
+
+    const cleanedMemberData = {
+      ...memberData,
+      confirmity_signature: confirmityFile,
+    };
 
     const cleanedFamilyMembers = familyMembers.map(
       ({ age: _age, tempId: _tempId, ...rest }) => rest
     );
 
-    formData.append("members", JSON.stringify(memberData));
+    formData.append("members", JSON.stringify(cleanedMemberData));
     formData.append("families", JSON.stringify(familyData));
     formData.append("households", JSON.stringify(householdData));
     formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
@@ -215,8 +225,23 @@ const MemberForms = ({ view }) => {
         toast.success("Member Successfully Updated");
       })
       .catch((err) => {
-        toast.error(err.response?.data?.error || "Something went wrong")
+        toast.error(err.response?.data?.error || "Something went wrong");
       });
+  };
+
+  const base64ToFile = (base64String, filename) => {
+    const arr = base64String.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    console.log(mime);
+
+    return new File([u8arr], filename, { type: mime });
   };
 
   const formatDate = (isoDate) => {

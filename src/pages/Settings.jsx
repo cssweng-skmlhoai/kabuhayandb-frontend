@@ -113,19 +113,25 @@ const Settings = () => {
       }
 
       if (option === "picture" && pfp) {
+        let profileFile = pfp;
+
+        if (typeof pfp === "string") {
+          profileFile = base64ToFile(pfp, "profile-picture");
+        }
+
         const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-        if (!validTypes.includes(pfp.type)) {
+        if (!validTypes.includes(profileFile.type)) {
           toast.error("Only JPG, JPEG, or PNG Files are Allowed.");
           return;
         }
 
-        if (pfp.size > 16 * 1024 * 1024) {
+        if (profileFile.size > 16 * 1024 * 1024) {
           toast.error("File Size Must be Under 16MB.");
           return;
         }
 
         const formData = new FormData();
-        formData.append("pfp", pfp);
+        formData.append("pfp", profileFile);
 
         await axios.post(`${API_URL}/uploads/member/${memberId}`, formData, {
           headers: {
@@ -140,6 +146,19 @@ const Settings = () => {
       toast.error(err.response?.data?.error || "Something went wrong");
     }
   };
+
+  const base64ToFile = (base64String, filename) => {
+    const arr = base64String.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  };
+
 
   return (
     <div className="font-poppins">
