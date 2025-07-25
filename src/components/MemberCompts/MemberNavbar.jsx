@@ -29,7 +29,7 @@ const MemberNavbar = ({ member }) => {
             <span className="greeting"> Mabuhay, {member?.first_name || "member"}!</span>
           </div>
           <div className="actions">
-            <Link to="/settings" className="icon-label">
+            <Link to="/member-settings" className="icon-label">
               <Settings />
               <span>Settings</span>
             </Link>
