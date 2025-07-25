@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
+import { toast } from "sonner";
 
 const useAuthStore = create(
   persist(
@@ -8,7 +9,6 @@ const useAuthStore = create(
       isAuth: false,
       isAdmin: false,
       memberId: null,
-      pfp: null,
 
       login: async (username, password) => {
         const API_SECRET = import.meta.env.VITE_API_SECRET;
@@ -33,10 +33,9 @@ const useAuthStore = create(
             isAuth: true,
             isAdmin: user.is_admin,
             memberId: user.member_id,
-            pfp: user.pfp,
           });
         } catch (error) {
-          console.log(error);
+          toast.error(error.response?.data?.error || "Something went wrong");
           set({
             isAuth: false,
             isAdmin: false,

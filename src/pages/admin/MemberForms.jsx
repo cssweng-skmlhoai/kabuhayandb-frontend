@@ -92,6 +92,8 @@ const MemberForms = ({ view }) => {
         const data = res.data;
         setAllDetails(data);
 
+        const signatureImage = bufferToBase64Image(data.confirmity_signature?.data);
+
         setMemberData({
           last_name: data.last_name,
           first_name: data.first_name,
@@ -99,7 +101,7 @@ const MemberForms = ({ view }) => {
           birth_date: data.birth_date,
           gender: data.gender,
           contact_number: data.contact_number,
-          confirmity_signature: data.confirmity_signature,
+          confirmity_signature: signatureImage,
           remarks: data.remarks,
         });
 
@@ -138,6 +140,28 @@ const MemberForms = ({ view }) => {
       });
   }, [id, API_SECRET]);
 
+  const bufferToBase64Image = (bufferData) => {
+    if (!bufferData) return null;
+
+    const binary = new Uint8Array(bufferData).reduce(
+      (acc, byte) => acc + String.fromCharCode(byte),
+      ""
+    );
+    const base64 = btoa(binary);
+    const mimeTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+    for (let mime of mimeTypes) {
+      const testSrc = `data:${mime};base64,${base64}`;
+      const img = new Image();
+      img.src = testSrc;
+      if (img.complete || img.width > 0) {
+        return testSrc;
+      }
+    }
+
+    return null;
+  };
+
   useEffect(() => {
     const area = parseFloat(householdData.area) || 0;
     const openSpace = parseFloat(householdData.open_space_share) || 0;
@@ -153,28 +177,46 @@ const MemberForms = ({ view }) => {
   const handleUpdates = (e) => {
     e.preventDefault();
 
+    const formData = new FormData();
+
+    if (memberData.confirmity_signature instanceof File) {
+      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+      if (!validTypes.includes(memberData.confirmity_signature.type)) {
+        toast.error("Only JPG, JPEG, or PNG files are allowed.");
+        return;
+      }
+
+      if (memberData.confirmity_signature.size > 16 * 1024 * 1024) {
+        toast.error("Signature image must be under 16MB.");
+        return;
+      }
+
+      formData.append("confirmity_signature", memberData.confirmity_signature);
+    }
+
     const cleanedFamilyMembers = familyMembers.map(
       ({ age: _age, tempId: _tempId, ...rest }) => rest
     );
 
-    const payload = {
-      members: memberData,
-      families: familyData,
-      households: householdData,
-      family_members: cleanedFamilyMembers,
-    };
+    formData.append("members", JSON.stringify(memberData));
+    formData.append("families", JSON.stringify(familyData));
+    formData.append("households", JSON.stringify(householdData));
+    formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
 
     axios
-      .put(`${API_URL}/members/info/${id}`, payload, {
+      .put(`${API_URL}/members/info/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
+          "Content-Type": "multipart/form-data",
         },
       })
       .then(() => {
         navigate("/members");
         toast.success("Member Successfully Updated");
       })
-      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
+      .catch((err) => {
+        toast.error(err.response?.data?.error || "Something went wrong")
+      });
   };
 
   const formatDate = (isoDate) => {
@@ -481,7 +523,7 @@ const MemberForms = ({ view }) => {
             )}
           </div>
 
-          <Accordion type="multiple" collapsible>
+          <Accordion type="multiple">
             <div className="flex flex-col gap-4">
               {filteredMembers?.map((member, index) => {
                 const key = member.id ?? member.tempId;
@@ -674,22 +716,34 @@ const MemberForms = ({ view }) => {
 
         <div className="flex flex-col gap-4 xl:col-start-3">
           <div className="bg-white p-5 flex flex-col rounded-md font-poppins font-normal">
-            <label htmlFor="signature">Conformity/Signature</label>
+            <label htmlFor="signature">Confirmity/Signature</label>
+            {memberData?.confirmity_signature ? (
+              <img
+                src={typeof memberData.confirmity_signature === "string"
+                  ? memberData.confirmity_signature
+                  : URL.createObjectURL(memberData.confirmity_signature)}
+                alt="Signature"
+                className="w-full max-w-xs border border-gray-300 rounded mb-3"
+              />
+            ) : (
+              <p className="text-sm italic text-gray-500 mb-3 bg-customgray2 pl-2 py-2 rounded-md">No signature uploaded.</p>
+            )}
             <input
-              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
-              placeholder="-----"
-              type="text"
-              name=""
-              id=""
-              disabled={!isEdit}
-              value={memberData?.confirmity_signature || ""}
+              type="file"
+              accept="image/*"
               onChange={(e) =>
-                setMemberData({
-                  ...memberData,
-                  confirmity_signature: e.target.value,
-                })
+                setMemberData({ ...memberData, confirmity_signature: e.target.files[0], })
               }
+              className="hidden"
+              id="signature-upload"
             />
+
+            <label
+              htmlFor="signature-upload"
+              className={`w-1/2 py-2 rounded-md text-sm bg-blue-button text-white border border-black hover:bg-black duration-200 text-center cursor-pointer mb-3 ${isEdit ? "" : "hidden"}`}
+            >
+              Upload Signature
+            </label>
 
             <label htmlFor="remarks">Remarks</label>
             <input
@@ -698,7 +752,6 @@ const MemberForms = ({ view }) => {
               type="text"
               name=""
               id=""
-              disabled={!isEdit}
               value={memberData?.remarks || ""}
               onChange={(e) =>
                 setMemberData({ ...memberData, remarks: e.target.value })

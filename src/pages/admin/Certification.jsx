@@ -24,7 +24,7 @@ const Certificate = () => {
     const form = pdfDoc.getForm();
 
     try {
-      const fullname = `${member.first_name} ${member.last_name}`.trim();
+      const fullname = `${member.first_name} ${member.middle_name} ${member.last_name}`.trim();
 
       form.getTextField("crn").setText(member?.crn.toString() || "");
       form.getTextField("name").setText(fullname || "");

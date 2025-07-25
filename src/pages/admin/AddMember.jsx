@@ -78,30 +78,78 @@ const AddMember = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const formData = new FormData();
+
+    if (memberData.confirmity_signature instanceof File) {
+      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+      if (!validTypes.includes(memberData.confirmity_signature.type)) {
+        toast.error("Only JPG, JPEG, or PNG files are allowed.");
+        return;
+      }
+
+      if (memberData.confirmity_signature.size > 16 * 1024 * 1024) {
+        toast.error("Signature image must be under 16MB.");
+        return;
+      }
+
+      formData.append("confirmity_signature", memberData.confirmity_signature);
+    }
+
     const { age: _age, ...cleanedMemberData } = memberData;
     const cleanedFamilyMembers = familyMembers.map(
       ({ age: _age, ...rest }) => rest
     );
 
-    const payload = {
-      members: cleanedMemberData,
-      families: familyData,
-      households: householdData,
-      family_members: cleanedFamilyMembers,
-    };
+    formData.append("members", JSON.stringify(cleanedMemberData));
+    formData.append("families", JSON.stringify(familyData));
+    formData.append("households", JSON.stringify(householdData));
+    formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
+
+    logUndefinedFields(cleanedMemberData, "memberData");
+    logUndefinedFields(familyData, "familyData");
+    logUndefinedFields(householdData, "householdData");
+    logUndefinedFields(cleanedFamilyMembers, "familyMembers");
 
     axios
-      .post(`${API_URL}/members/info`, payload, {
+      .post(`${API_URL}/members/info`, formData, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
+          "Content-Type": "multipart/form-data",
         },
       })
       .then(() => {
         navigate("/members");
         toast.success("Member Successfully Added");
       })
-      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
+      .catch((err) => {
+        toast.error(err.response?.data?.error || "Something went wrong")
+      });
   };
+
+  function logUndefinedFields(data, label = "Root") {
+    const checkObject = (obj, path = label) => {
+      for (const [key, value] of Object.entries(obj)) {
+        const fullPath = `${path}.${key}`;
+        if (value === undefined) {
+          console.warn(`Undefined value found at: ${fullPath}`);
+        } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+          checkObject(value, fullPath);
+        }
+      }
+    };
+
+    if (Array.isArray(data)) {
+      data.forEach((item, index) => {
+        if (typeof item === "object" && item !== null) {
+          checkObject(item, `${label}[${index}]`);
+        }
+      });
+    } else if (typeof data === "object" && data !== null) {
+      checkObject(data);
+    } else {
+      console.warn("Data provided is not an object or array.");
+    }
+  }
 
   const confirmRemoveFamilyMember = (index, fullName) => {
     setMemberToDeleteId(index);
@@ -388,7 +436,7 @@ const AddMember = () => {
             </div>
           </div>
 
-          <Accordion type="multiple" collapsible>
+          <Accordion type="multiple">
             <div className="flex flex-col gap-4">
               {familyMembers.map((member, index) => (
                 <AccordionItem key={index} value={`member${index}`}>
@@ -572,20 +620,33 @@ const AddMember = () => {
         <div className="flex flex-col gap-4 xl:col-start-3">
           <div className="bg-white p-5 flex flex-col rounded-md font-poppins font-normal">
             <label htmlFor="signature">Confirmity/Signature</label>
+            {memberData.confirmity_signature ? (
+              <img
+                src={typeof memberData.confirmity_signature === "string"
+                  ? memberData.confirmity_signature
+                  : URL.createObjectURL(memberData.confirmity_signature)}
+                alt="Signature"
+                className="w-full max-w-xs border border-gray-300 rounded mb-3"
+              />
+            ) : (
+              <p className="text-sm italic text-gray-500 mb-3 bg-customgray2 pl-2 py-2 rounded-md">No signature uploaded.</p>
+            )}
             <input
-              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
-              placeholder="-----"
-              type="text"
-              name=""
-              id=""
-              value={memberData.confirmity_signature || ""}
+              type="file"
+              accept="image/*"
               onChange={(e) =>
-                setMemberData({
-                  ...memberData,
-                  confirmity_signature: e.target.value,
-                })
+                setMemberData({ ...memberData, confirmity_signature: e.target.files[0], })
               }
+              className="hidden"
+              id="signature-upload"
             />
+
+            <label
+              htmlFor="signature-upload"
+              className="w-1/2 py-2 rounded-md text-sm bg-blue-button text-white border border-black hover:bg-black duration-200 text-center cursor-pointer mb-3"
+            >
+              Upload Signature
+            </label>
 
             <label htmlFor="remarks">Remarks</label>
             <input

@@ -44,7 +44,6 @@ const Settings = () => {
         Authorization: `Bearer ${API_SECRET}`,
       },
     }).then((res) => {
-      console.log(memberId);
       setCredentialsId(res.data.id);
       setInitialName(res.data.username);
 
@@ -55,7 +54,7 @@ const Settings = () => {
     }).catch((err) => {
       toast.error(err.response?.data?.error || "Something went wrong");
     });
-  }, [API_SECRET]);
+  }, [API_SECRET, memberId]);
 
   const bufferToBase64Image = (bufferData) => {
     if (!bufferData) return null;
@@ -99,8 +98,9 @@ const Settings = () => {
           return;
         }
 
-        await axios.put(`${API_URL}/credentials/${credentialsId}`, {
-          password: newPass,
+        await axios.post(`${API_URL}/credentials/password/${memberId}`, {
+          current_password: currentPass,
+          new_password: newPass,
         }, {
           headers: { Authorization: `Bearer ${API_SECRET}` },
         });

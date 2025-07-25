@@ -124,7 +124,7 @@ const HHMembers = ({ view }) => {
         setSavedData(normalizedData);
         form.reset(normalizedData);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
   }, [form, memberId, API_SECRET]);
 
   // function for the deletion of a family member from the form
@@ -184,8 +184,7 @@ const HHMembers = ({ view }) => {
       navigate(`/memberView`);
       toast.success("Changes saved successfully!");
     } catch (err) {
-      console.log(err);
-      toast.error("Something went wrong. Please try again!");
+      toast.error(err.response?.data?.error || "Something went wrong");
     }
   };
 

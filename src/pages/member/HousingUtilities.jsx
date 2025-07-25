@@ -72,7 +72,7 @@ const HousingUtilities = ({ view }) => {
         setSavedData(household);
         form.reset(household);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
   }, [form, memberId, API_SECRET]);
 
   // function to update housing & utilities details
@@ -111,8 +111,7 @@ const HousingUtilities = ({ view }) => {
       navigate(`/memberView/housing-utilities`);
       toast.success("Changes saved successfully!");
     } catch (err) {
-      console.log(err);
-      toast.error("Something went wrong. Please try again!");
+      toast.error(err.response?.data?.error || "Something went wrong");
     }
   };
 

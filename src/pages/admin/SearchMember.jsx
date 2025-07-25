@@ -69,7 +69,7 @@ const SearchMember = ({ purpose }) => {
           toast.error(err.response?.data?.error || "Something went wrong");
         });
     }
-  }, [purpose]);
+  }, [purpose, API_SECRET]);
 
   const searchUser = () => {
     axios

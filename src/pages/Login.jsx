@@ -36,7 +36,7 @@ const Login = () => {
         navigate(`/memberView`);
       }
     } catch (error) {
-      toast.error("Invalid username or password. Please try again.");
+      toast.error(error.response?.data?.error || "Something went wrong");
     }
   };
 

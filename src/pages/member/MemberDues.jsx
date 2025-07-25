@@ -59,7 +59,7 @@ const MemberDues = () => {
 
     const unpaid = filtered.filter(d => d.status === "Unpaid").sort((a, b) => new Date(b.due_date) - new Date(a.due_date));
 
-    const paid = filtered.filter(d => d.status === "Paid").sort((a, b) => new Date(b.due_date) - new Date(a.due_date));
+    const paid = filtered.filter(d => d.status === "Paid").sort((a, b) => new Date(b.date_paid) - new Date(a.date_paid));
 
     setFilteredUnpaid(unpaid);
     setFilteredPaid(paid);
@@ -178,7 +178,7 @@ const MemberDues = () => {
                     <div key={due.id} className="payment-row">
                       <span>{due.receipt_number}</span>
                       <span>₱ {Number(due.amount).toFixed(2)}</span>
-                      <span>{format(new Date(due.due_date), "MMMM d, yyyy")}</span>
+                      <span>{format(new Date(due.date_paid), "MMMM d, yyyy")}</span>
                     </div>
                   ))}
                 </div>
