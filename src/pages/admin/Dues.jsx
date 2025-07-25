@@ -260,12 +260,10 @@ const Dues = () => {
                   <table className="w-full table-auto border-separate border-spacing-y-3 text-sm">
                     <thead>
                       <tr className="text-left">
-                        <th className="px-4 py-2 rounded-tl-md">
-                          Receipt No.
-                        </th>
-                        <th className="px-4 py-2 rounded-tr-md">Due Type</th>
+                        <th className="px-4 py-2 rounded-tl-md">Due Type</th>
                         <th className="px-4 py-2">Amount</th>
                         <th className="px-4 py-2 rounded-tr-md">Due Date</th>
+                        <th className="px-4 py-2 rounded-tr-md">Receipt No.</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -282,10 +280,10 @@ const Dues = () => {
                             className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md"
                             onClick={() => openUpdateForm(due)}
                           >
-                            <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
-                            <td className="px-4 py-2">{due.due_type}</td>
+                            <td className="px-4 py-2 rounded-l-md">{due.due_type}</td>
                             <td className="px-4 py-2">₱ {parseFloat(due.amount).toLocaleString("en-US")}</td>
                             <td className="px-4 py-2">{new Date(due.due_date).toLocaleDateString()}</td>
+                            <td className="px-4 py-2">{due.receipt_number}</td>
                             <td className="text-gray-500 text-2xl font-light rounded-r-md pr-2">&rsaquo;</td>
                           </tr>
                         ))
@@ -318,12 +316,10 @@ const Dues = () => {
                   <table className="w-full table-auto border-separate border-spacing-y-3 text-sm">
                     <thead>
                       <tr className="text-left">
-                        <th className="px-4 py-2 rounded-tl-md">
-                          Receipt No.
-                        </th>
-                        <th className="px-4 py-2">Due Type</th>
+                        <th className="px-4 py-2 rounded-tl-md">Due Type</th>
                         <th className="px-4 py-2">Amount</th>
-                        <th className="px-4 py-2 rounded-tr-md">Paid Date</th>
+                        <th className="px-4 py-2">Date Paid</th>
+                        <th className="px-4 py-2 rounded-tr-md">Receipt No.</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -340,10 +336,10 @@ const Dues = () => {
                             className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md"
                             onClick={() => openUpdateForm(due)}
                           >
-                            <td className="px-4 py-2 rounded-l-md">{due.receipt_number}</td>
-                            <td className="px-4 py-2">{due.due_type}</td>
+                            <td className="px-4 py-2 rounded-l-md">{due.due_type}</td>
                             <td className="px-4 py-2">₱ {parseFloat(due.amount).toLocaleString("en-US")}</td>
-                            <td className="px-4 py-2 ">{new Date(due.date_paid).toLocaleDateString()}</td>
+                            <td className="px-4 py-2">{new Date(due.date_paid).toLocaleDateString()}</td>
+                            <td className="px-4 py-2">{due.receipt_number}</td>
                             <td className="text-gray-500 text-2xl font-light rounded-r-md pr-2">&rsaquo;</td>
                           </tr>
                         ))
