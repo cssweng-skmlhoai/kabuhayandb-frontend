@@ -29,8 +29,9 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import useAuthStore from "@/authStore";
 
 const MembersList = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -45,6 +46,9 @@ const MembersList = () => {
   const indexOfFirstMember = indexOfLastMember - membersPerPage;
   const currentMembers = members.slice(indexOfFirstMember, indexOfLastMember);
   const totalPages = Math.ceil(members.length / membersPerPage);
+
+  const { memberId, logout } = useAuthStore();
+  const navigate = useNavigate();
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
@@ -103,6 +107,10 @@ const MembersList = () => {
         setMembers((prev) => prev.filter((m) => m.member_id !== id));
         setDialogOpen(false);
         toast.success("Member Successfully Deleted");
+        if (id === memberId) {
+          logout();
+          navigate("/login");
+        }
       })
       .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
   };

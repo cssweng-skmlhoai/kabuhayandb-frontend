@@ -128,9 +128,10 @@ const MemberDues = () => {
               </p>
             ) : (
               <input
-                className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black"
+                className="bg-customgray2 p-2 text-center text-lg rounded-sm w-full xl:border"
                 type="text"
                 readOnly
+                disabled
                 value={`₱ ${getOutstandingBalance(selectedType).toLocaleString("en-US")}`}
               />
             )}

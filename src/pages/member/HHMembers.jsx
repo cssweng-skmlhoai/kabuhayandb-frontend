@@ -24,10 +24,11 @@ import "./Members.css";
 import useAuthStore from "@/authStore";
 
 const HHMembers = ({ view }) => {
-  const { memberId } = useAuthStore();
+  const memberId = useAuthStore((s) => s.memberId);
   const navigate = useNavigate();
 
   const [savedData, setSavedData] = useState(null);
+  const [signatureFile, setSignatureFile] = useState(null);
   const [openAccordions, setOpenAccordions] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -98,6 +99,8 @@ const HHMembers = ({ view }) => {
       })
       .then((res) => {
         const data = res.data;
+        const signatureBase64 = bufferToBase64Image(data.confirmity_signature?.data);
+
         const normalizedData = {
           last_name: data.last_name,
           first_name: data.first_name,
@@ -121,11 +124,44 @@ const HHMembers = ({ view }) => {
           })),
         };
 
+        setSignatureFile(signatureBase64);
         setSavedData(normalizedData);
         form.reset(normalizedData);
       })
       .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
   }, [form, memberId, API_SECRET]);
+
+  const base64ToFile = (base64String, filename) => {
+    const arr = base64String.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new File([u8arr], filename, { type: mime });
+  };
+
+  const bufferToBase64Image = (bufferData) => {
+    if (!bufferData) return null;
+
+    const binary = new Uint8Array(bufferData).reduce(
+      (acc, byte) => acc + String.fromCharCode(byte),
+      ""
+    );
+    const base64 = btoa(binary);
+    const mimeTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+    for (let mime of mimeTypes) {
+      const testSrc = `data:${mime};base64,${base64}`;
+      const img = new Image();
+      img.src = testSrc;
+      if (img.complete || img.width > 0) {
+        return testSrc;
+      }
+    }
+
+    return null;
+  };
 
   // function for the deletion of a family member from the form
   const handleDeleteFamilyMember = (indexToRemove) => {
@@ -173,10 +209,30 @@ const HHMembers = ({ view }) => {
       family_members: cleanedFamilyMembers,
     };
 
+    const formData = new FormData();
+
+    formData.append("members", JSON.stringify(payload.members));
+    formData.append("families", JSON.stringify(payload.families));
+    formData.append("households", JSON.stringify(payload.households));
+    formData.append("family_members", JSON.stringify(payload.family_members));
+
+    let fileToUpload = signatureFile;
+    if (typeof fileToUpload === "string") {
+      fileToUpload = base64ToFile(fileToUpload, "signature.png");
+    }
+
+    if (fileToUpload instanceof File) {
+      formData.append("confirmity_signature", fileToUpload);
+    } else {
+      toast.error("Missing required signature file.");
+      return;
+    }
+
     try {
-      await axios.put(`${API_URL}/members/info/${memberId}`, payload, {
+      await axios.put(`${API_URL}/members/info/${memberId}`, formData, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
+          "Content-Type": "multipart/form-data",
         },
       });
 

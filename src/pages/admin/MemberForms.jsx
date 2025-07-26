@@ -181,7 +181,7 @@ const MemberForms = ({ view }) => {
     let confirmityFile = memberData.confirmity_signature;
 
     if (typeof confirmityFile === "string") {
-      confirmityFile = base64ToFile(confirmityFile, "signature.png"); // or .jpg
+      confirmityFile = base64ToFile(confirmityFile, "signature");
     }
 
     if (confirmityFile instanceof File) {
@@ -213,6 +213,11 @@ const MemberForms = ({ view }) => {
     formData.append("households", JSON.stringify(householdData));
     formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
 
+    console.log(cleanedMemberData);
+    console.log(familyData);
+    console.log(householdData);
+    console.log(cleanedFamilyMembers);
+
     axios
       .put(`${API_URL}/members/info/${id}`, formData, {
         headers: {
@@ -239,7 +244,6 @@ const MemberForms = ({ view }) => {
     while (n--) {
       u8arr[n] = bstr.charCodeAt(n);
     }
-    console.log(mime);
 
     return new File([u8arr], filename, { type: mime });
   };

@@ -14,10 +14,11 @@ import "./Members.css";
 import useAuthStore from "@/authStore";
 
 const HousingUtilities = ({ view }) => {
-  const { memberId } = useAuthStore();
+  const memberId = useAuthStore((s) => s.memberId);
   const navigate = useNavigate();
 
   const [savedData, setSavedData] = useState(null);
+  const [signatureFile, setSignatureFile] = useState(null);
   const isEdit = view === "edit";
 
   const form = useForm({
@@ -52,6 +53,31 @@ const HousingUtilities = ({ view }) => {
       })
       .then((res) => {
         const data = res.data;
+
+        const bufferToBase64Image = (bufferData) => {
+          if (!bufferData) return null;
+
+          const binary = new Uint8Array(bufferData).reduce(
+            (acc, byte) => acc + String.fromCharCode(byte),
+            ""
+          );
+          const base64 = btoa(binary);
+          const mimeTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+          for (let mime of mimeTypes) {
+            const testSrc = `data:${mime};base64,${base64}`;
+            const img = new Image();
+            img.src = testSrc;
+            if (img.complete || img.width > 0) {
+              return testSrc;
+            }
+          }
+
+          return null;
+        };
+
+        const signatureImage = bufferToBase64Image(data.confirmity_signature?.data);
+
         const household = {
           tct_no: data.tct_no,
           block_no: data.block_no,
@@ -59,7 +85,7 @@ const HousingUtilities = ({ view }) => {
           area: data.area,
           open_space_share: data.open_space_share,
           total: data.total || "",
-          confirmity_signature: data.confirmity_signature || "",
+          confirmity_signature: signatureImage || "",
           remarks: data.remarks,
           condition_type: data.condition_type,
           Meralco: data.Meralco,
@@ -70,6 +96,7 @@ const HousingUtilities = ({ view }) => {
         };
 
         setSavedData(household);
+        setSignatureFile(signatureImage || null);
         form.reset(household);
       })
       .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
@@ -77,42 +104,87 @@ const HousingUtilities = ({ view }) => {
 
   // function to update housing & utilities details
   const handleUpdates = async (data) => {
+
+    const formData = new FormData();
+    let confirmityFile = signatureFile;
+
+    if (typeof confirmityFile === "string") {
+      confirmityFile = base64ToFile(confirmityFile, "signature");
+    }
+
+    if (confirmityFile instanceof File) {
+      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+      if (!validTypes.includes(confirmityFile.type)) {
+        toast.error("Only JPG, JPEG, or PNG files are allowed.");
+        return;
+      }
+
+      if (confirmityFile.size > 16 * 1024 * 1024) {
+        toast.error("Signature image must be under 16MB.");
+        return;
+      }
+
+      formData.append("confirmity_signature", confirmityFile);
+    }
+
     const payload = {
       members: {
-        //confirmity_signature: data.confirmity_signature,
+        confirmity_signature: data.confirmity_signature,
         remarks: data.remarks,
       },
-      families: {},
+      families: {
+        land_acquisition: data.land_acquisition,
+        status_of_occupancy: data.status_of_occupancy,
+      },
       households: {
         tct_no: data.tct_no,
         block_no: data.block_no,
         lot_no: data.lot_no,
         area: data.area,
         open_space_share: data.open_space_share,
-        //total: data.total,
         condition_type: data.condition_type,
         Meralco: data.Meralco,
         Maynilad: data.Maynilad,
         Septic_Tank: data.Septic_Tank,
-        //land_acquisition: data.land_acquisition,
-        //status_of_occupancy: data.status_of_occupancy,
       },
       family_members: [],
     };
 
+    formData.append("members", JSON.stringify(payload.members));
+    formData.append("families", JSON.stringify(payload.families));
+    formData.append("households", JSON.stringify(payload.households));
+    formData.append("family_members", JSON.stringify(payload.family_members));
+
+    console.log(payload);
+
     try {
-      await axios.put(`${API_URL}/members/info/${memberId}`, payload, {
+      await axios.put(`${API_URL}/members/info/${memberId}`, formData, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
+          "Content-Type": "multipart/form-data",
         },
       });
 
       setSavedData(data);
-      navigate(`/memberView/housing-utilities`);
       toast.success("Changes saved successfully!");
+      navigate(`/memberView/housing-utilities`);
     } catch (err) {
       toast.error(err.response?.data?.error || "Something went wrong");
     }
+  };
+
+  const base64ToFile = (base64String, filename) => {
+    const arr = base64String.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], filename, { type: mime });
   };
 
   return (
@@ -173,12 +245,60 @@ const HousingUtilities = ({ view }) => {
 
           <Card className="card">
             <CardContent className="card-content">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <ClearableInputField control={form.control} name="confirmity_signature" label="Conformity/ Signature" isEdit={isEdit} inputProps={{ placeholder: "----" }} />
-                <ClearableInputField control={form.control} name="remarks" label="Remarks" isEdit={isEdit} inputProps={{ placeholder: "Remarks" }} />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="signature" className="font-medium">Conformity/Signature</label>
+
+                  {signatureFile ? (
+                    <img
+                      src={
+                        typeof signatureFile === "string" ? signatureFile : URL.createObjectURL(signatureFile)
+                      }
+                      alt="Signature"
+                      className="w-full max-w-xs border border-gray-300 rounded mb-3"
+                    />
+                  ) : (
+                    <p className={`text-sm italic text-gray-500 mb-3 bg-customgray2 pl-2 rounded-md ${isEdit ? "py-2" : "py-2.5"}`}>
+                      No signature uploaded.
+                    </p>
+                  )}
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setSignatureFile(e.target.files[0])}
+                    className="hidden"
+                    id="signature-upload"
+                  />
+
+                  <label
+                    htmlFor="signature-upload"
+                    className={`w-1/2 py-2 rounded-md text-sm bg-blue-button text-white border border-black hover:bg-black duration-200 text-center cursor-pointer mb-3 ${isEdit ? "" : "hidden"
+                      } sm:hidden`}
+                  >
+                    Upload Signature
+                  </label>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <ClearableInputField
+                    control={form.control}
+                    name="remarks"
+                    label="Remarks"
+                    isEdit={isEdit}
+                    inputProps={{ placeholder: "Remarks" }}
+                  />
+                </div>
               </div>
+
+              <label
+                htmlFor="signature-upload"
+                className={`w-1/4 py-2 rounded-md text-sm bg-blue-button text-white border border-black hover:bg-black duration-200 text-center cursor-pointer ${isEdit ? "sm:block hidden" : "hidden"
+                  }`}
+              >
+                Upload Signature
+              </label>
             </CardContent>
-          </Card >
+          </Card>
 
           <Card className="card">
             <CardContent className="card-content space-y-4">
