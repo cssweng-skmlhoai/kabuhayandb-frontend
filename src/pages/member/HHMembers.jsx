@@ -110,18 +110,20 @@ const HHMembers = ({ view }) => {
           gender: data.gender,
           contact_number: data.contact_number,
           position: data.position,
-          family: (data.family_members || []).map((fm) => ({
-            id: fm.id,
-            last_name: fm.last_name,
-            first_name: fm.first_name,
-            middle_name: fm.middle_name,
-            relation_to_member: fm.relation,
-            birth_date: fm.birth_date,
-            age: fm.age,
-            gender: fm.gender,
-            educational_attainment: fm.educational_attainment,
-            update: true,
-          })),
+          family: (data.family_members || [])
+            .filter((fm) => fm.update !== false)
+            .map((fm) => ({
+              id: fm.id,
+              last_name: fm.last_name,
+              first_name: fm.first_name,
+              middle_name: fm.middle_name,
+              relation_to_member: fm.relation,
+              birth_date: fm.birth_date,
+              age: fm.age,
+              gender: fm.gender,
+              educational_attainment: fm.educational_attainment,
+              update: true,
+            })),
         };
 
         setSignatureFile(signatureBase64);
@@ -224,7 +226,7 @@ const HHMembers = ({ view }) => {
     if (fileToUpload instanceof File) {
       formData.append("confirmity_signature", fileToUpload);
     } else {
-      toast.error("Missing required signature file.");
+      toast.error("Missing required signature file. Try Reloading the Page");
       return;
     }
 
@@ -252,6 +254,7 @@ const HHMembers = ({ view }) => {
             <>
               <Button
                 variant="cancel"
+                className="p-6 border border-black hover:bg-gray-300"
                 onClick={() => {
                   if (savedData) {
                     form.reset(savedData);
@@ -272,6 +275,7 @@ const HHMembers = ({ view }) => {
           ) : (
             <Button
               variant="edit_details"
+              className="p-6 hover:bg-black"
               onClick={() => navigate(`/memberView/edit`)}
             >
               {" "}
@@ -309,80 +313,77 @@ const HHMembers = ({ view }) => {
               </CardContent >
             </Card >
 
-            <Card className="card">
-              <CardContent className="card-content">
-                <div className="accordion">
-                  <p className="text-lg font-semibold"> Family Composition ({visibleFamilyCount}) </p>
-                  {
-                    isEdit && (
-                      <>
-                        <Button variant="add" onClick={() => setIsDialogOpen(true)}>
-                          <Plus className="mr-1" />
-                          Add
-                        </Button>
+            <div className="flex flex-col gap-4 card">
+              <div className="bg-white px-5 py-6 flex justify-between items-center rounded-md font-poppins">
+                <p className="font-medium">Family Composition ({visibleFamilyCount})</p>
 
-                        <AddFamilyMemberDialog
-                          open={isDialogOpen}
-                          onOpenChange={setIsDialogOpen}
-                          onAdd={(data) => {
-                            append({ ...data, update: true });
-                            setOpenAccordions((prev) => [...prev, `member-${fields.length}`]);
-                          }}
-                        />
-                      </>
-                    )
-                  }
-                </div >
+                {isEdit && (
+                  <div
+                    className="flex items-center gap-2 bg-customgray1 px-2 py-2 rounded-sm cursor-pointer hover:bg-gray-400 duration-300"
+                    onClick={() => setIsDialogOpen(true)}
+                  >
+                    <Plus className="mr-1 size-5" />
+                    <p>Add</p>
+                  </div>
+                )}
+              </div>
 
-                <Accordion
-                  type="multiple"
-                  value={openAccordions}
-                  onValueChange={setOpenAccordions}
-                  className="space-y-4"
-                >
+              <AddFamilyMemberDialog
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                onAdd={(data) => {
+                  append({ ...data, update: true });
+                  setOpenAccordions((prev) => [...prev, `member-${fields.length}`]);
+                }}
+              />
+
+              <Accordion type="multiple" value={openAccordions} onValueChange={setOpenAccordions}>
+                <div className="flex flex-col gap-4">
                   {fields.map((member, index) => {
                     const isDeleted = form.getValues(`family.${index}.update`) === false;
                     if (isDeleted) return null;
+
                     const watchedFirstName = watchedFamily?.[index]?.first_name;
 
                     return (
                       <AccordionItem key={member.id ?? `new-${index}`} value={`member-${index}`}>
-                        <AccordionTrigger className={`text-base`}> {watchedFirstName || `Family Member ${index + 1}`} </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="space-y-4 mt-4 grid gap-4 sm:grid-cols-2">
-                            <ClearableInputField control={form.control} name={`family.${index}.last_name`} label="Last Name" isEdit={isEdit} inputProps={{ placeholder: "Last Name" }} rules={{ required: "Please enter the last name of the family member" }} />
-                            <ClearableInputField control={form.control} name={`family.${index}.first_name`} label="First Name" isEdit={isEdit} inputProps={{ placeholder: "First Name" }} rules={{ required: "Please enter the first name of the family member" }} />
-                            <ClearableInputField control={form.control} name={`family.${index}.middle_name`} label="Middle Name" isEdit={isEdit} inputProps={{ placeholder: "Middle Name" }} rules={{ required: "Please enter the middle name of the family member" }} />
-                            <ClearableInputField control={form.control} name={`family.${index}.relation_to_member`} label="Relation to Member" isEdit={isEdit} inputProps={{ placeholder: "Relation to Member" }} rules={{ required: "Please enter the relation to member" }} />
-                            <DatePickerField control={form.control} name={`family.${index}.birth_date`} label="Birth Date" isEdit={isEdit} rules={{ required: "Please select the birth date of the family member" }} />
+                        <AccordionTrigger className="hover:no-underline bg-white p-5 rounded-md font-poppins font-medium data-[state=open]:rounded-b-none cursor-pointer text-md">
+                          {watchedFirstName || `Family Member ${index + 1}`}
+                        </AccordionTrigger>
+                        <AccordionContent className="flex flex-col bg-white px-5 pb-5 font-poppins rounded-b-md">
+                          <div className="grid gap-4 sm:grid-cols-2 mt-4">
+                            <ClearableInputField control={form.control} name={`family.${index}.last_name`} label="Last Name" isEdit={isEdit} inputProps={{ placeholder: "Last Name" }} rules={{ required: "Please enter the last name" }} />
+                            <ClearableInputField control={form.control} name={`family.${index}.first_name`} label="First Name" isEdit={isEdit} inputProps={{ placeholder: "First Name" }} rules={{ required: "Please enter the first name" }} />
+                            <ClearableInputField control={form.control} name={`family.${index}.middle_name`} label="Middle Name" isEdit={isEdit} inputProps={{ placeholder: "Middle Name" }} rules={{ required: "Please enter the middle name" }} />
+                            <ClearableInputField control={form.control} name={`family.${index}.relation_to_member`} label="Relation to Member" isEdit={isEdit} inputProps={{ placeholder: "Relation" }} rules={{ required: "Please enter the relation" }} />
+                            <DatePickerField control={form.control} name={`family.${index}.birth_date`} label="Birth Date" isEdit={isEdit} rules={{ required: "Please select the birth date" }} />
 
-                            <div className="flex gap-4">
+                            <div className="flex gap-4 col-span-2">
                               <ClearableInputField control={form.control} name={`family.${index}.age`} label="Age" isEdit={false} className="w-1/2" inputProps={{ readOnly: true, placeholder: "Age", value: calculateAge(watchedFamily?.[index]?.birth_date) }} />
-                              <ClearableSelectField control={form.control} name={`family.${index}.gender`} label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Prefer not to say"]} rules={{ required: "Please choose from the gender options" }} />
+                              <ClearableSelectField control={form.control} name={`family.${index}.gender`} label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Prefer not to say"]} rules={{ required: "Please choose gender" }} />
                             </div>
 
-                            <div>
-                              <ClearableInputField control={form.control} name={`family.${index}.educational_attainment`} label="Education" isEdit={isEdit} inputProps={{ placeholder: "Educational Attainment" }} rules={{ required: "Please enter the educational attainment of the member" }} />
-                            </div>
+                            <ClearableInputField control={form.control} name={`family.${index}.educational_attainment`} label="Educational Attainment" isEdit={isEdit} inputProps={{ placeholder: "Educational Attainment" }} rules={{ required: "Please enter the educational attainment" }} />
+                          </div>
 
-                            {isEdit && (
-                              <div className="delete">
-                                <ConfirmDialog
-                                  title="Delete Family Member"
-                                  description="Are you sure you want to delete"
-                                  triggerLabel={<><Trash2 /> Delete</>}
-                                  onConfirm={() => { handleDeleteFamilyMember(index); }}
-                                />
-                              </div >
-                            )}
-                          </div >
-                        </AccordionContent >
-                      </AccordionItem >
+                          {isEdit && (
+                            <div className="mt-4 self-end">
+                              <ConfirmDialog
+                                title="Delete Family Member"
+                                description="Are you sure you want to delete this member?"
+                                triggerLabel={<><Trash2 className="mr-1" /> Delete</>}
+                                onConfirm={() => handleDeleteFamilyMember(index)}
+                              />
+                            </div>
+                          )}
+                        </AccordionContent>
+                      </AccordionItem>
                     );
                   })}
-                </Accordion >
-              </CardContent >
-            </Card >
+                </div>
+              </Accordion>
+            </div>
+
           </Form >
         </div >
       </div >

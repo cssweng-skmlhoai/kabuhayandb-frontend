@@ -194,6 +194,7 @@ const HousingUtilities = ({ view }) => {
           <>
             <Button
               variant="cancel"
+              className="py-6 border border-black hover:bg-gray-300"
               onClick={() => {
                 if (savedData) {
                   form.reset(savedData);
@@ -214,6 +215,7 @@ const HousingUtilities = ({ view }) => {
         ) : (
           <Button
             variant="edit_details"
+            className="p-6 hover:bg-black"
             onClick={() => navigate(`/memberView/housing-utilities/edit`)}
           >
             {" "}

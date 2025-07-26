@@ -103,7 +103,7 @@ const MemberDues = () => {
                   applyFilters(dues, val);
                 }}
               >
-                <SelectTrigger className="w-full md:w-64">
+                <SelectTrigger className="w-full md:w-64 border border-gray-400">
                   <SelectValue placeholder="Select type of due" />
                 </SelectTrigger>
                 <SelectContent>

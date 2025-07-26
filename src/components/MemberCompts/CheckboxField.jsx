@@ -21,8 +21,8 @@ const CheckboxField = ({ control, name, label, isEdit }) => (
             disabled={!isEdit}
             className={
               isEdit
-                ? "data-[state=checked]:bg-black data-[state=checked]:border-black"
-                : "border-black text-black opacity-100"
+                ? "data-[state=checked]:bg-black data-[state=checked]:border-black border-2 size-8"
+                : "border-black border-2 text-black opacity-100 size-8"
             }
           />
         </FormControl>

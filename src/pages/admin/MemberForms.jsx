@@ -213,11 +213,6 @@ const MemberForms = ({ view }) => {
     formData.append("households", JSON.stringify(householdData));
     formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
 
-    console.log(cleanedMemberData);
-    console.log(familyData);
-    console.log(householdData);
-    console.log(cleanedFamilyMembers);
-
     axios
       .put(`${API_URL}/members/info/${id}`, formData, {
         headers: {
@@ -679,7 +674,7 @@ const MemberForms = ({ view }) => {
                             value={member?.gender || ""}
                             onChange={(e) =>
                               handleFamilyMemberChange(
-                                index,
+                                key,
                                 "gender",
                                 e.target.value
                               )
