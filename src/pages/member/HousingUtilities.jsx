@@ -126,7 +126,7 @@ const HousingUtilities = ({ view }) => {
 
     const payload = {
       members: {
-        confirmity_signature: data.confirmity_signature,
+        confirmity_signature: confirmityFile,
         remarks: data.remarks,
       },
       families: {
