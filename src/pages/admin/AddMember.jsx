@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { FaPlus } from "react-icons/fa6";
 import { IoIosArrowRoundBack } from "react-icons/io";
@@ -39,8 +39,36 @@ const AddMember = () => {
   const [memberToDeleteId, setMemberToDeleteId] = useState(null);
   const [memberToDeleteName, setMemberToDeleteName] = useState("");
 
+  const [confirmAddDialog, setConfirmAddDialog] = useState(false);
+  const [credentialsDialog, setCredentialsDialog] = useState(false);
+  const [newCredentials, setNewCredentials] = useState({});
+  const [secondsLeft, setSecondsLeft] = useState(5);
+  const [showCloseButton, setShowCloseButton] = useState(false);
+
   const API_SECRET = import.meta.env.VITE_API_SECRET;
   const API_URL = "https://kabuhayandb-backend.onrender.com";
+
+  useEffect(() => {
+    let timer;
+
+    if (credentialsDialog) {
+      setSecondsLeft(5);
+      setShowCloseButton(false);
+
+      timer = setInterval(() => {
+        setSecondsLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setShowCloseButton(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [credentialsDialog]);
 
   const handleAddFamilyMember = () => {
     setFamilyMembers((prev) => [
@@ -87,8 +115,8 @@ const AddMember = () => {
         return;
       }
 
-      if (memberData.confirmity_signature.size > 16 * 1024 * 1024) {
-        toast.error("Signature image must be under 16MB.");
+      if (memberData.confirmity_signature.size > 10 * 1024 * 1024) {
+        toast.error("Signature image must be under 10MB.");
         return;
       }
 
@@ -105,11 +133,6 @@ const AddMember = () => {
     formData.append("households", JSON.stringify(householdData));
     formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
 
-    logUndefinedFields(cleanedMemberData, "memberData");
-    logUndefinedFields(familyData, "familyData");
-    logUndefinedFields(householdData, "householdData");
-    logUndefinedFields(cleanedFamilyMembers, "familyMembers");
-
     axios
       .post(`${API_URL}/members/info`, formData, {
         headers: {
@@ -117,39 +140,15 @@ const AddMember = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then(() => {
-        navigate("/members");
-        toast.success("Member Successfully Added");
+      .then((res) => {
+        console.log(res.data);
+        setCredentialsDialog(true);
+        setNewCredentials(res.data.credentials);
       })
       .catch((err) => {
         toast.error(err.response?.data?.error || "Something went wrong")
       });
   };
-
-  function logUndefinedFields(data, label = "Root") {
-    const checkObject = (obj, path = label) => {
-      for (const [key, value] of Object.entries(obj)) {
-        const fullPath = `${path}.${key}`;
-        if (value === undefined) {
-          console.warn(`Undefined value found at: ${fullPath}`);
-        } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-          checkObject(value, fullPath);
-        }
-      }
-    };
-
-    if (Array.isArray(data)) {
-      data.forEach((item, index) => {
-        if (typeof item === "object" && item !== null) {
-          checkObject(item, `${label}[${index}]`);
-        }
-      });
-    } else if (typeof data === "object" && data !== null) {
-      checkObject(data);
-    } else {
-      console.warn("Data provided is not an object or array.");
-    }
-  }
 
   const confirmRemoveFamilyMember = (index, fullName) => {
     setMemberToDeleteId(index);
@@ -193,7 +192,7 @@ const AddMember = () => {
 
       <form
         className="p-5 bg-customgray1 flex flex-col gap-4 xl:grid xl:grid-cols-3 xl:p-8 xl:gap-7"
-        onSubmit={handleSubmit}
+        onSubmit={(e) => { e.preventDefault(); setConfirmAddDialog(true) }}
       >
         <div className="flex flex-col gap-4 xl:col-start-1">
           <div className="flex justify-between items-center xl:hidden">
@@ -841,6 +840,73 @@ const AddMember = () => {
               <DialogClose className="w-[45%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
                 Cancel
               </DialogClose>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* dialog for cofirmation of creating a member */}
+      <Dialog open={confirmAddDialog} onOpenChange={setConfirmAddDialog}>
+        <DialogContent className="w-[80%]">
+          <DialogHeader>
+            <DialogTitle className="text-left">
+              Add Member?
+            </DialogTitle>
+            <DialogDescription className="text-md text-gray-700">
+              Proceed to add this member? Please double-check the details before proceeding.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <div className="w-full flex justify-between">
+              <Button
+                className="w-[45%] bg-blue-button py-6 text-md font-normal"
+                onClick={handleSubmit}
+              >
+                Proceed
+              </Button>
+              <DialogClose className="w-[45%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
+                Cancel
+              </DialogClose>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* dialog for new credentials */}
+      <Dialog open={credentialsDialog} onOpenChange={setCredentialsDialog}>
+        <DialogContent className="w-[80%] [&>button]:hidden">
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl">
+              TAKE NOTE!
+            </DialogTitle>
+            <DialogDescription className="text-md text-gray-700 flex flex-col items-center gap-3 text-lg">
+              <div className="font-medium text-center">
+                The following are the credentials of this newly created member.
+                <br />
+                PLEASE NOTE THEM DOWN. THIS WILL ONLY SHOW ONCE.
+              </div>
+              <div>
+                Username: <span className="font-semibold">{newCredentials.username}</span>
+              </div>
+              <div>
+                Password: <span className="font-semibold">{newCredentials.password}</span>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <div className="w-full flex justify-between">
+              <Button
+                className="w-full bg-blue-button mt-5 py-6 text-md font-normal"
+                onClick={() => {
+                  setCredentialsDialog(false);
+                  setNewCredentials({});
+                  navigate("/members");
+                  toast.success("Member Successfully Added");
+                }}
+                disabled={!showCloseButton}
+              >
+                {showCloseButton ? "Close" : `Close (${secondsLeft})`}
+              </Button>
             </div>
           </DialogFooter>
         </DialogContent>

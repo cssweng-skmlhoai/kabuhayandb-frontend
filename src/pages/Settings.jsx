@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import axios from "axios";
 import useAuthStore from "@/authStore";
+import imageCompression from "browser-image-compression";
 
 const Settings = () => {
   const { memberId } = useAuthStore();
@@ -59,23 +60,20 @@ const Settings = () => {
   const bufferToBase64Image = (bufferData) => {
     if (!bufferData) return null;
 
-    const binary = new Uint8Array(bufferData).reduce(
-      (acc, byte) => acc + String.fromCharCode(byte),
-      ""
-    );
-    const base64 = btoa(binary);
-    const mimeTypes = ["image/jpeg", "image/jpg", "image/png"];
+    const uint8Array = new Uint8Array(bufferData);
 
-    for (let mime of mimeTypes) {
-      const testSrc = `data:${mime};base64,${base64}`;
-      const img = new Image();
-      img.src = testSrc;
-      if (img.complete || img.width > 0) {
-        return testSrc;
-      }
+    const header = uint8Array.slice(0, 4).join(",");
+
+    let mime = "image/png";
+    if (header === "255,216,255,224" || header === "255,216,255,225") {
+      mime = "image/jpeg";
+    } else if (header === "137,80,78,71") {
+      mime = "image/png";
     }
 
-    return null;
+    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+    const base64 = btoa(binary);
+    return `data:${mime};base64,${base64}`;
   };
 
   const handleUpdate = async (e) => {
@@ -125,13 +123,15 @@ const Settings = () => {
           return;
         }
 
-        if (profileFile.size > 16 * 1024 * 1024) {
-          toast.error("File Size Must be Under 16MB.");
+        if (profileFile.size > 5 * 1024 * 1024) {
+          toast.error("File Size Must be Under 5MB.");
           return;
         }
 
+        const compressedFile = await compressImage(profileFile);
+
         const formData = new FormData();
-        formData.append("pfp", profileFile);
+        formData.append("pfp", compressedFile);
 
         await axios.post(`${API_URL}/uploads/member/${memberId}`, formData, {
           headers: {
@@ -144,6 +144,24 @@ const Settings = () => {
       }
     } catch (err) {
       toast.error(err.response?.data?.error || "Something went wrong");
+    }
+  };
+
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 0.05,
+      maxWidthOrHeight: 800,
+      useWebWorker: true,
+    };
+
+    try {
+      const compressedFile = await imageCompression(file, options);
+      console.log("Original:", file.size / 1024, "KB");
+      console.log("Compressed:", compressedFile.size / 1024, "KB");
+      return compressedFile;
+    } catch (error) {
+      console.error("Compression failed:", error);
+      return file;
     }
   };
 

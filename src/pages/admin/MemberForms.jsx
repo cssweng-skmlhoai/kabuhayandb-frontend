@@ -95,23 +95,20 @@ const MemberForms = ({ view }) => {
         const bufferToBase64Image = (bufferData) => {
           if (!bufferData) return null;
 
-          const binary = new Uint8Array(bufferData).reduce(
-            (acc, byte) => acc + String.fromCharCode(byte),
-            ""
-          );
-          const base64 = btoa(binary);
-          const mimeTypes = ["image/jpeg", "image/jpg", "image/png"];
+          const uint8Array = new Uint8Array(bufferData);
 
-          for (let mime of mimeTypes) {
-            const testSrc = `data:${mime};base64,${base64}`;
-            const img = new Image();
-            img.src = testSrc;
-            if (img.complete || img.width > 0) {
-              return testSrc;
-            }
+          const header = uint8Array.slice(0, 4).join(",");
+
+          let mime = "image/png";
+          if (header === "255,216,255,224" || header === "255,216,255,225") {
+            mime = "image/jpeg";
+          } else if (header === "137,80,78,71") {
+            mime = "image/png";
           }
 
-          return null;
+          const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+          const base64 = btoa(binary);
+          return `data:${mime};base64,${base64}`;
         };
 
         const signatureImage = bufferToBase64Image(data.confirmity_signature?.data);
@@ -191,8 +188,8 @@ const MemberForms = ({ view }) => {
         return;
       }
 
-      if (confirmityFile.size > 16 * 1024 * 1024) {
-        toast.error("Signature image must be under 16MB.");
+      if (confirmityFile.size > 5 * 1024 * 1024) {
+        toast.error("Signature image must be under 5MB.");
         return;
       }
 
@@ -747,7 +744,6 @@ const MemberForms = ({ view }) => {
                   ? memberData.confirmity_signature
                   : URL.createObjectURL(memberData.confirmity_signature)}
                 alt="Signature"
-                loading="lazy"
                 className="w-full max-w-xs border border-gray-300 rounded mb-3"
               />
             ) : (
