@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import useAuthStore from "@/authStore";
 import { toast } from "sonner";
+import Logo from "@/assets/SKMLHOAI_Logo.jpg";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -46,7 +47,7 @@ const Login = () => {
         onSubmit={handleLogin}
         className="flex flex-col justify-center items-center gap-10 font-poppins w-full lg:gap-6"
       >
-        <div className="size-36 rounded-full bg-gray-300"></div>
+        <img src={Logo} alt="SKMLHOAI" className="size-36" />
         <p className="text-3xl font-semibold lg:text-2xl">Welcome Back!</p>
 
         <div className="flex flex-col gap-3 w-[65%] md:items-center">
@@ -91,12 +92,9 @@ const Login = () => {
               </button>
             </div>
           </div>
-          <p className="text-sm text-right md:w-3/5 lg:w-1/2 xl:w-2/5">
-            Forgot Password?
-          </p>
         </div>
 
-        <div className="w-[65%] flex justify-center">
+        <div className="w-[65%] flex justify-center mt-5">
           <Button
             type="submit"
             className="bg-blue-button font-light text-md px-10 py-7 w-full md:w-3/5 lg:w-1/2 xl:w-2/5"

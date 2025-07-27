@@ -98,7 +98,7 @@ const MembersList = () => {
   // function to delete member
   const handleDelete = (id) => {
     axios
-      .delete(`${API_URL}/members/delete/${id}`, {
+      .delete(`${API_URL}/members/${id}`, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
         },
@@ -112,7 +112,9 @@ const MembersList = () => {
           navigate("/login");
         }
       })
-      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
+      .catch((err) => {
+        toast.error(err.response?.data?.error || "Something went wrong")
+      });
   };
 
   return (

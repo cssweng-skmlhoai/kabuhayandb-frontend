@@ -155,8 +155,6 @@ const HousingUtilities = ({ view }) => {
     formData.append("households", JSON.stringify(payload.households));
     formData.append("family_members", JSON.stringify(payload.family_members));
 
-    console.log(payload);
-
     try {
       await axios.put(`${API_URL}/members/info/${memberId}`, formData, {
         headers: {

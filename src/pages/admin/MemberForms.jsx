@@ -298,7 +298,7 @@ const MemberForms = ({ view }) => {
           <div className="bg-white p-5 flex flex-col rounded-md font-poppins font-normal">
             <label htmlFor="lastname">Last Name</label>
             <input
-              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+              className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               placeholder="Last Name"
               type="text"
               name=""
@@ -313,7 +313,7 @@ const MemberForms = ({ view }) => {
 
             <label htmlFor="firstname">First Name</label>
             <input
-              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+              className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               placeholder="First Name"
               type="text"
               name=""
@@ -328,7 +328,7 @@ const MemberForms = ({ view }) => {
 
             <label htmlFor="middlename">Middle Name</label>
             <input
-              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+              className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               placeholder="Middle Name"
               type="text"
               name=""
@@ -343,11 +343,11 @@ const MemberForms = ({ view }) => {
 
             <label htmlFor="birthdate">Date of Birth</label>
             <input
-              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+              className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               type="date"
               name=""
               id=""
-              disabled
+              disabled={!isEdit}
               value={formatDate(memberData?.birth_date) || ""}
               onChange={(e) =>
                 setMemberData({ ...memberData, birth_date: e.target.value })
@@ -358,7 +358,7 @@ const MemberForms = ({ view }) => {
               <div className="flex flex-col w-1/2">
                 <label htmlFor="age">Age</label>
                 <input
-                  className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+                  className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
                   placeholder="00"
                   type="number"
                   name=""
@@ -379,7 +379,7 @@ const MemberForms = ({ view }) => {
                   onChange={(e) =>
                     setMemberData({ ...memberData, gender: e.target.value })
                   }
-                  className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+                  className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
                 >
                   <option value="" disabled hidden></option>
                   <option value="Male">Male</option>
@@ -397,7 +397,7 @@ const MemberForms = ({ view }) => {
 
             <label htmlFor="position">Position</label>
             <input
-              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+              className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               placeholder="Position"
               type="text"
               name=""
@@ -412,7 +412,7 @@ const MemberForms = ({ view }) => {
 
             <label htmlFor="contact">Contact Number</label>
             <input
-              className="bg-customgray2 p-2 text-sm rounded-sm"
+              className={`bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               placeholder="Contact Number"
               type="number"
               name=""
@@ -429,7 +429,7 @@ const MemberForms = ({ view }) => {
           <div className="bg-white p-5 flex flex-col rounded-md font-poppins font-normal">
             <label htmlFor="tct">TCT No.</label>
             <input
-              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+              className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               placeholder="TCT Number"
               type="text"
               name=""
@@ -443,10 +443,10 @@ const MemberForms = ({ view }) => {
             />
 
             <div className="flex justify-between gap-4">
-              <div className="flex flex-col w-1/2">
+              <div className="flex flex-col w-[48%]">
                 <label htmlFor="block">Block No.</label>
                 <input
-                  className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+                  className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
                   placeholder="Block Number"
                   type="number"
                   name=""
@@ -463,10 +463,10 @@ const MemberForms = ({ view }) => {
                 />
               </div>
 
-              <div className="flex flex-col w-1/2">
+              <div className="flex flex-col w-[48%]">
                 <label htmlFor="lot">Lot No.</label>
                 <input
-                  className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+                  className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
                   placeholder="Lot Number"
                   type="number"
                   name=""
@@ -486,7 +486,7 @@ const MemberForms = ({ view }) => {
 
             <label htmlFor="openspace">Share of Open Space</label>
             <input
-              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+              className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               placeholder="Open Space Share"
               type="number"
               name=""
@@ -504,7 +504,7 @@ const MemberForms = ({ view }) => {
 
             <label htmlFor="openspace">Area</label>
             <input
-              className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+              className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               placeholder="Area"
               type="number"
               name=""
@@ -519,7 +519,7 @@ const MemberForms = ({ view }) => {
 
             <label htmlFor="total">Total</label>
             <input
-              className="bg-customgray2 p-2 text-sm rounded-sm"
+              className={`bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               placeholder="Total"
               type="number"
               name=""
@@ -559,7 +559,7 @@ const MemberForms = ({ view }) => {
                     <AccordionContent className="flex flex-col bg-white px-5 pb-5 font-poppins rounded-b-sm">
                       <label htmlFor="famlastname">Last Name</label>
                       <input
-                        className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
+                        className={`bg-customgray2 p-2 text-sm rounded-sm mb-3 ${isEdit ? "bg-gray-200" : ""}`}
                         placeholder="Last Name"
                         type="text"
                         name=""
@@ -578,7 +578,7 @@ const MemberForms = ({ view }) => {
 
                       <label htmlFor="famfirstname">First Name</label>
                       <input
-                        className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
+                        className={`bg-customgray2 p-2 text-sm rounded-sm mb-3 ${isEdit ? "bg-gray-200" : ""}`}
                         placeholder="First Name"
                         type="text"
                         name=""
@@ -597,7 +597,7 @@ const MemberForms = ({ view }) => {
 
                       <label htmlFor="fammiddlename">Middle Name</label>
                       <input
-                        className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
+                        className={`bg-customgray2 p-2 text-sm rounded-sm mb-3 ${isEdit ? "bg-gray-200" : ""}`}
                         placeholder="Middle Name"
                         type="text"
                         name=""
@@ -616,7 +616,7 @@ const MemberForms = ({ view }) => {
 
                       <label htmlFor="relation">Relation to Member</label>
                       <input
-                        className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
+                        className={`bg-customgray2 p-2 text-sm rounded-sm mb-3 ${isEdit ? "bg-gray-200" : ""}`}
                         placeholder="Relation to Member"
                         type="text"
                         name=""
@@ -635,7 +635,7 @@ const MemberForms = ({ view }) => {
 
                       <label htmlFor="fambirthdate">Date of Birth</label>
                       <input
-                        className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
+                        className={`bg-customgray2 p-2 text-sm rounded-sm mb-3 ${isEdit ? "bg-gray-200" : ""}`}
                         placeholder="Birth Date"
                         type="date"
                         name=""
@@ -654,7 +654,7 @@ const MemberForms = ({ view }) => {
                         <div className="flex flex-col w-1/2">
                           <label htmlFor="famage">Age</label>
                           <input
-                            className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
+                            className={`bg-customgray2 p-2 text-sm rounded-sm mb-3 ${isEdit ? "bg-gray-200" : ""}`}
                             placeholder="00"
                             type="number"
                             name=""
@@ -679,7 +679,7 @@ const MemberForms = ({ view }) => {
                                 e.target.value
                               )
                             }
-                            className="mb-3 bg-customgray2 p-2 text-sm rounded-sm"
+                            className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
                           >
                             <option value="" disabled hidden></option>
                             <option value="Male">Male</option>
@@ -697,7 +697,7 @@ const MemberForms = ({ view }) => {
 
                       <label htmlFor="education">Educational Attainment</label>
                       <input
-                        className="bg-customgray2 p-2 text-sm rounded-sm mb-3"
+                        className={`bg-customgray2 p-2 text-sm rounded-sm mb-3 ${isEdit ? "bg-gray-200" : ""}`}
                         placeholder="Educational Attainment"
                         type="text"
                         name=""
@@ -747,10 +747,11 @@ const MemberForms = ({ view }) => {
                   ? memberData.confirmity_signature
                   : URL.createObjectURL(memberData.confirmity_signature)}
                 alt="Signature"
+                loading="lazy"
                 className="w-full max-w-xs border border-gray-300 rounded mb-3"
               />
             ) : (
-              <p className="text-sm italic text-gray-500 mb-3 bg-customgray2 pl-2 py-2 rounded-md">No signature uploaded.</p>
+              <p className={`text-sm italic text-gray-500 mb-3 bg-customgray2 pl-2 py-2 rounded-md ${isEdit ? "bg-gray-200" : ""}`}>No signature uploaded.</p>
             )}
             <input
               type="file"
@@ -771,11 +772,12 @@ const MemberForms = ({ view }) => {
 
             <label htmlFor="remarks">Remarks</label>
             <input
-              className="bg-customgray2 p-2 text-sm rounded-sm"
+              className={`bg-customgray2 p-2 text-sm rounded-sm ${isEdit ? "bg-gray-200" : ""}`}
               placeholder="Remarks"
               type="text"
               name=""
               id=""
+              disabled={!isEdit}
               value={memberData?.remarks || ""}
               onChange={(e) =>
                 setMemberData({ ...memberData, remarks: e.target.value })
@@ -800,7 +802,7 @@ const MemberForms = ({ view }) => {
                     condition_type: e.target.value,
                   })
                 }
-                className="mb-3 bg-customgray2 p-2 text-sm rounded-sm w-full"
+                className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm w-full ${isEdit ? "bg-gray-200" : ""}`}
               >
                 <option value="" disabled hidden></option>
                 <option value="Needs minor repair">Needs minor repair</option>
@@ -876,7 +878,7 @@ const MemberForms = ({ view }) => {
                     land_acquisition: e.target.value,
                   })
                 }
-                className="mb-3 bg-customgray2 p-2 text-sm rounded-sm w-full"
+                className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm w-full ${isEdit ? "bg-gray-200" : ""}`}
               >
                 <option value="" disabled hidden></option>
                 <option value="CMP">CMP</option>
@@ -908,7 +910,7 @@ const MemberForms = ({ view }) => {
                     status_of_occupancy: e.target.value,
                   })
                 }
-                className="mb-3 bg-customgray2 p-2 text-sm rounded-sm w-full"
+                className={`mb-3 bg-customgray2 p-2 text-sm rounded-sm w-full ${isEdit ? "bg-gray-200" : ""}`}
               >
                 <option value="" disabled hidden></option>
                 <option value="Owner">Owner</option>

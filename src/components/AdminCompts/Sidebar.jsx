@@ -19,12 +19,13 @@ import {
 import { Button } from "@/components/ui/button";
 import useAuthStore from "@/authStore";
 import { IoPersonCircleSharp } from "react-icons/io5";
+import Logo from "@/assets/SKMLHOAI_Logo.jpg";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = () => setIsOpen(!isOpen);
 
-  const { logout, pfp } = useAuthStore();
+  const { logout } = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -40,15 +41,7 @@ const Sidebar = () => {
         <div className="flex items-center justify-between px-5 py-4">
           {isOpen && (
             <div className="flex items-center gap-2">
-              {pfp ? (
-                <img
-                  src={pfp || "/path/to/profile.jpg"}
-                  alt="Profile"
-                  className="size-8 rounded-full"
-                />
-              ) : (
-                <IoPersonCircleSharp className="size-12 text-gray-400" />
-              )}
+              <img src={Logo} alt="SKMLHOAI" className="size-10" />
               <span
                 className={`text-xl font-medium ml-2 overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 w-auto translate-x-0" : "opacity-0 w-0 -translate-x-2"}`}
               >
