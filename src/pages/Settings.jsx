@@ -113,36 +113,39 @@ const Settings = () => {
       if (option === "picture" && pfp) {
         let profileFile = pfp;
 
-        const isBase64 = typeof pfp === "string";
+        if (profileFile) {
+          const isBase64 = typeof profileFile === "string";
 
-        if (isBase64) {
-          profileFile = base64ToFile(pfp, "profile-picture");
-        } else {
-          const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-          if (!validTypes.includes(profileFile.type)) {
-            toast.error("Only JPG, JPEG, or PNG Files are Allowed.");
-            return;
+          if (isBase64) {
+            profileFile = base64ToFile(profileFile, "profile-picture");
+          } else if (profileFile instanceof File) {
+            const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+            if (!validTypes.includes(profileFile.type)) {
+              toast.error("Only JPG, JPEG, or PNG Files are Allowed.");
+              return;
+            }
+
+            if (profileFile.size > 10 * 1024 * 1024) {
+              toast.error("Picture File Size Must be Under 10MB.");
+              return;
+            }
+
+            profileFile = await compressImage(profileFile);
           }
 
-          if (profileFile.size > 10 * 1024 * 1024) {
-            toast.error("Picture File Size Must be Under 10MB.");
-            return;
-          }
+          const formData = new FormData();
+          formData.append("pfp", profileFile);
 
-          profileFile = await compressImage(profileFile);
+          await axios.post(`${API_URL}/uploads/member/${memberId}`, formData, {
+            headers: {
+              Authorization: `Bearer ${API_SECRET}`,
+              "Content-Type": "multipart/form-data",
+            },
+          });
+
+          setDialogOpen(true);
+          setDialogMsg("Profile Picture");
         }
-
-        const formData = new FormData();
-        formData.append("pfp", profileFile);
-
-        await axios.post(`${API_URL}/uploads/member/${memberId}`, formData, {
-          headers: {
-            Authorization: `Bearer ${API_SECRET}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        setDialogOpen(true);
-        setDialogMsg("Profile Picture");
       }
     } catch (err) {
       toast.error(err.response?.data?.error || err.message || "Something went wrong");

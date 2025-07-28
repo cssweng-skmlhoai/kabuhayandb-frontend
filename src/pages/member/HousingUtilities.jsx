@@ -106,26 +106,28 @@ const HousingUtilities = ({ view }) => {
       const formData = new FormData();
       let confirmityFile = signatureFile;
 
-      const isBase64 = typeof confirmityFile === "string";
+      if (confirmityFile) {
+        const isBase64 = typeof confirmityFile === "string";
 
-      if (isBase64) {
-        confirmityFile = base64ToFile(confirmityFile, "signature");
-      } else {
-        const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-        if (!validTypes.includes(confirmityFile.type)) {
-          toast.error("Only JPG, JPEG, or PNG files are allowed.");
-          return;
+        if (isBase64) {
+          confirmityFile = base64ToFile(confirmityFile, "signature");
+        } else if (confirmityFile instanceof File) {
+          const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+          if (!validTypes.includes(confirmityFile.type)) {
+            toast.error("Only JPG, JPEG, or PNG files are allowed.");
+            return;
+          }
+
+          if (confirmityFile.size > 10 * 1024 * 1024) {
+            toast.error("Signature image must be under 10MB.");
+            return;
+          }
+
+          confirmityFile = await compressImage(confirmityFile);
         }
 
-        if (confirmityFile.size > 10 * 1024 * 1024) {
-          toast.error("Signature image must be under 10MB.");
-          return;
-        }
-
-        confirmityFile = await compressImage(confirmityFile);
+        formData.append("confirmity_signature", confirmityFile);
       }
-
-      formData.append("confirmity_signature", confirmityFile);
 
       const payload = {
         members: {
