@@ -8,6 +8,7 @@ import MemberDues from "@/pages/member/MemberDues";
 import axios from "axios";
 import useAuthStore from "@/authStore";
 import Settings from "@/pages/Settings";
+import { toast } from "sonner";
 
 const MemberLayout = () => {
   const [member, setMember] = useState([]);
@@ -26,7 +27,7 @@ const MemberLayout = () => {
       .then((res) => {
         setMember(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
   }, [API_SECRET, memberId]);
 
   return (

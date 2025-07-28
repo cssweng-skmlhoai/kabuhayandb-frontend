@@ -99,6 +99,7 @@ const HHMembers = ({ view }) => {
       })
       .then((res) => {
         const data = res.data;
+
         const signatureBase64 = bufferToBase64Image(data.confirmity_signature?.data);
 
         const normalizedData = {
@@ -133,16 +134,6 @@ const HHMembers = ({ view }) => {
       .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
   }, [form, memberId, API_SECRET]);
 
-  const base64ToFile = (base64String, filename) => {
-    const arr = base64String.split(",");
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) u8arr[n] = bstr.charCodeAt(n);
-    return new File([u8arr], filename, { type: mime });
-  };
-
   const bufferToBase64Image = (bufferData) => {
     if (!bufferData) return null;
 
@@ -162,6 +153,16 @@ const HHMembers = ({ view }) => {
     return `data:${mime};base64,${base64}`;
   };
 
+  const base64ToFile = (base64String, filename) => {
+    const arr = base64String.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new File([u8arr], filename, { type: mime });
+  };
+
   // function for the deletion of a family member from the form
   const handleDeleteFamilyMember = (indexToRemove) => {
     const memberToDelete = form.getValues(`family.${indexToRemove}`);
@@ -178,56 +179,54 @@ const HHMembers = ({ view }) => {
 
   // function to update member details
   const handleUpdates = async (data) => {
-    const cleanedFamilyMembers = data.family
-      .filter((m) => m.update || (m.id && m.update === false))
-      .map((member) => ({
-        id: member.id,
-        last_name: member.last_name,
-        first_name: member.first_name,
-        middle_name: member.middle_name,
-        relation_to_member: member.relation_to_member,
-        birth_date: toDateString(member.birth_date),
-        gender: member.gender,
-        educational_attainment: member.educational_attainment,
-        update: member.update !== false,
-      }));
-
-    const payload = {
-      members: {
-        last_name: data.last_name,
-        first_name: data.first_name,
-        middle_name: data.middle_name,
-        birth_date: toDateString(data.birth_date),
-        gender: data.gender,
-        contact_number: data.contact_number,
-      },
-      families: {
-        head_position: data.position,
-      },
-      households: {},
-      family_members: cleanedFamilyMembers,
-    };
-
-    const formData = new FormData();
-
-    formData.append("members", JSON.stringify(payload.members));
-    formData.append("families", JSON.stringify(payload.families));
-    formData.append("households", JSON.stringify(payload.households));
-    formData.append("family_members", JSON.stringify(payload.family_members));
-
-    let fileToUpload = signatureFile;
-    if (typeof fileToUpload === "string") {
-      fileToUpload = base64ToFile(fileToUpload, "signature.png");
-    }
-
-    if (fileToUpload instanceof File) {
-      formData.append("confirmity_signature", fileToUpload);
-    } else {
-      toast.error("Missing required signature file. Try Reloading the Page");
-      return;
-    }
-
     try {
+      const cleanedFamilyMembers = data.family
+        .filter((m) => m.update || (m.id && m.update === false))
+        .map((member) => ({
+          id: member.id,
+          last_name: member.last_name,
+          first_name: member.first_name,
+          middle_name: member.middle_name,
+          relation_to_member: member.relation_to_member,
+          birth_date: toDateString(member.birth_date),
+          gender: member.gender,
+          educational_attainment: member.educational_attainment,
+          update: member.update !== false,
+        }));
+
+      const payload = {
+        members: {
+          last_name: data.last_name,
+          first_name: data.first_name,
+          middle_name: data.middle_name,
+          birth_date: toDateString(data.birth_date),
+          gender: data.gender,
+          contact_number: data.contact_number,
+        },
+        families: {
+          head_position: data.position,
+        },
+        households: {},
+        family_members: cleanedFamilyMembers,
+      };
+
+      const formData = new FormData();
+
+      formData.append("members", JSON.stringify(payload.members));
+      formData.append("families", JSON.stringify(payload.families));
+      formData.append("households", JSON.stringify(payload.households));
+      formData.append("family_members", JSON.stringify(payload.family_members));
+
+      let fileToUpload = signatureFile;
+
+      if (typeof fileToUpload === "string") {
+        fileToUpload = base64ToFile(fileToUpload, "signature");
+      }
+
+      if (fileToUpload instanceof File) {
+        formData.append("confirmity_signature", fileToUpload);
+      }
+
       await axios.put(`${API_URL}/members/info/${memberId}`, formData, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,

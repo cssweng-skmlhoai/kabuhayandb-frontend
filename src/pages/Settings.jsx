@@ -113,25 +113,27 @@ const Settings = () => {
       if (option === "picture" && pfp) {
         let profileFile = pfp;
 
-        if (typeof pfp === "string") {
+        const isBase64 = typeof pfp === "string";
+
+        if (isBase64) {
           profileFile = base64ToFile(pfp, "profile-picture");
-        }
+        } else {
+          const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+          if (!validTypes.includes(profileFile.type)) {
+            toast.error("Only JPG, JPEG, or PNG Files are Allowed.");
+            return;
+          }
 
-        const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-        if (!validTypes.includes(profileFile.type)) {
-          toast.error("Only JPG, JPEG, or PNG Files are Allowed.");
-          return;
-        }
+          if (profileFile.size > 10 * 1024 * 1024) {
+            toast.error("Picture File Size Must be Under 10MB.");
+            return;
+          }
 
-        if (profileFile.size > 5 * 1024 * 1024) {
-          toast.error("File Size Must be Under 5MB.");
-          return;
+          profileFile = await compressImage(profileFile);
         }
-
-        const compressedFile = await compressImage(profileFile);
 
         const formData = new FormData();
-        formData.append("pfp", compressedFile);
+        formData.append("pfp", profileFile);
 
         await axios.post(`${API_URL}/uploads/member/${memberId}`, formData, {
           headers: {
@@ -156,11 +158,9 @@ const Settings = () => {
 
     try {
       const compressedFile = await imageCompression(file, options);
-      console.log("Original:", file.size / 1024, "KB");
-      console.log("Compressed:", compressedFile.size / 1024, "KB");
       return compressedFile;
     } catch (error) {
-      console.error("Compression failed:", error);
+      toast.error("Compression failed:", error);
       return file;
     }
   };

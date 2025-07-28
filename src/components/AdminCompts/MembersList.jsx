@@ -55,28 +55,6 @@ const MembersList = () => {
 
   // fetch all members once
   useEffect(() => {
-    const bufferToBase64Image = (bufferData) => {
-      if (!bufferData) return null;
-
-      const uint8Array = new Uint8Array(bufferData);
-
-      const sizeInKB = (uint8Array.length / 1024).toFixed(2);
-      console.log(`Signature image size: ${sizeInKB} KB`);
-
-      const header = uint8Array.slice(0, 4).join(",");
-
-      let mime = "image/png";
-      if (header === "255,216,255,224" || header === "255,216,255,225") {
-        mime = "image/jpeg";
-      } else if (header === "137,80,78,71") {
-        mime = "image/png";
-      }
-
-      const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
-      const base64 = btoa(binary);
-      return `data:${mime};base64,${base64}`;
-    };
-
     axios
       .get(`${API_URL}/members/home`, {
         headers: {
@@ -98,6 +76,28 @@ const MembersList = () => {
         toast.error(err.response?.data?.error || "Something went wrong");
       });
   }, [API_SECRET]);
+
+  const bufferToBase64Image = (bufferData) => {
+    if (!bufferData) return null;
+
+    const uint8Array = new Uint8Array(bufferData);
+
+    const sizeInKB = (uint8Array.length / 1024).toFixed(2);
+    console.log(`image size: ${sizeInKB} KB`);
+
+    const header = uint8Array.slice(0, 4).join(",");
+
+    let mime = "image/png";
+    if (header === "255,216,255,224" || header === "255,216,255,225") {
+      mime = "image/jpeg";
+    } else if (header === "137,80,78,71") {
+      mime = "image/png";
+    }
+
+    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+    const base64 = btoa(binary);
+    return `data:${mime};base64,${base64}`;
+  };
 
   // function to search for user
   const searchUser = () => {
@@ -258,7 +258,7 @@ const MembersList = () => {
                         : URL.createObjectURL(member.pfp)}
                       alt="Profile"
                       loading="lazy"
-                      className="hidden xl:block size-12 rounded-full bg-gray-300 object-cover"
+                      className="hidden xl:block size-14 rounded-full bg-gray-300 object-cover"
                     />
                   ) : (
                     <IoPersonCircleSharp className="hidden xl:block size-15 text-gray-400" />

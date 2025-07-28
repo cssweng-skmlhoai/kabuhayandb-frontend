@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import "./Members.css";
 import useAuthStore from "@/authStore";
+import imageCompression from 'browser-image-compression';
 
 const HousingUtilities = ({ view }) => {
   const memberId = useAuthStore((s) => s.memberId);
@@ -54,25 +55,6 @@ const HousingUtilities = ({ view }) => {
       .then((res) => {
         const data = res.data;
 
-        const bufferToBase64Image = (bufferData) => {
-          if (!bufferData) return null;
-
-          const uint8Array = new Uint8Array(bufferData);
-
-          const header = uint8Array.slice(0, 4).join(",");
-
-          let mime = "image/png";
-          if (header === "255,216,255,224" || header === "255,216,255,225") {
-            mime = "image/jpeg";
-          } else if (header === "137,80,78,71") {
-            mime = "image/png";
-          }
-
-          const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
-          const base64 = btoa(binary);
-          return `data:${mime};base64,${base64}`;
-        };
-
         const signatureImage = bufferToBase64Image(data.confirmity_signature?.data);
 
         const household = {
@@ -99,60 +81,81 @@ const HousingUtilities = ({ view }) => {
       .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
   }, [form, memberId, API_SECRET]);
 
-  // function to update housing & utilities details
-  const handleUpdates = async (data) => {
+  const bufferToBase64Image = (bufferData) => {
+    if (!bufferData) return null;
 
-    const formData = new FormData();
-    let confirmityFile = signatureFile;
+    const uint8Array = new Uint8Array(bufferData);
 
-    if (typeof confirmityFile === "string") {
-      confirmityFile = base64ToFile(confirmityFile, "signature");
+    const header = uint8Array.slice(0, 4).join(",");
+
+    let mime = "image/png";
+    if (header === "255,216,255,224" || header === "255,216,255,225") {
+      mime = "image/jpeg";
+    } else if (header === "137,80,78,71") {
+      mime = "image/png";
     }
 
-    if (confirmityFile instanceof File) {
-      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-      if (!validTypes.includes(confirmityFile.type)) {
-        toast.error("Only JPG, JPEG, or PNG files are allowed.");
-        return;
-      }
+    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+    const base64 = btoa(binary);
+    return `data:${mime};base64,${base64}`;
+  };
 
-      if (confirmityFile.size > 10 * 1024 * 1024) {
-        toast.error("Signature image must be under 10MB.");
-        return;
+  // function to update housing & utilities details
+  const handleUpdates = async (data) => {
+    try {
+      const formData = new FormData();
+      let confirmityFile = signatureFile;
+
+      const isBase64 = typeof confirmityFile === "string";
+
+      if (isBase64) {
+        confirmityFile = base64ToFile(confirmityFile, "signature");
+      } else {
+        const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+        if (!validTypes.includes(confirmityFile.type)) {
+          toast.error("Only JPG, JPEG, or PNG files are allowed.");
+          return;
+        }
+
+        if (confirmityFile.size > 10 * 1024 * 1024) {
+          toast.error("Signature image must be under 10MB.");
+          return;
+        }
+
+        confirmityFile = await compressImage(confirmityFile);
       }
 
       formData.append("confirmity_signature", confirmityFile);
-    }
 
-    const payload = {
-      members: {
-        confirmity_signature: confirmityFile,
-        remarks: data.remarks,
-      },
-      families: {
-        land_acquisition: data.land_acquisition,
-        status_of_occupancy: data.status_of_occupancy,
-      },
-      households: {
-        tct_no: data.tct_no,
-        block_no: data.block_no,
-        lot_no: data.lot_no,
-        area: data.area,
-        open_space_share: data.open_space_share,
-        condition_type: data.condition_type,
-        Meralco: data.Meralco,
-        Maynilad: data.Maynilad,
-        Septic_Tank: data.Septic_Tank,
-      },
-      family_members: [],
-    };
+      const payload = {
+        members: {
+          confirmity_signature: confirmityFile,
+          remarks: data.remarks,
+        },
+        families: {
+          land_acquisition: data.land_acquisition,
+          status_of_occupancy: data.status_of_occupancy,
+        },
+        households: {
+          tct_no: data.tct_no,
+          block_no: data.block_no,
+          lot_no: data.lot_no,
+          area: data.area,
+          open_space_share: data.open_space_share,
+          condition_type: data.condition_type,
+          Meralco: data.Meralco,
+          Maynilad: data.Maynilad,
+          Septic_Tank: data.Septic_Tank,
+        },
+        family_members: [],
+      };
 
-    formData.append("members", JSON.stringify(payload.members));
-    formData.append("families", JSON.stringify(payload.families));
-    formData.append("households", JSON.stringify(payload.households));
-    formData.append("family_members", JSON.stringify(payload.family_members));
+      formData.append("members", JSON.stringify(payload.members));
+      formData.append("families", JSON.stringify(payload.families));
+      formData.append("households", JSON.stringify(payload.households));
+      formData.append("family_members", JSON.stringify(payload.family_members));
 
-    try {
+
       await axios.put(`${API_URL}/members/info/${memberId}`, formData, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
@@ -165,6 +168,22 @@ const HousingUtilities = ({ view }) => {
       navigate(`/memberView/housing-utilities`);
     } catch (err) {
       toast.error(err.response?.data?.error || "Something went wrong");
+    }
+  };
+
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 0.3,
+      maxWidthOrHeight: 1000,
+      useWebWorker: true,
+    };
+
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      toast.error("Compression failed:", error);
+      return file;
     }
   };
 

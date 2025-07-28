@@ -22,6 +22,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import imageCompression from 'browser-image-compression';
 
 const AddMember = () => {
   const navigate = useNavigate();
@@ -103,51 +104,67 @@ const AddMember = () => {
     setFamilyMembers(updated);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    if (memberData.confirmity_signature instanceof File) {
-      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-      if (!validTypes.includes(memberData.confirmity_signature.type)) {
-        toast.error("Only JPG, JPEG, or PNG files are allowed.");
-        return;
+      if (memberData.confirmity_signature instanceof File) {
+        const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+        if (!validTypes.includes(memberData.confirmity_signature.type)) {
+          toast.error("Only JPG, JPEG, or PNG files are allowed.");
+          return;
+        }
+
+        if (memberData.confirmity_signature.size > 10 * 1024 * 1024) {
+          toast.error("Signature image must be under 10MB.");
+          return;
+        }
+
+        const compressedSignature = await compressImage(memberData.confirmity_signature)
+        formData.append("confirmity_signature", compressedSignature);
       }
 
-      if (memberData.confirmity_signature.size > 10 * 1024 * 1024) {
-        toast.error("Signature image must be under 10MB.");
-        return;
-      }
+      const { age: _age, ...cleanedMemberData } = memberData;
+      const cleanedFamilyMembers = familyMembers.map(
+        ({ age: _age, ...rest }) => rest
+      );
 
-      formData.append("confirmity_signature", memberData.confirmity_signature);
+      formData.append("members", JSON.stringify(cleanedMemberData));
+      formData.append("families", JSON.stringify(familyData));
+      formData.append("households", JSON.stringify(householdData));
+      formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
+
+      await axios
+        .post(`${API_URL}/members/info`, formData, {
+          headers: {
+            Authorization: `Bearer ${API_SECRET}`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+
+      setCredentialsDialog(true);
+      setNewCredentials(res.data.credentials);
+    } catch (error) {
+      toast.error(err.response?.data?.error || "Something went wrong");
     }
+  };
 
-    const { age: _age, ...cleanedMemberData } = memberData;
-    const cleanedFamilyMembers = familyMembers.map(
-      ({ age: _age, ...rest }) => rest
-    );
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 0.3,
+      maxWidthOrHeight: 1000,
+      useWebWorker: true,
+    };
 
-    formData.append("members", JSON.stringify(cleanedMemberData));
-    formData.append("families", JSON.stringify(familyData));
-    formData.append("households", JSON.stringify(householdData));
-    formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
-
-    axios
-      .post(`${API_URL}/members/info`, formData, {
-        headers: {
-          Authorization: `Bearer ${API_SECRET}`,
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setCredentialsDialog(true);
-        setNewCredentials(res.data.credentials);
-      })
-      .catch((err) => {
-        toast.error(err.response?.data?.error || "Something went wrong")
-      });
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      toast.error("Compression failed:", error);
+      return file;
+    }
   };
 
   const confirmRemoveFamilyMember = (index, fullName) => {

@@ -22,6 +22,7 @@ import {
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
+import imageCompression from 'browser-image-compression';
 
 const MemberForms = ({ view }) => {
   const { id } = useParams();
@@ -34,6 +35,7 @@ const MemberForms = ({ view }) => {
   const [familyData, setFamilyData] = useState({});
   const [familyMembers, setFamilyMembers] = useState([]);
 
+  const [confirmEditDialog, setConfirmEditDialog] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [memberToDeleteId, setMemberToDeleteId] = useState(null);
   const [memberToDeleteName, setMemberToDeleteName] = useState("");
@@ -92,25 +94,6 @@ const MemberForms = ({ view }) => {
         const data = res.data;
         setAllDetails(data);
 
-        const bufferToBase64Image = (bufferData) => {
-          if (!bufferData) return null;
-
-          const uint8Array = new Uint8Array(bufferData);
-
-          const header = uint8Array.slice(0, 4).join(",");
-
-          let mime = "image/png";
-          if (header === "255,216,255,224" || header === "255,216,255,225") {
-            mime = "image/jpeg";
-          } else if (header === "137,80,78,71") {
-            mime = "image/png";
-          }
-
-          const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
-          const base64 = btoa(binary);
-          return `data:${mime};base64,${base64}`;
-        };
-
         const signatureImage = bufferToBase64Image(data.confirmity_signature?.data);
 
         setMemberData({
@@ -159,10 +142,32 @@ const MemberForms = ({ view }) => {
       });
   }, [id, API_SECRET]);
 
+  const bufferToBase64Image = (bufferData) => {
+    if (!bufferData) return null;
+
+    const uint8Array = new Uint8Array(bufferData);
+
+    const sizeInKB = (uint8Array.length / 1024).toFixed(2);
+    console.log(`image size: ${sizeInKB} KB`);
+
+    const header = uint8Array.slice(0, 4).join(",");
+
+    let mime = "image/png";
+    if (header === "255,216,255,224" || header === "255,216,255,225") {
+      mime = "image/jpeg";
+    } else if (header === "137,80,78,71") {
+      mime = "image/png";
+    }
+
+    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+    const base64 = btoa(binary);
+    return `data:${mime};base64,${base64}`;
+  };
+
   useEffect(() => {
     const area = parseFloat(householdData.area) || 0;
     const openSpace = parseFloat(householdData.open_space_share) || 0;
-    const total = area + openSpace;
+    const total = parseFloat((area + openSpace).toFixed(2));
 
     setAllDetails((prev) => ({
       ...prev,
@@ -171,59 +176,76 @@ const MemberForms = ({ view }) => {
   }, [householdData.area, householdData.open_space_share]);
 
   // function to update member details
-  const handleUpdates = (e) => {
+  const handleUpdates = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    let confirmityFile = memberData.confirmity_signature;
+    try {
+      const formData = new FormData();
+      let confirmityFile = memberData.confirmity_signature;
 
-    if (typeof confirmityFile === "string") {
-      confirmityFile = base64ToFile(confirmityFile, "signature");
-    }
+      const isBase64 = typeof confirmityFile === "string";
 
-    if (confirmityFile instanceof File) {
-      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-      if (!validTypes.includes(confirmityFile.type)) {
-        toast.error("Only JPG, JPEG, or PNG files are allowed.");
-        return;
-      }
+      if (isBase64) {
+        confirmityFile = base64ToFile(confirmityFile, "signature");
+      } else {
+        const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+        if (!validTypes.includes(confirmityFile.type)) {
+          toast.error("Only JPG, JPEG, or PNG files are allowed.");
+          return;
+        }
 
-      if (confirmityFile.size > 5 * 1024 * 1024) {
-        toast.error("Signature image must be under 5MB.");
-        return;
+        if (confirmityFile.size > 10 * 1024 * 1024) {
+          toast.error("Signature image must be under 10MB.");
+          return;
+        }
+
+        confirmityFile = await compressImage(confirmityFile);
       }
 
       formData.append("confirmity_signature", confirmityFile);
-    }
 
-    const cleanedMemberData = {
-      ...memberData,
-      confirmity_signature: confirmityFile,
-    };
+      const cleanedMemberData = {
+        ...memberData,
+        confirmity_signature: confirmityFile,
+      };
 
-    const cleanedFamilyMembers = familyMembers.map(
-      ({ age: _age, tempId: _tempId, ...rest }) => rest
-    );
+      const cleanedFamilyMembers = familyMembers.map(
+        ({ age: _age, tempId: _tempId, ...rest }) => rest
+      );
 
-    formData.append("members", JSON.stringify(cleanedMemberData));
-    formData.append("families", JSON.stringify(familyData));
-    formData.append("households", JSON.stringify(householdData));
-    formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
+      formData.append("members", JSON.stringify(cleanedMemberData));
+      formData.append("families", JSON.stringify(familyData));
+      formData.append("households", JSON.stringify(householdData));
+      formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
 
-    axios
-      .put(`${API_URL}/members/info/${id}`, formData, {
+      await axios.put(`${API_URL}/members/info/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
           "Content-Type": "multipart/form-data",
         },
-      })
-      .then(() => {
-        navigate("/members");
-        toast.success("Member Successfully Updated");
-      })
-      .catch((err) => {
-        toast.error(err.response?.data?.error || "Something went wrong");
       });
+
+      navigate("/members");
+      toast.success("Member Successfully Updated");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Something went wrong");
+    }
+  };
+
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 0.3,
+      maxWidthOrHeight: 1000,
+      useWebWorker: true,
+    };
+
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      toast.error(`Compression failed: ${error.message || error}`);
+      return file;
+    }
   };
 
   const base64ToFile = (base64String, filename) => {
@@ -278,7 +300,7 @@ const MemberForms = ({ view }) => {
 
       <form
         className="p-5 bg-customgray1 flex flex-col gap-4 xl:grid xl:grid-cols-3 xl:p-8 xl:gap-7"
-        onSubmit={handleUpdates}
+        onSubmit={(e) => { e.preventDefault(); setConfirmEditDialog(true) }}
       >
         <div className="flex flex-col gap-4 xl:col-start-1">
           <div className="flex justify-between items-center xl:hidden">
@@ -963,6 +985,33 @@ const MemberForms = ({ view }) => {
                 Delete
               </Button>
               <DialogClose className="w-[48%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
+                Cancel
+              </DialogClose>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* dialog for cofirmation of editing the member */}
+      <Dialog open={confirmEditDialog} onOpenChange={setConfirmEditDialog}>
+        <DialogContent className="w-[80%]">
+          <DialogHeader>
+            <DialogTitle className="text-left">
+              Edit Member?
+            </DialogTitle>
+            <DialogDescription className="text-md text-gray-700">
+              Proceed to edit this member? Please double-check the details before proceeding.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <div className="w-full flex justify-between">
+              <Button
+                className="w-[45%] bg-blue-button py-6 text-md font-normal"
+                onClick={handleUpdates}
+              >
+                Proceed
+              </Button>
+              <DialogClose className="w-[45%] bg-black rounded-md text-white cursor-pointer hover:bg-gray-900 duration-200">
                 Cancel
               </DialogClose>
             </div>
