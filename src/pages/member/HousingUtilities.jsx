@@ -167,7 +167,7 @@ const HousingUtilities = ({ view }) => {
       toast.success("Changes saved successfully!");
       navigate(`/memberView/housing-utilities`);
     } catch (err) {
-      toast.error(err.response?.data?.error || "Something went wrong");
+      toast.error(err.response?.data?.error || err.message || "Something went wrong");
     }
   };
 

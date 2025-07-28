@@ -82,9 +82,6 @@ const MembersList = () => {
 
     const uint8Array = new Uint8Array(bufferData);
 
-    const sizeInKB = (uint8Array.length / 1024).toFixed(2);
-    console.log(`image size: ${sizeInKB} KB`);
-
     const header = uint8Array.slice(0, 4).join(",");
 
     let mime = "image/png";

@@ -145,7 +145,7 @@ const Settings = () => {
         setDialogMsg("Profile Picture");
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || "Something went wrong");
+      toast.error(err.response?.data?.error || err.message || "Something went wrong");
     }
   };
 

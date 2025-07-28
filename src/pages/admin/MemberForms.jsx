@@ -147,9 +147,6 @@ const MemberForms = ({ view }) => {
 
     const uint8Array = new Uint8Array(bufferData);
 
-    const sizeInKB = (uint8Array.length / 1024).toFixed(2);
-    console.log(`image size: ${sizeInKB} KB`);
-
     const header = uint8Array.slice(0, 4).join(",");
 
     let mime = "image/png";
@@ -228,7 +225,7 @@ const MemberForms = ({ view }) => {
       navigate("/members");
       toast.success("Member Successfully Updated");
     } catch (err) {
-      toast.error(err.response?.data?.error || "Something went wrong");
+      toast.error(err.response?.data?.error || err.message || "Something went wrong");
     }
   };
 

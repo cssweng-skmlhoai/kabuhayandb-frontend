@@ -136,7 +136,7 @@ const AddMember = () => {
       formData.append("households", JSON.stringify(householdData));
       formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
 
-      await axios
+      const res = await axios
         .post(`${API_URL}/members/info`, formData, {
           headers: {
             Authorization: `Bearer ${API_SECRET}`,
@@ -146,8 +146,8 @@ const AddMember = () => {
 
       setCredentialsDialog(true);
       setNewCredentials(res.data.credentials);
-    } catch (error) {
-      toast.error(err.response?.data?.error || "Something went wrong");
+    } catch (err) {
+      toast.error(err.response?.data?.error || err.message || "Something went wrong");
     }
   };
 

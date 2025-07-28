@@ -238,7 +238,7 @@ const HHMembers = ({ view }) => {
       navigate(`/memberView`);
       toast.success("Changes saved successfully!");
     } catch (err) {
-      toast.error(err.response?.data?.error || "Something went wrong");
+      toast.error(err.response?.data?.error || err.message || "Something went wrong");
     }
   };
 
