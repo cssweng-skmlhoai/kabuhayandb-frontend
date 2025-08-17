@@ -1,8 +1,5 @@
-import React, { useEffect } from "react";
-import { IoPersonCircleSharp, IoSearchOutline } from "react-icons/io5";
-import { IoFilterOutline } from "react-icons/io5";
-import { TbArrowsSort } from "react-icons/tb";
-import { LiaFileDownloadSolid } from "react-icons/lia";
+import React, { useEffect, useState } from "react";
+import { IoPersonCircleSharp } from "react-icons/io5";
 import { BsThreeDots } from "react-icons/bs";
 import { IoIosList } from "react-icons/io";
 import { LuPencil } from "react-icons/lu";
@@ -10,7 +7,6 @@ import { TiDeleteOutline } from "react-icons/ti";
 import { TbCancel } from "react-icons/tb";
 import { FaPlus } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,22 +14,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import useAuthStore from "@/authStore";
+import SearchBar from "./SearchBar";
+import Pagination from "./Pagination";
+import ConfirmationDialog from "./ConfirmationDialog";
+import { fetchMembers, handleDelete, searchUser } from "@/hooks/MemberListUtils";
 
 const MembersList = () => {
+  const navigate = useNavigate();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [members, setMembers] = useState([]);
   const [searched, setSearched] = useState("");
@@ -45,100 +35,12 @@ const MembersList = () => {
   const indexOfLastMember = currentPage * membersPerPage;
   const indexOfFirstMember = indexOfLastMember - membersPerPage;
   const currentMembers = members.slice(indexOfFirstMember, indexOfLastMember);
-  const totalPages = Math.ceil(members.length / membersPerPage);
 
   const { memberId, logout } = useAuthStore();
-  const navigate = useNavigate();
 
-  const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
-
-  // fetch all members once
   useEffect(() => {
-    axios
-      .get(`${API_URL}/members/home`, {
-        headers: {
-          Authorization: `Bearer ${API_SECRET}`,
-        },
-      })
-      .then((res) => {
-        if (!res.data) {
-          setMembers([]);
-        } else {
-          const members = res.data.map((member) => ({
-            ...member,
-            pfp: bufferToBase64Image(member.pfp?.data),
-          }));
-          setMembers(members);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.response?.data?.error || "Something went wrong");
-      });
-  }, [API_SECRET]);
-
-  const bufferToBase64Image = (bufferData) => {
-    if (!bufferData) return null;
-
-    const uint8Array = new Uint8Array(bufferData);
-
-    const header = uint8Array.slice(0, 4).join(",");
-
-    let mime = "image/png";
-    if (header === "255,216,255,224" || header === "255,216,255,225") {
-      mime = "image/jpeg";
-    } else if (header === "137,80,78,71") {
-      mime = "image/png";
-    }
-
-    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
-    const base64 = btoa(binary);
-    return `data:${mime};base64,${base64}`;
-  };
-
-  // function to search for user
-  const searchUser = () => {
-    axios
-      .get(`${API_URL}/members/home?name=${searched}`, {
-        headers: {
-          Authorization: `Bearer ${API_SECRET}`,
-        },
-      })
-      .then((res) => {
-        if (!res.data) {
-          setMembers([]);
-        } else {
-          const results = Array.isArray(res.data) ? res.data : [res.data];
-          setMembers(results);
-          setCurrentPage(1);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.response?.data?.error || "Something went wrong");
-      });
-  };
-
-  // function to delete member
-  const handleDelete = (id) => {
-    axios
-      .delete(`${API_URL}/members/${id}`, {
-        headers: {
-          Authorization: `Bearer ${API_SECRET}`,
-        },
-      })
-      .then(() => {
-        setMembers((prev) => prev.filter((m) => m.member_id !== id));
-        setDialogOpen(false);
-        toast.success("Member Successfully Deleted");
-        if (id === memberId) {
-          logout();
-          navigate("/login");
-        }
-      })
-      .catch((err) => {
-        toast.error(err.response?.data?.error || "Something went wrong")
-      });
-  };
+    fetchMembers(setMembers);
+  }, []);
 
   return (
     <div>
@@ -159,37 +61,14 @@ const MembersList = () => {
         </div>
 
         <div className="flex flex-col items-center gap-3 w-[90%] xl:hidden">
-          <div className="flex w-full gap-3">
-            <input
-              type="text"
-              placeholder="Search Member Name"
-              className="border border-gray-300 rounded-md p-3 w-full bg-white"
-              value={searched}
-              onChange={(e) => setSearched(e.target.value)}
-            />
-            <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10" onClick={searchUser}>Search</Button>
-          </div>
+          <SearchBar value={searched} onChange={setSearched} onSearch={() => searchUser(searched, setMembers, setCurrentPage)} />
           <p className="text-sm italic text-gray-500">Note: Empty the search bar and press 'Search' to show all members</p>
         </div>
       </div>
 
       <div className="px-8 py-6 xl:border xl:border-black xl:mr-10 xl:mt-3 xl:ml-5 xl:mb-10 xl:rounded-lg xl:flex xl:flex-col xl:gap-7">
         <div className="hidden xl:flex flex-col justify-between gap-3">
-          <div className="flex items-center w-2/5 gap-3">
-            <input
-              type="text"
-              placeholder="Search Member Name"
-              className="border border-black rounded-md px-3 py-1.5 w-full bg-white"
-              value={searched}
-              onChange={(e) => setSearched(e.target.value)}
-            />
-
-            <Button className="rounded-sm bg-blue-button text-white cursor-pointer w-1/4"
-              onClick={searchUser}
-            >
-              <p className="text-md font-normal">Search</p>
-            </Button>
-          </div>
+          <SearchBar variant="compact" value={searched} onChange={setSearched} onSearch={() => searchUser(searched, setMembers, setCurrentPage)} memList />
           <p className="text-sm italic text-gray-400">Note: Empty the search bar and press 'Search' to show all members</p>
         </div>
 
@@ -279,60 +158,22 @@ const MembersList = () => {
           ))
         )}
 
-        <div className={`flex justify-between items-center mt-5 xl:mt-0 ${members.length <= membersPerPage ? "hidden" : ""}`}>
-          <p className="text-sm text-gray-600">
-            {members.length === 0
-              ? "0 results"
-              : `${indexOfFirstMember + 1}-${Math.min(indexOfLastMember, members.length)} of ${members.length}`}
-          </p>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className={`border border-gray-400 rounded hover:bg-gray-300 px-2 py-1 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
-            >
-              <ChevronLeft />
-            </button>
-            <p className="text-sm">
-              Page {currentPage} of {totalPages}
-            </p>
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-              className={`border border-gray-400 rounded hover:bg-gray-300 px-2 py-1 ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""}`}
-            >
-              <ChevronRight />
-            </button>
-          </div>
-        </div>
+        <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalItems={members.length} itemsPerPage={membersPerPage} showRange />
       </div>
 
       {/* Dialog for delete member confirmation */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="w-[80%]">
-          <DialogHeader>
-            <DialogTitle className="text-left">Delete This Member?</DialogTitle>
-            <DialogDescription className="text-md text-gray-700">
-              All records related to <span className="font-bold">{memberToDeleteName}</span> will be
-              permanently deleted from the database, including their family
-              members, their household, dues, and credentials.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex flex-row justify-between gap-4">
-            <Button
-              className="w-1/2 bg-red-700 hover:bg-red-900 font-normal text-md py-6"
-              onClick={() => handleDelete(memberToDeleteId)}
-            >
-              Delete
-            </Button>
-            <DialogClose className="w-1/2 bg-black rounded-md text-white cursor-pointer hover:bg-gray-800 duration-200">
-              Cancel
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmationDialog
+        open={dialogOpen}
+        setOpen={setDialogOpen}
+        title={"Delete This Member?"}
+        description={<>
+          All records related to <span className="font-bold">{memberToDeleteName}</span> will be permanently deleted from the database, including their family members, their household, dues, and credentials.
+        </>}
+        confirmText="Delete"
+        confirmColor="bg-red-700"
+        onConfirm={() => handleDelete(memberToDeleteId, setMembers, setDialogOpen, memberId, logout, navigate)}
+        confirmHover="hover:bg-red-900"
+      />
     </div>
   );
 };

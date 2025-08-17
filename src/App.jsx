@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import AllMembers from "./pages/admin/AllMembers";
-import MemberForms from "./pages/admin/MemberForms";
+import EditMember from "./pages/admin/EditMember";
 import Dues from "./pages/admin/Dues";
 import Certification from "./pages/admin/Certification";
 import Landing from "./pages/Landing";
@@ -24,8 +24,8 @@ const App = () => {
       <Route element={<ProtectedRoute adminOnly={true} />}>
         <Route path="/members" element={<AllMembers />} />
         <Route path="/members/add" element={<AddMember />} />
-        <Route path="/members/:id" element={<MemberForms view="view" />} />
-        <Route path="/members/:id/edit" element={<MemberForms view="edit" />} />
+        <Route path="/members/:id" element={<EditMember view="view" />} />
+        <Route path="/members/:id/edit" element={<EditMember view="edit" />} />
         <Route path="/searchMemberDues" element={<SearchMember purpose={"dues"} />} />
         <Route path="/searchMemberCert" element={<SearchMember purpose={"certification"} />} />
         <Route path="/dues/:id/:name" element={<Dues />} />

@@ -10,12 +10,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
-import axios from "axios";
 import useAuthStore from "@/authStore";
-import imageCompression from "browser-image-compression";
+import { fetchCredentials, handleUpdate } from "@/hooks/SettingsUtils";
 
 const Settings = () => {
   const { memberId } = useAuthStore();
@@ -36,150 +33,9 @@ const Settings = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMsg, setDialogMsg] = useState("");
 
-  const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
-
   useEffect(() => {
-    axios.get(`${API_URL}/credentials/member/${memberId}`, {
-      headers: {
-        Authorization: `Bearer ${API_SECRET}`,
-      },
-    }).then((res) => {
-      setCredentialsId(res.data.id);
-      setInitialName(res.data.username);
-
-      if (res.data.pfp?.data) {
-        const imageSrc = bufferToBase64Image(res.data.pfp.data);
-        setPfp(imageSrc);
-      }
-    }).catch((err) => {
-      toast.error(err.response?.data?.error || "Something went wrong");
-    });
-  }, [API_SECRET, memberId]);
-
-  const bufferToBase64Image = (bufferData) => {
-    if (!bufferData) return null;
-
-    const uint8Array = new Uint8Array(bufferData);
-
-    const header = uint8Array.slice(0, 4).join(",");
-
-    let mime = "image/png";
-    if (header === "255,216,255,224" || header === "255,216,255,225") {
-      mime = "image/jpeg";
-    } else if (header === "137,80,78,71") {
-      mime = "image/png";
-    }
-
-    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
-    const base64 = btoa(binary);
-    return `data:${mime};base64,${base64}`;
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-
-    try {
-      if (option === "username") {
-        await axios.put(`${API_URL}/credentials/${credentialsId}`, { username }, {
-          headers: { Authorization: `Bearer ${API_SECRET}` },
-        });
-        setDialogOpen(true);
-        setDialogMsg("Username");
-        setInitialName(username);
-        setUsername("");
-      }
-
-      if (option === "password") {
-        if (newPass !== confirmPass) {
-          toast.error("New Password and Confirm New Password Do Not Match.");
-          return;
-        }
-
-        await axios.post(`${API_URL}/credentials/password/${memberId}`, {
-          current_password: currentPass,
-          new_password: newPass,
-        }, {
-          headers: { Authorization: `Bearer ${API_SECRET}` },
-        });
-
-        setDialogOpen(true);
-        setDialogMsg("Password");
-        setCurrentPass("");
-        setNewPass("");
-        setConfirmPass("");
-      }
-
-      if (option === "picture" && pfp) {
-        let profileFile = pfp;
-
-        if (profileFile) {
-          const isBase64 = typeof profileFile === "string";
-
-          if (isBase64) {
-            profileFile = base64ToFile(profileFile, "profile-picture");
-          } else if (profileFile instanceof File) {
-            const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-            if (!validTypes.includes(profileFile.type)) {
-              toast.error("Only JPG, JPEG, or PNG Files are Allowed.");
-              return;
-            }
-
-            if (profileFile.size > 10 * 1024 * 1024) {
-              toast.error("Picture File Size Must be Under 10MB.");
-              return;
-            }
-
-            profileFile = await compressImage(profileFile);
-          }
-
-          const formData = new FormData();
-          formData.append("pfp", profileFile);
-
-          await axios.post(`${API_URL}/uploads/member/${memberId}`, formData, {
-            headers: {
-              Authorization: `Bearer ${API_SECRET}`,
-              "Content-Type": "multipart/form-data",
-            },
-          });
-
-          setDialogOpen(true);
-          setDialogMsg("Profile Picture");
-        }
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.error || err.message || "Something went wrong");
-    }
-  };
-
-  const compressImage = async (file) => {
-    const options = {
-      maxSizeMB: 0.05,
-      maxWidthOrHeight: 800,
-      useWebWorker: true,
-    };
-
-    try {
-      const compressedFile = await imageCompression(file, options);
-      return compressedFile;
-    } catch (error) {
-      toast.error("Compression failed:", error);
-      return file;
-    }
-  };
-
-  const base64ToFile = (base64String, filename) => {
-    const arr = base64String.split(",");
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-  };
-
+    fetchCredentials(setCredentialsId, setInitialName, setPfp);
+  }, [memberId]);
 
   return (
     <div className="font-poppins">
@@ -218,7 +74,9 @@ const Settings = () => {
           </div>
         </div>
 
-        <form className="border border-black rounded-xl p-7 flex flex-col gap-20 min-h-lvh xl:flex-4/7" onSubmit={handleUpdate}>
+        <form className="border border-black rounded-xl p-7 flex flex-col gap-20 min-h-lvh xl:flex-4/7" onSubmit={(e) =>
+          handleUpdate({ e, option, username, currentPass, newPass, confirmPass, pfp, credentialsId, memberId, setDialogOpen, setDialogMsg, setInitialName, setUsername, setCurrentPass, setNewPass, setConfirmPass })}
+        >
           <Button
             className="w-2/5 self-end bg-blue-button xl:w-1/5"
             type="submit"

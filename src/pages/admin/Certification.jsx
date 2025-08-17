@@ -1,13 +1,10 @@
 import TopNav from "@/components/AdminCompts/TopNav";
 import React from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import certification_form from "@/assets/CERTIFICATION.pdf";
 import { useEffect, useState } from "react";
-import { PDFDocument } from "pdf-lib";
 import { Link, useParams } from "react-router-dom";
 import Sidebar from "@/components/AdminCompts/Sidebar";
-import axios from "axios";
-import { toast } from "sonner";
+import { fetchCertificateData } from "@/hooks/CertificationUtils";
 
 const Certificate = () => {
   const { id } = useParams();
@@ -15,49 +12,9 @@ const Certificate = () => {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loadError, setLoadError] = useState(false);
 
-  const fillPdf = async (member) => {
-    const formPdfBytes = await fetch(certification_form).then((res) =>
-      res.arrayBuffer()
-    );
-
-    const pdfDoc = await PDFDocument.load(formPdfBytes);
-    const form = pdfDoc.getForm();
-
-    try {
-      const fullname = `${member.first_name} ${member.middle_name} ${member.last_name}`.trim();
-
-      form.getTextField("crn").setText(member?.crn.toString() || "");
-      form.getTextField("name").setText(fullname || "");
-      form.getTextField("age").setText(member.age?.toString() || "");
-      form.getTextField("block").setText(member.block_no?.toString() || "");
-      form.getTextField("lot").setText(member.lot_no?.toString() || "");
-      form.getTextField("requestor").setText("");
-      form.getTextField("purpose").setText("");
-      form.getTextField("day").setText(new Date(Date.now()).getDate().toString() || "");
-      form.getTextField("month").setText(new Date(Date.now()).toLocaleDateString('en-US', { month: 'long' }) || "");
-      form.getTextField("year").setText(new Date(Date.now()).getFullYear().toString().slice(-2) || "");
-    } catch (err) {
-      console.warn("Some form fields not found:", err);
-    }
-
-    const pdfBytes = await pdfDoc.save();
-    const blob = new Blob([pdfBytes], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-    setPdfUrl(url);
-  };
-
-  const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
-
   useEffect(() => {
-    axios.get(`${API_URL}/certifications/member/${id}`, {
-      headers: {
-        Authorization: `Bearer ${API_SECRET}`,
-      }
-    }).then((res) => {
-      fillPdf(res.data);
-    }).catch(err => toast.error(err.response?.data?.error || "Something went wrong"));
-  }, [API_SECRET, id]);
+    fetchCertificateData(id, setPdfUrl);
+  }, [id]);
 
   return (
     <div className="pb-35 xl:pb-0 bg-customgray1">
