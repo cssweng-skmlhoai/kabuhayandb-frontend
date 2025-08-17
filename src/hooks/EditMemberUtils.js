@@ -1,5 +1,5 @@
 import axios from "axios";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { bufferToBase64Image, base64ToFile, compressImage } from "./ImageUtils";
 import { API_SECRET, API_URL } from "./Constants";
 
