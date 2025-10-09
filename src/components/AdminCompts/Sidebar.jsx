@@ -5,6 +5,8 @@ import { PiWallet } from "react-icons/pi";
 import { GrDocumentUser } from "react-icons/gr";
 import { SlSettings } from "react-icons/sl";
 import { MdOutlineLogout } from "react-icons/md";
+import { BsClockHistory } from "react-icons/bs";
+import { BsClipboard2 } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -105,6 +107,30 @@ const Sidebar = () => {
                 className={`ml-2 overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 w-auto translate-x-0" : "opacity-0 w-0 -translate-x-2"}`}
               >
                 Certification
+              </span>
+            )}
+          </Link>
+          <Link className="flex items-center gap-2 hover:bg-gray-300 p-2 rounded">
+            <div className="min-w-[24px] flex justify-center items-center">
+              <BsClipboard2 className="size-6" />
+            </div>
+            {isOpen && (
+              <span
+                className={`ml-2 overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 w-auto translate-x-0" : "opacity-0 w-0 -translate-x-2"}`}
+              >
+                Accreditation
+              </span>
+            )}
+          </Link>
+          <Link className="flex items-center gap-2 hover:bg-gray-300 p-2 rounded">
+            <div className="min-w-[24px] flex justify-center items-center">
+              <BsClockHistory className="size-6" />
+            </div>
+            {isOpen && (
+              <span
+                className={`ml-2 overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 w-auto translate-x-0" : "opacity-0 w-0 -translate-x-2"}`}
+              >
+                Change History
               </span>
             )}
           </Link>
