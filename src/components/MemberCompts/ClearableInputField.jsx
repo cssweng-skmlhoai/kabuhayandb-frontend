@@ -16,7 +16,7 @@ const ClearableInputField = ({
   className,
   inputType = "text",
   inputProps = {},
-  rules ={},
+  rules = {},
 }) => (
   <FormField
     control={control}
@@ -24,7 +24,9 @@ const ClearableInputField = ({
     rules={rules}
     render={({ field }) => (
       <FormItem className={`relative ${className}`}>
-        <FormLabel htmlFor={name} className={`text-base`}>{label}</FormLabel>
+        <FormLabel htmlFor={name} className={`text-base`}>
+          {label}
+        </FormLabel>
         <FormControl>
           <div className="relative">
             <Input
@@ -32,7 +34,11 @@ const ClearableInputField = ({
               id={name}
               type={inputType}
               disabled={!isEdit}
-              className={isEdit ? "pr-10" : "h-10 px-3 py-2 text-base !text-black disabled:opacity-100 rounded-md"}
+              className={
+                isEdit
+                  ? "pr-10"
+                  : "h-10 px-3 py-2 text-base !text-black disabled:opacity-100 rounded-md"
+              }
               style={{ backgroundColor: "#F0EDED" }}
               {...inputProps}
             />

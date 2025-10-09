@@ -1,5 +1,5 @@
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .main {
@@ -87,7 +87,7 @@ body {
   text-align: center;
   padding: 0.5rem 0;
   font-size: 0.875rem;
-  background-color: #F0EDED;
+  background-color: #f0eded;
   border-radius: 0.5rem;
 }
 

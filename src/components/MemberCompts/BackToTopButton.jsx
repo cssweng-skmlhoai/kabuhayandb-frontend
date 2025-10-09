@@ -23,10 +23,7 @@ const BackToTopButton = () => {
   }, []);
 
   return visible ? (
-    <Button
-      onClick={scrollToTop}
-      variant="back_to_top"
-    >
+    <Button onClick={scrollToTop} variant="back_to_top">
       <ArrowUp className="h-5 w-5" />
     </Button>
   ) : null;

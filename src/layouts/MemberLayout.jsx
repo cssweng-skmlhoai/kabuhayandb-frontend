@@ -27,7 +27,9 @@ const MemberLayout = () => {
       .then((res) => {
         setMember(res.data);
       })
-      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
+      .catch((err) =>
+        toast.error(err.response?.data?.error || "Something went wrong")
+      );
   }, [API_SECRET, memberId]);
 
   return (

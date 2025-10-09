@@ -15,7 +15,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-const DatePickerField = ({ control, name, label, isEdit, className, rules={}, }) => (
+const DatePickerField = ({
+  control,
+  name,
+  label,
+  isEdit,
+  className,
+  rules = {},
+}) => (
   <FormField
     control={control}
     name={name}
