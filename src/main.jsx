@@ -19,7 +19,8 @@ createRoot(document.getElementById("root")).render(
             actionButton: "text-sm px-4 py-2",
             closeButton: "text-lg",
           },
-        }} />
+        }}
+      />
     </BrowserRouter>
   </StrictMode>
 );

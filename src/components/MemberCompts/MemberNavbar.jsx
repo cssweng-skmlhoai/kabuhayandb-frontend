@@ -24,9 +24,12 @@ const MemberNavbar = ({ member }) => {
         <div className="top-section">
           <div className="left-side">
             <Avatar>
-              <AvatarImage src={pfp || "/SKMLHOAI_Logo.png"} alt="Profile"/>
+              <AvatarImage src={pfp || "/SKMLHOAI_Logo.png"} alt="Profile" />
             </Avatar>
-            <span className="greeting"> Mabuhay, {member?.first_name || "member"}!</span>
+            <span className="greeting">
+              {" "}
+              Mabuhay, {member?.first_name || "member"}!
+            </span>
           </div>
           <div className="actions">
             <Link to="/member-settings" className="icon-label">
@@ -59,7 +62,9 @@ const MemberNavbar = ({ member }) => {
         >
           <TabsList className="w-fit">
             <TabsTrigger value="/memberView">Household Members</TabsTrigger>
-            <TabsTrigger value="/memberView/housing-utilities">Housing & Utilities</TabsTrigger>
+            <TabsTrigger value="/memberView/housing-utilities">
+              Housing & Utilities
+            </TabsTrigger>
             <TabsTrigger value="/memberView/dues">Dues</TabsTrigger>
           </TabsList>
         </Tabs>
