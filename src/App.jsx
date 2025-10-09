@@ -12,6 +12,7 @@ import MemberLayout from "./layouts/MemberLayout";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import SearchMember from "./pages/admin/SearchMember";
 import MonthlyDues from "./pages/admin/MonthlyDues";
+import ForgotPassword from "@/pages/ForgotPassword";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
       {/* Public routes */}
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
 
       {/* Admin-only routes */}
       <Route element={<ProtectedRoute adminOnly={true} />}>
