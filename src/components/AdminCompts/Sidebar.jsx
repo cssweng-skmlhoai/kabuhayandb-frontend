@@ -122,7 +122,10 @@ const Sidebar = () => {
               </span>
             )}
           </Link>
-          <Link className="flex items-center gap-2 hover:bg-gray-300 p-2 rounded">
+          <Link
+            to="/changeHistory"
+            className="flex items-center gap-2 hover:bg-gray-300 p-2 rounded"
+          >
             <div className="min-w-[24px] flex justify-center items-center">
               <BsClockHistory className="size-6" />
             </div>

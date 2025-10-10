@@ -12,6 +12,7 @@ import MemberLayout from "./layouts/MemberLayout";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import SearchMember from "./pages/admin/SearchMember";
 import MonthlyDues from "./pages/admin/MonthlyDues";
+import ChangeHistory from "./pages/admin/ChangeHistory";
 
 const App = () => {
   return (
@@ -37,6 +38,7 @@ const App = () => {
         <Route path="/dues/:id/:name" element={<Dues />} />
         <Route path="/monthlyDuesReport/" element={<MonthlyDues />} />
         <Route path="/certification/:id" element={<Certification />} />
+        <Route path="/changeHistory" element={<ChangeHistory />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
 
