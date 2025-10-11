@@ -39,7 +39,7 @@ const ChangeHistory = () => {
 
             <div className="flex flex-col gap-8 xl:flex xl:border xl:border-black xl:mr-3 xl:mt-3 xl:mb-10 xl:rounded-lg xl:py-10">
               <div className="flex flex-col gap-5">
-                <div className="flex flex-col text-center">
+                <div className="flex flex-col space-y-5 text-center">
                   <div className="w-full flex flex-row gap-6 px-5 justify-between">
                     <input
                       type="text"
@@ -96,6 +96,37 @@ const ChangeHistory = () => {
                     <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10 hover:cursor-pointer">
                       Reset Filters
                     </Button>
+                  </div>
+
+                  <div className="overflow-x-auto px-5">
+                    <table className="min-w-full borderrounded-lg text-sm text-left">
+                      <thead className="font-semibold bg-blue-button">
+                        <tr className="flex justify-between py-1 px-4">
+                          <th className="py-3 px-4 text-white">Date Changed</th>
+                          <th className="py-3 px-4 text-white">Admin</th>
+                          <th className="py-3 px-4 text-white">Member</th>
+                          <th className="py-3 px-4 text-white">Change Type</th>
+                          <th className="py-3 px-4 text-white">
+                            Field Changed
+                          </th>
+                          <th className="py-3 px-4 text-white">Past Value</th>
+                          <th className="py-3 px-4 text-white">New Value</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td
+                            colSpan="7"
+                            className="text-center py-6 text-gray-500 italic border-b"
+                          >
+                            No change history available
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div className="text-gray-500 text-sm mt-2">
+                      1 - 00 of 00
+                    </div>
                   </div>
                 </div>
               </div>
