@@ -17,10 +17,58 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BsCalendar } from "react-icons/bs";
 import { BsArrowDown } from "react-icons/bs";
+import { SlArrowLeft } from "react-icons/sl";
+import { SlArrowRight } from "react-icons/sl";
 
 const ChangeHistory = () => {
   const [selectedAdmin, setSelectedAdmin] = useState("All");
   const [date, setDate] = useState();
+
+  {
+    /* Sample data for history change */
+  }
+  const changedData = [
+    {
+      id: 1,
+      member: "John D",
+      changedBy: "Jane",
+      date: new Date("2023-01-01"),
+      change_type: "Update",
+      field_changed: "Contact Number",
+      past_value: "09654321209",
+      new_value: "09123456789",
+    },
+    {
+      id: 2,
+      member: "Alice S",
+      changedBy: "John",
+      date: new Date("2023-01-02"),
+      change_type: "Add",
+      field_changed: "Gender",
+      past_value: "-",
+      new_value: "Male",
+    },
+    {
+      id: 3,
+      member: "Sabrina C",
+      changedBy: "Taylor",
+      date: new Date("2023-01-03"),
+      change_type: "Update",
+      field_changed: "Middle Name",
+      past_value: "Ann",
+      new_value: "Annlyn",
+    },
+    {
+      id: 4,
+      member: "Lebron J.",
+      changedBy: "Stephen",
+      date: new Date("2023-01-06"),
+      change_type: "Delete",
+      field_changed: "Last Name",
+      past_value: "James",
+      new_value: "-",
+    },
+  ];
 
   return (
     <div className="pb-35 xl:pb-0">
@@ -99,33 +147,84 @@ const ChangeHistory = () => {
                   </div>
 
                   <div className="overflow-x-auto px-5">
-                    <table className="min-w-full borderrounded-lg text-sm text-left">
+                    <table className="min-w-full table-fixed borderrounded-lg text-sm text-left">
                       <thead className="font-semibold bg-blue-button">
-                        <tr className="flex justify-between py-1 px-4">
-                          <th className="py-3 px-4 text-white">Date Changed</th>
-                          <th className="py-3 px-4 text-white">Admin</th>
-                          <th className="py-3 px-4 text-white">Member</th>
-                          <th className="py-3 px-4 text-white">Change Type</th>
-                          <th className="py-3 px-4 text-white">
+                        <tr>
+                          <th className="w-[22rem] py-3 px-4 text-white">
+                            Date Changed
+                          </th>
+                          <th className="w-[22rem] py-3 px-4 text-white">
+                            Admin
+                          </th>
+                          <th className="w-[22rem] py-3 px-4 text-white">
+                            Member
+                          </th>
+                          <th className="w-[22rem] py-3 px-4 text-white">
+                            Change Type
+                          </th>
+                          <th className="w-[22rem] py-3 px-4 text-white">
                             Field Changed
                           </th>
-                          <th className="py-3 px-4 text-white">Past Value</th>
-                          <th className="py-3 px-4 text-white">New Value</th>
+                          <th className="w-[22rem] py-3 px-4 text-white">
+                            Past Value
+                          </th>
+                          <th className="w-[22rem]py-3 px-4 text-white">
+                            New Value
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td
-                            colSpan="7"
-                            className="text-center py-6 text-gray-500 italic border-b"
-                          >
-                            No change history available
-                          </td>
-                        </tr>
+                        {changedData.map((row, index) => (
+                          <tr key={index} className="border-b bg-gray-50">
+                            <td className="py-3 px-4">
+                              {row.date.toLocaleDateString()}
+                            </td>
+                            <td className="py-3 px-4">{row.changedBy}</td>
+                            <td className="py-3 px-4">{row.member}</td>
+                            {row.change_type === "Add" ? (
+                              <td className="py-3 px-4 font-semibold">
+                                <span className="px-3 py-1 rounded-lg bg-green-100">
+                                  {row.change_type}
+                                </span>
+                              </td>
+                            ) : row.change_type === "Delete" ? (
+                              <td className="py-3 px-4 font-semibold">
+                                <span className="px-3 py-1 rounded-lg bg-red-100">
+                                  {row.change_type}
+                                </span>
+                              </td>
+                            ) : (
+                              <td className="py-3 px-4 font-semibold">
+                                <span className="px-3 py-1 rounded-lg bg-yellow-100">
+                                  {row.change_type}
+                                </span>
+                              </td>
+                            )}
+                            <td className="py-3 px-4">{row.field_changed}</td>
+                            <td className="py-3 px-4">{row.past_value}</td>
+                            <td className="py-3 px-4">{row.new_value}</td>
+                          </tr>
+                        ))}
+
+                        {Array.from({
+                          length: Math.max(0, 10 - changedData.length),
+                        }).map((_, i) => (
+                          <tr key={`empty-${i}`} className="border-b">
+                            <td className="py-3 px-4 text-gray-300" colSpan="7">
+                              &nbsp;
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
-                    <div className="text-gray-500 text-sm mt-2">
-                      1 - 00 of 00
+                    <div className="flex flex-row justify-between items-center mt-4">
+                      <p className="text-gray-500 text-sm mt-2">1 - 00 of 00</p>
+
+                      <div className="flex items-center">
+                        <SlArrowLeft className="inline py-1 size-5 mr-3 hover:cursor-pointer border" />
+                        <span className="text-gray-500 text-sm">1 / 10</span>
+                        <SlArrowRight className="inline py-1 size-5 ml-3 hover:cursor-pointer border" />
+                      </div>
                     </div>
                   </div>
                 </div>
