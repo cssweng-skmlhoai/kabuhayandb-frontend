@@ -24,7 +24,8 @@ const Certificate = () => {
     const form = pdfDoc.getForm();
 
     try {
-      const fullname = `${member.first_name} ${member.middle_name} ${member.last_name}`.trim();
+      const fullname =
+        `${member.first_name} ${member.middle_name} ${member.last_name}`.trim();
 
       form.getTextField("crn").setText(member?.crn.toString() || "");
       form.getTextField("name").setText(fullname || "");
@@ -33,9 +34,18 @@ const Certificate = () => {
       form.getTextField("lot").setText(member.lot_no?.toString() || "");
       form.getTextField("requestor").setText("");
       form.getTextField("purpose").setText("");
-      form.getTextField("day").setText(new Date(Date.now()).getDate().toString() || "");
-      form.getTextField("month").setText(new Date(Date.now()).toLocaleDateString('en-US', { month: 'long' }) || "");
-      form.getTextField("year").setText(new Date(Date.now()).getFullYear().toString().slice(-2) || "");
+      form
+        .getTextField("day")
+        .setText(new Date(Date.now()).getDate().toString() || "");
+      form
+        .getTextField("month")
+        .setText(
+          new Date(Date.now()).toLocaleDateString("en-US", { month: "long" }) ||
+            ""
+        );
+      form
+        .getTextField("year")
+        .setText(new Date(Date.now()).getFullYear().toString().slice(-2) || "");
     } catch (err) {
       console.warn("Some form fields not found:", err);
     }
@@ -47,16 +57,21 @@ const Certificate = () => {
   };
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    axios.get(`${API_URL}/certifications/member/${id}`, {
-      headers: {
-        Authorization: `Bearer ${API_SECRET}`,
-      }
-    }).then((res) => {
-      fillPdf(res.data);
-    }).catch(err => toast.error(err.response?.data?.error || "Something went wrong"));
+    axios
+      .get(`${API_URL}/certifications/member/${id}`, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET}`,
+        },
+      })
+      .then((res) => {
+        fillPdf(res.data);
+      })
+      .catch((err) =>
+        toast.error(err.response?.data?.error || "Something went wrong")
+      );
   }, [API_SECRET, id]);
 
   return (

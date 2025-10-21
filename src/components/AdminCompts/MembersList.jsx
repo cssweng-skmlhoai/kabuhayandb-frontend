@@ -51,7 +51,7 @@ const MembersList = () => {
   const navigate = useNavigate();
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // fetch all members once
   useEffect(() => {
@@ -91,7 +91,10 @@ const MembersList = () => {
       mime = "image/png";
     }
 
-    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+    const binary = uint8Array.reduce(
+      (acc, byte) => acc + String.fromCharCode(byte),
+      ""
+    );
     const base64 = btoa(binary);
     return `data:${mime};base64,${base64}`;
   };
@@ -136,7 +139,7 @@ const MembersList = () => {
         }
       })
       .catch((err) => {
-        toast.error(err.response?.data?.error || "Something went wrong")
+        toast.error(err.response?.data?.error || "Something went wrong");
       });
   };
 
@@ -167,9 +170,16 @@ const MembersList = () => {
               value={searched}
               onChange={(e) => setSearched(e.target.value)}
             />
-            <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10" onClick={searchUser}>Search</Button>
+            <Button
+              className="font-normal text-md px-5 py-6 bg-blue-button md:px-10"
+              onClick={searchUser}
+            >
+              Search
+            </Button>
           </div>
-          <p className="text-sm italic text-gray-500">Note: Empty the search bar and press 'Search' to show all members</p>
+          <p className="text-sm italic text-gray-500">
+            Note: Empty the search bar and press 'Search' to show all members
+          </p>
         </div>
       </div>
 
@@ -184,13 +194,16 @@ const MembersList = () => {
               onChange={(e) => setSearched(e.target.value)}
             />
 
-            <Button className="rounded-sm bg-blue-button text-white cursor-pointer w-1/4"
+            <Button
+              className="rounded-sm bg-blue-button text-white cursor-pointer w-1/4"
               onClick={searchUser}
             >
               <p className="text-md font-normal">Search</p>
             </Button>
           </div>
-          <p className="text-sm italic text-gray-400">Note: Empty the search bar and press 'Search' to show all members</p>
+          <p className="text-sm italic text-gray-400">
+            Note: Empty the search bar and press 'Search' to show all members
+          </p>
         </div>
 
         {members.length === 0 ? (
@@ -250,9 +263,11 @@ const MembersList = () => {
                 <div className="flex items-center gap-4">
                   {member?.pfp ? (
                     <img
-                      src={typeof member.pfp === "string"
-                        ? member.pfp
-                        : URL.createObjectURL(member.pfp)}
+                      src={
+                        typeof member.pfp === "string"
+                          ? member.pfp
+                          : URL.createObjectURL(member.pfp)
+                      }
                       alt="Profile"
                       loading="lazy"
                       className="hidden xl:block size-14 rounded-full bg-gray-300 object-cover"
@@ -279,7 +294,9 @@ const MembersList = () => {
           ))
         )}
 
-        <div className={`flex justify-between items-center mt-5 xl:mt-0 ${members.length <= membersPerPage ? "hidden" : ""}`}>
+        <div
+          className={`flex justify-between items-center mt-5 xl:mt-0 ${members.length <= membersPerPage ? "hidden" : ""}`}
+        >
           <p className="text-sm text-gray-600">
             {members.length === 0
               ? "0 results"
@@ -315,7 +332,8 @@ const MembersList = () => {
           <DialogHeader>
             <DialogTitle className="text-left">Delete This Member?</DialogTitle>
             <DialogDescription className="text-md text-gray-700">
-              All records related to <span className="font-bold">{memberToDeleteName}</span> will be
+              All records related to{" "}
+              <span className="font-bold">{memberToDeleteName}</span> will be
               permanently deleted from the database, including their family
               members, their household, dues, and credentials.
             </DialogDescription>

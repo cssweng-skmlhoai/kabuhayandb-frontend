@@ -45,27 +45,36 @@ const Dues = () => {
   const [unpaidPage, setUnpaidPage] = useState(1);
   const [paidPage, setPaidPage] = useState(1);
   const itemsPerPage = 5;
-  const paginatedUnpaid = filteredUnpaid.slice((unpaidPage - 1) * itemsPerPage, unpaidPage * itemsPerPage);
-  const paginatedPaid = filteredPaid.slice((paidPage - 1) * itemsPerPage, paidPage * itemsPerPage);
+  const paginatedUnpaid = filteredUnpaid.slice(
+    (unpaidPage - 1) * itemsPerPage,
+    unpaidPage * itemsPerPage
+  );
+  const paginatedPaid = filteredPaid.slice(
+    (paidPage - 1) * itemsPerPage,
+    paidPage * itemsPerPage
+  );
   const totalUnpaidPages = Math.ceil(filteredUnpaid.length / itemsPerPage);
   const totalPaidPages = Math.ceil(filteredPaid.length / itemsPerPage);
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    axios.get(`${API_URL}/dues/member/${id}`, {
-      headers: {
-        Authorization: `Bearer ${API_SECRET}`,
-      },
-    }).then((res) => {
-      const { dues, balances } = res.data;
-      setDues(dues);
-      setBalances(balances);
-      applyFilters(dues, selectedType);
-    }).catch((err) => {
-      toast.error(err.response?.data?.error || "Something went wrong");
-    });
+    axios
+      .get(`${API_URL}/dues/member/${id}`, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET}`,
+        },
+      })
+      .then((res) => {
+        const { dues, balances } = res.data;
+        setDues(dues);
+        setBalances(balances);
+        applyFilters(dues, selectedType);
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.error || "Something went wrong");
+      });
   }, [refreshKey, API_SECRET, id, selectedType]);
 
   useEffect(() => {
@@ -81,11 +90,16 @@ const Dues = () => {
   }, [addDueDialog, updateDueDialog, selectedType]);
 
   const applyFilters = (allDues, type) => {
-    const filtered = type === "All" ? allDues : allDues.filter(d => d.due_type === type);
+    const filtered =
+      type === "All" ? allDues : allDues.filter((d) => d.due_type === type);
 
-    const unpaid = filtered.filter(d => d.status === "Unpaid").sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+    const unpaid = filtered
+      .filter((d) => d.status === "Unpaid")
+      .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
 
-    const paid = filtered.filter(d => d.status === "Paid").sort((a, b) => new Date(b.date_paid) - new Date(a.date_paid));
+    const paid = filtered
+      .filter((d) => d.status === "Paid")
+      .sort((a, b) => new Date(b.date_paid) - new Date(a.date_paid));
 
     setFilteredUnpaid(unpaid);
     setFilteredPaid(paid);
@@ -109,18 +123,21 @@ const Dues = () => {
       member_id: id,
     };
 
-    axios.post(`${API_URL}/dues`, payload, {
-      headers: {
-        Authorization: `Bearer ${API_SECRET}`,
-      },
-    }).then(() => {
-      setAddDueDialog(false);
-      setRefreshKey(prev => prev + 1);
-      toast.success("Due Successfully Added");
-    }).catch((err) => {
-      toast.error(err.response?.data?.error || "Something went wrong");
-    });
-  }
+    axios
+      .post(`${API_URL}/dues`, payload, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET}`,
+        },
+      })
+      .then(() => {
+        setAddDueDialog(false);
+        setRefreshKey((prev) => prev + 1);
+        toast.success("Due Successfully Added");
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.error || "Something went wrong");
+      });
+  };
 
   const handleUpdateDue = (e) => {
     e.preventDefault();
@@ -131,20 +148,23 @@ const Dues = () => {
       status,
       due_type: dueTypeInput,
       household_id: householdId,
-      receipt_number: receiptNumber
+      receipt_number: receiptNumber,
     };
 
-    axios.put(`${API_URL}/dues/${selectedDueId}`, payload, {
-      headers: {
-        Authorization: `Bearer ${API_SECRET}`,
-      },
-    }).then(() => {
-      setUpdateDueDialog(false);
-      setRefreshKey(prev => prev + 1);
-      toast.success("Due Successfully Updated");
-    }).catch((err) => {
-      toast.error(err.response?.data?.error || "Something went wrong");
-    });
+    axios
+      .put(`${API_URL}/dues/${selectedDueId}`, payload, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET}`,
+        },
+      })
+      .then(() => {
+        setUpdateDueDialog(false);
+        setRefreshKey((prev) => prev + 1);
+        toast.success("Due Successfully Updated");
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.error || "Something went wrong");
+      });
   };
 
   const openUpdateForm = (due) => {
@@ -169,13 +189,13 @@ const Dues = () => {
         setDeleteDueDialog(false);
         setUpdateDueDialog(false);
         setSelectedDueId(null);
-        setRefreshKey(prev => prev + 1);
+        setRefreshKey((prev) => prev + 1);
         toast.success("Due Successfully Deleted");
       })
       .catch((err) => {
         toast.error(err.response?.data?.error || "Something went wrong");
       });
-  }
+  };
 
   const dueTypeBalances = (type) => {
     if (type === "Monthly Amortization") return "amortization";
@@ -183,11 +203,14 @@ const Dues = () => {
     if (type === "Taxes") return "taxes";
     if (type === "Penalties") return "penalties";
     if (type === "Others") return "others";
-  }
+  };
 
   const getOutstandingBalance = (type) => {
     if (type === "All") {
-      return Object.values(balances).reduce((acc, val) => acc + parseFloat(val || 0), 0);
+      return Object.values(balances).reduce(
+        (acc, val) => acc + parseFloat(val || 0),
+        0
+      );
     }
     return parseFloat(balances[dueTypeBalances(type)] || 0);
   };
@@ -217,12 +240,23 @@ const Dues = () => {
                 <p className="font-poppins text-lg">Back</p>
               </Link>
 
-              <p className="font-semibold text-center text-xl xl:text-2xl">{name}'s Dues</p>
+              <p className="font-semibold text-center text-xl xl:text-2xl">
+                {name}'s Dues
+              </p>
 
-              <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); setAddDueDialog(true) }}>
+              <form
+                className="flex flex-col gap-5"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setAddDueDialog(true);
+                }}
+              >
                 <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm xl:flex-row xl:justify-center">
                   <p className="font-medium">Select Type of Due:</p>
-                  <select name="" id="" required
+                  <select
+                    name=""
+                    id=""
+                    required
                     value={selectedType}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -244,18 +278,35 @@ const Dues = () => {
 
                 <div className="flex flex-col items-center justify-center gap-5 xl:gap-0 xl:flex-row">
                   <div className="px-5 py-4 bg-white flex flex-col items-center gap-3 rounded-sm xl:w-1/2 xl:flex-row xl:justify-center">
-                    <p className="font-medium w-full text-center">Outstanding Balance ({selectedType === "All" ? "All Types" : selectedType})</p>
+                    <p className="font-medium w-full text-center">
+                      Outstanding Balance (
+                      {selectedType === "All" ? "All Types" : selectedType})
+                    </p>
                     <input
-                      className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black" type="text" name="" id="" placeholder="₱ 0.00" readOnly value={`₱ ${getOutstandingBalance(selectedType).toLocaleString("en-US")}`} />
+                      className="bg-customgray2 p-2 text-md rounded-sm w-full xl:border xl:border-black"
+                      type="text"
+                      name=""
+                      id=""
+                      placeholder="₱ 0.00"
+                      readOnly
+                      value={`₱ ${getOutstandingBalance(selectedType).toLocaleString("en-US")}`}
+                    />
                   </div>
 
-                  <Button className="bg-blue-button w-full rounded-sm !py-5 md:w-1/2 xl:!py-3 xl:!h-auto xl:w-1/5" type="submit">Add New Due</Button>
+                  <Button
+                    className="bg-blue-button w-full rounded-sm !py-5 md:w-1/2 xl:!py-3 xl:!h-auto xl:w-1/5"
+                    type="submit"
+                  >
+                    Add New Due
+                  </Button>
                 </div>
               </form>
 
               <div className="p-5 bg-white flex flex-col items-center rounded-sm gap-3 xl:border xl:border-black xl:px-15">
                 <p className="font-medium">Unpaid Dues</p>
-                <p className="text-sm text-gray-500 italic">Tap on a Due to Update It</p>
+                <p className="text-sm text-gray-500 italic">
+                  Tap on a Due to Update It
+                </p>
                 <div className="w-full overflow-x-auto">
                   <table className="w-full table-auto border-separate border-spacing-y-3 text-sm">
                     <thead>
@@ -269,7 +320,10 @@ const Dues = () => {
                     <tbody>
                       {paginatedUnpaid.length === 0 ? (
                         <tr>
-                          <td colSpan="4" className="text-center py-4 text-gray-500">
+                          <td
+                            colSpan="4"
+                            className="text-center py-4 text-gray-500"
+                          >
                             No unpaid dues for this type.
                           </td>
                         </tr>
@@ -280,11 +334,19 @@ const Dues = () => {
                             className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md"
                             onClick={() => openUpdateForm(due)}
                           >
-                            <td className="px-4 py-2 rounded-l-md">{due.due_type}</td>
-                            <td className="px-4 py-2">₱ {parseFloat(due.amount).toLocaleString("en-US")}</td>
-                            <td className="px-4 py-2">{new Date(due.due_date).toLocaleDateString()}</td>
+                            <td className="px-4 py-2 rounded-l-md">
+                              {due.due_type}
+                            </td>
+                            <td className="px-4 py-2">
+                              ₱ {parseFloat(due.amount).toLocaleString("en-US")}
+                            </td>
+                            <td className="px-4 py-2">
+                              {new Date(due.due_date).toLocaleDateString()}
+                            </td>
                             <td className="px-4 py-2">{due.receipt_number}</td>
-                            <td className="text-gray-500 text-2xl font-light rounded-r-md pr-2">&rsaquo;</td>
+                            <td className="text-gray-500 text-2xl font-light rounded-r-md pr-2">
+                              &rsaquo;
+                            </td>
                           </tr>
                         ))
                       )}
@@ -292,15 +354,24 @@ const Dues = () => {
                   </table>
                 </div>
 
-                <div className={`flex items-center gap-7 ${filteredUnpaid.length <= 5 ? "hidden" : ""}`}>
-                  <button onClick={() => setUnpaidPage(p => Math.max(p - 1, 1))}>
+                <div
+                  className={`flex items-center gap-7 ${filteredUnpaid.length <= 5 ? "hidden" : ""}`}
+                >
+                  <button
+                    onClick={() => setUnpaidPage((p) => Math.max(p - 1, 1))}
+                  >
                     <ChevronLeft className="size-8 hover:bg-gray-300 rounded-md duration-200" />
                   </button>
-                  <p>Page {unpaidPage} of {totalUnpaidPages}</p>
+                  <p>
+                    Page {unpaidPage} of {totalUnpaidPages}
+                  </p>
                   <button
                     onClick={() =>
-                      setUnpaidPage(p =>
-                        Math.min(p + 1, Math.ceil(filteredUnpaid.length / itemsPerPage))
+                      setUnpaidPage((p) =>
+                        Math.min(
+                          p + 1,
+                          Math.ceil(filteredUnpaid.length / itemsPerPage)
+                        )
                       )
                     }
                   >
@@ -311,7 +382,9 @@ const Dues = () => {
 
               <div className="p-5 bg-white flex flex-col items-center rounded-sm gap-3 xl:border xl:border-black xl:px-15">
                 <p className="font-medium">Payment History</p>
-                <p className="text-sm text-gray-500 italic">Tap on a Due to Update It</p>
+                <p className="text-sm text-gray-500 italic">
+                  Tap on a Due to Update It
+                </p>
                 <div className="w-full overflow-x-auto">
                   <table className="w-full table-auto border-separate border-spacing-y-3 text-sm">
                     <thead>
@@ -325,7 +398,10 @@ const Dues = () => {
                     <tbody>
                       {paginatedPaid.length === 0 ? (
                         <tr>
-                          <td colSpan="4" className="text-center py-4 text-gray-500">
+                          <td
+                            colSpan="4"
+                            className="text-center py-4 text-gray-500"
+                          >
                             No unpaid dues for this type.
                           </td>
                         </tr>
@@ -336,11 +412,19 @@ const Dues = () => {
                             className="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 duration-200 shadow-md"
                             onClick={() => openUpdateForm(due)}
                           >
-                            <td className="px-4 py-2 rounded-l-md">{due.due_type}</td>
-                            <td className="px-4 py-2">₱ {parseFloat(due.amount).toLocaleString("en-US")}</td>
-                            <td className="px-4 py-2">{new Date(due.date_paid).toLocaleDateString()}</td>
+                            <td className="px-4 py-2 rounded-l-md">
+                              {due.due_type}
+                            </td>
+                            <td className="px-4 py-2">
+                              ₱ {parseFloat(due.amount).toLocaleString("en-US")}
+                            </td>
+                            <td className="px-4 py-2">
+                              {new Date(due.date_paid).toLocaleDateString()}
+                            </td>
                             <td className="px-4 py-2">{due.receipt_number}</td>
-                            <td className="text-gray-500 text-2xl font-light rounded-r-md pr-2">&rsaquo;</td>
+                            <td className="text-gray-500 text-2xl font-light rounded-r-md pr-2">
+                              &rsaquo;
+                            </td>
                           </tr>
                         ))
                       )}
@@ -348,15 +432,24 @@ const Dues = () => {
                   </table>
                 </div>
 
-                <div className={`flex items-center gap-5 ${filteredPaid.length <= 5 ? "hidden" : ""}`}>
-                  <button onClick={() => setPaidPage(p => Math.max(p - 1, 1))}>
+                <div
+                  className={`flex items-center gap-5 ${filteredPaid.length <= 5 ? "hidden" : ""}`}
+                >
+                  <button
+                    onClick={() => setPaidPage((p) => Math.max(p - 1, 1))}
+                  >
                     <ChevronLeft className="size-8 hover:bg-gray-300 rounded-md duration-200" />
                   </button>
-                  <p>Page {paidPage} of {totalPaidPages}</p>
+                  <p>
+                    Page {paidPage} of {totalPaidPages}
+                  </p>
                   <button
                     onClick={() =>
-                      setPaidPage(p =>
-                        Math.min(p + 1, Math.ceil(filteredPaid.length / itemsPerPage))
+                      setPaidPage((p) =>
+                        Math.min(
+                          p + 1,
+                          Math.ceil(filteredPaid.length / itemsPerPage)
+                        )
                       )
                     }
                   >
@@ -367,39 +460,41 @@ const Dues = () => {
             </div>
           </div>
         </div>
-      </div >
+      </div>
 
       {/* dialog for adding dues */}
-      <Dialog Dialog open={addDueDialog} onOpenChange={setAddDueDialog} >
+      <Dialog Dialog open={addDueDialog} onOpenChange={setAddDueDialog}>
         <DialogContent className="w-[80%] flex items-center justify-center">
           <form onSubmit={handleAddDue} className="w-[95%]">
             <DialogHeader>
               <DialogTitle className="text-center font-semibold">
                 Add New Due
               </DialogTitle>
-              <DialogDescription className="text-md text-gray-700">
-              </DialogDescription>
+              <DialogDescription className="text-md text-gray-700"></DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-3 my-5">
               <div className="flex flex-col gap-2">
-                {selectedType === "All" && (<>
-                  <label htmlFor="dueType">Due Type</label>
-                  <select
-                    name="" id=""
-                    required
-                    className="bg-customgray2 p-2 text-md rounded-sm "
-                    value={addDueType}
-                    onChange={(e) => setAddDueType(e.target.value)}
-                  >
-                    <option value="Monthly Amortization">
-                      Monthly Amortization
-                    </option>
-                    <option value="Monthly Dues">Monthly Dues</option>
-                    <option value="Taxes">Taxes</option>
-                    <option value="Penalties">Penalties</option>
-                    <option value="Others">Others</option>
-                  </select>
-                </>)}
+                {selectedType === "All" && (
+                  <>
+                    <label htmlFor="dueType">Due Type</label>
+                    <select
+                      name=""
+                      id=""
+                      required
+                      className="bg-customgray2 p-2 text-md rounded-sm "
+                      value={addDueType}
+                      onChange={(e) => setAddDueType(e.target.value)}
+                    >
+                      <option value="Monthly Amortization">
+                        Monthly Amortization
+                      </option>
+                      <option value="Monthly Dues">Monthly Dues</option>
+                      <option value="Taxes">Taxes</option>
+                      <option value="Penalties">Penalties</option>
+                      <option value="Others">Others</option>
+                    </select>
+                  </>
+                )}
 
                 <label htmlFor="duedate">Due Date</label>
                 <input
@@ -426,7 +521,8 @@ const Dues = () => {
 
                 <label htmlFor="Status">Status</label>
                 <select
-                  name="" id=""
+                  name=""
+                  id=""
                   required
                   className="bg-customgray2 p-2 text-md rounded-sm"
                   value={status}
@@ -439,7 +535,10 @@ const Dues = () => {
               </div>
             </div>
             <DialogFooter className="flex flex-row">
-              <button type="submit" className="bg-blue-button w-1/2 text-white py-3 rounded-md hover:bg-black duration-200">
+              <button
+                type="submit"
+                className="bg-blue-button w-1/2 text-white py-3 rounded-md hover:bg-black duration-200"
+              >
                 Add Due
               </button>
               <DialogClose className="bg-white text-black rounded-md w-1/2 cursor-pointer border border-black hover:bg-gray-300 duration-200">
@@ -451,15 +550,14 @@ const Dues = () => {
       </Dialog>
 
       {/* dialog for updating dues */}
-      <Dialog Dialog open={updateDueDialog} onOpenChange={setUpdateDueDialog} >
+      <Dialog Dialog open={updateDueDialog} onOpenChange={setUpdateDueDialog}>
         <DialogContent className="w-[80%] flex items-center justify-center">
           <form onSubmit={handleUpdateDue} className="w-[95%]">
             <DialogHeader>
               <DialogTitle className="text-center font-semibold">
                 Update Due
               </DialogTitle>
-              <DialogDescription>
-              </DialogDescription>
+              <DialogDescription></DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-3 my-5">
               <div className="flex flex-col gap-2">
@@ -500,7 +598,8 @@ const Dues = () => {
 
                 <label htmlFor="Status">Status</label>
                 <select
-                  name="" id=""
+                  name=""
+                  id=""
                   required
                   className="bg-customgray2 p-2 text-md rounded-sm"
                   value={status}
@@ -521,7 +620,10 @@ const Dues = () => {
               </div>
             </div>
             <DialogFooter className="flex flex-row">
-              <button type="submit" className="bg-blue-button w-1/2 text-white py-3 rounded-md hover:bg-black duration-200">
+              <button
+                type="submit"
+                className="bg-blue-button w-1/2 text-white py-3 rounded-md hover:bg-black duration-200"
+              >
                 Update Due
               </button>
               <DialogClose className="bg-white text-black rounded-md w-1/2 cursor-pointer border border-black hover:bg-gray-300 duration-200">
@@ -536,11 +638,10 @@ const Dues = () => {
       <Dialog open={deleteDueDialog} onOpenChange={setDeleteDueDialog}>
         <DialogContent className="w-[80%]">
           <DialogHeader>
-            <DialogTitle className="text-left">
-              Delete This Due?
-            </DialogTitle>
+            <DialogTitle className="text-left">Delete This Due?</DialogTitle>
             <DialogDescription className="text-md text-gray-700">
-              Are you sure you want to delete this due? Double check before performing this action
+              Are you sure you want to delete this due? Double check before
+              performing this action
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

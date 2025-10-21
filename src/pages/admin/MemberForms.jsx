@@ -22,7 +22,7 @@ import {
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
-import imageCompression from 'browser-image-compression';
+import imageCompression from "browser-image-compression";
 
 const MemberForms = ({ view }) => {
   const { id } = useParams();
@@ -41,7 +41,7 @@ const MemberForms = ({ view }) => {
   const [memberToDeleteName, setMemberToDeleteName] = useState("");
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleAddFamilyMember = () => {
     setFamilyMembers((prev) => [
@@ -94,7 +94,9 @@ const MemberForms = ({ view }) => {
         const data = res.data;
         setAllDetails(data);
 
-        const signatureImage = bufferToBase64Image(data.confirmity_signature?.data);
+        const signatureImage = bufferToBase64Image(
+          data.confirmity_signature?.data
+        );
 
         setMemberData({
           last_name: data.last_name,
@@ -156,7 +158,10 @@ const MemberForms = ({ view }) => {
       mime = "image/png";
     }
 
-    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+    const binary = uint8Array.reduce(
+      (acc, byte) => acc + String.fromCharCode(byte),
+      ""
+    );
     const base64 = btoa(binary);
     return `data:${mime};base64,${base64}`;
   };
@@ -227,7 +232,9 @@ const MemberForms = ({ view }) => {
       navigate("/members");
       toast.success("Member Successfully Updated");
     } catch (err) {
-      toast.error(err.response?.data?.error || err.message || "Something went wrong");
+      toast.error(
+        err.response?.data?.error || err.message || "Something went wrong"
+      );
     }
   };
 
@@ -299,7 +306,10 @@ const MemberForms = ({ view }) => {
 
       <form
         className="p-5 bg-customgray1 flex flex-col gap-4 xl:grid xl:grid-cols-3 xl:p-8 xl:gap-7"
-        onSubmit={(e) => { e.preventDefault(); setConfirmEditDialog(true) }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          setConfirmEditDialog(true);
+        }}
       >
         <div className="flex flex-col gap-4 xl:col-start-1">
           <div className="flex justify-between items-center xl:hidden">
@@ -761,20 +771,29 @@ const MemberForms = ({ view }) => {
             <label htmlFor="signature">Confirmity/Signature</label>
             {memberData?.confirmity_signature ? (
               <img
-                src={typeof memberData.confirmity_signature === "string"
-                  ? memberData.confirmity_signature
-                  : URL.createObjectURL(memberData.confirmity_signature)}
+                src={
+                  typeof memberData.confirmity_signature === "string"
+                    ? memberData.confirmity_signature
+                    : URL.createObjectURL(memberData.confirmity_signature)
+                }
                 alt="Signature"
                 className="w-full max-w-xs border border-gray-300 rounded mb-3"
               />
             ) : (
-              <p className={`text-sm italic text-gray-500 mb-3 bg-customgray2 pl-2 py-2 rounded-md ${isEdit ? "bg-gray-200" : ""}`}>No signature uploaded.</p>
+              <p
+                className={`text-sm italic text-gray-500 mb-3 bg-customgray2 pl-2 py-2 rounded-md ${isEdit ? "bg-gray-200" : ""}`}
+              >
+                No signature uploaded.
+              </p>
             )}
             <input
               type="file"
               accept="image/*"
               onChange={(e) =>
-                setMemberData({ ...memberData, confirmity_signature: e.target.files[0], })
+                setMemberData({
+                  ...memberData,
+                  confirmity_signature: e.target.files[0],
+                })
               }
               className="hidden"
               id="signature-upload"
@@ -971,7 +990,8 @@ const MemberForms = ({ view }) => {
               Delete This Family Member?
             </DialogTitle>
             <DialogDescription className="text-md text-gray-700">
-              Are you sure you want to remove <span className="font-bold">{memberToDeleteName}</span> as a
+              Are you sure you want to remove{" "}
+              <span className="font-bold">{memberToDeleteName}</span> as a
               family member?
             </DialogDescription>
           </DialogHeader>
@@ -995,11 +1015,10 @@ const MemberForms = ({ view }) => {
       <Dialog open={confirmEditDialog} onOpenChange={setConfirmEditDialog}>
         <DialogContent className="w-[80%]">
           <DialogHeader>
-            <DialogTitle className="text-left">
-              Edit Member?
-            </DialogTitle>
+            <DialogTitle className="text-left">Edit Member?</DialogTitle>
             <DialogDescription className="text-md text-gray-700">
-              Proceed to edit this member? Please double-check the details before proceeding.
+              Proceed to edit this member? Please double-check the details
+              before proceeding.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

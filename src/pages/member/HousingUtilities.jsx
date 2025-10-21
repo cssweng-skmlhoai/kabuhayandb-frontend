@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import "./Members.css";
 import useAuthStore from "@/authStore";
-import imageCompression from 'browser-image-compression';
+import imageCompression from "browser-image-compression";
 
 const HousingUtilities = ({ view }) => {
   const memberId = useAuthStore((s) => s.memberId);
@@ -43,7 +43,7 @@ const HousingUtilities = ({ view }) => {
   });
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     axios
@@ -55,7 +55,9 @@ const HousingUtilities = ({ view }) => {
       .then((res) => {
         const data = res.data;
 
-        const signatureImage = bufferToBase64Image(data.confirmity_signature?.data);
+        const signatureImage = bufferToBase64Image(
+          data.confirmity_signature?.data
+        );
 
         const household = {
           tct_no: data.tct_no,
@@ -78,7 +80,9 @@ const HousingUtilities = ({ view }) => {
         setSignatureFile(signatureImage || null);
         form.reset(household);
       })
-      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
+      .catch((err) =>
+        toast.error(err.response?.data?.error || "Something went wrong")
+      );
   }, [form, memberId, API_SECRET]);
 
   const bufferToBase64Image = (bufferData) => {
@@ -95,7 +99,10 @@ const HousingUtilities = ({ view }) => {
       mime = "image/png";
     }
 
-    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+    const binary = uint8Array.reduce(
+      (acc, byte) => acc + String.fromCharCode(byte),
+      ""
+    );
     const base64 = btoa(binary);
     return `data:${mime};base64,${base64}`;
   };
@@ -157,7 +164,6 @@ const HousingUtilities = ({ view }) => {
       formData.append("households", JSON.stringify(payload.households));
       formData.append("family_members", JSON.stringify(payload.family_members));
 
-
       await axios.put(`${API_URL}/members/info/${memberId}`, formData, {
         headers: {
           Authorization: `Bearer ${API_SECRET}`,
@@ -169,7 +175,9 @@ const HousingUtilities = ({ view }) => {
       toast.success("Changes saved successfully!");
       navigate(`/memberView/housing-utilities`);
     } catch (err) {
-      toast.error(err.response?.data?.error || err.message || "Something went wrong");
+      toast.error(
+        err.response?.data?.error || err.message || "Something went wrong"
+      );
     }
   };
 
@@ -245,38 +253,85 @@ const HousingUtilities = ({ view }) => {
           <Card className="card">
             <CardContent className="card-content">
               <div className="space-y-4 mt-4">
-
-                <ClearableInputField control={form.control} name="tct_no" label="TCT No." isEdit={isEdit} inputProps={{ placeholder: "000-0000000000" }} rules={{ required: "Please enter your TCT number" }} />
+                <ClearableInputField
+                  control={form.control}
+                  name="tct_no"
+                  label="TCT No."
+                  isEdit={isEdit}
+                  inputProps={{ placeholder: "000-0000000000" }}
+                  rules={{ required: "Please enter your TCT number" }}
+                />
 
                 <div className="flex gap-4">
-                  <ClearableInputField control={form.control} name="block_no" label="Block No." className="w-1/2" isEdit={isEdit} inputProps={{ placeholder: "00" }} rules={{ required: "Please enter your block number" }} />
-                  <ClearableInputField control={form.control} name="lot_no" label="Lot No." className="w-1/2" isEdit={isEdit} inputProps={{ placeholder: "00" }} rules={{ required: "Please enter your lot number" }} />
+                  <ClearableInputField
+                    control={form.control}
+                    name="block_no"
+                    label="Block No."
+                    className="w-1/2"
+                    isEdit={isEdit}
+                    inputProps={{ placeholder: "00" }}
+                    rules={{ required: "Please enter your block number" }}
+                  />
+                  <ClearableInputField
+                    control={form.control}
+                    name="lot_no"
+                    label="Lot No."
+                    className="w-1/2"
+                    isEdit={isEdit}
+                    inputProps={{ placeholder: "00" }}
+                    rules={{ required: "Please enter your lot number" }}
+                  />
                 </div>
 
-                <ClearableInputField control={form.control} name="area" label="Area" isEdit={isEdit} inputProps={{ placeholder: "00" }} rules={{ required: "Please enter your area" }} />
-                <ClearableInputField control={form.control} name="open_space_share" label="Share of Open Space" isEdit={isEdit} inputProps={{ placeholder: "00" }} rules={{ required: "Please enter your share of open space" }} />
-                <ClearableInputField control={form.control} name="total" label="Total" isEdit={false} inputProps={{ readOnly: true, placeholder: "00" }} />
-
+                <ClearableInputField
+                  control={form.control}
+                  name="area"
+                  label="Area"
+                  isEdit={isEdit}
+                  inputProps={{ placeholder: "00" }}
+                  rules={{ required: "Please enter your area" }}
+                />
+                <ClearableInputField
+                  control={form.control}
+                  name="open_space_share"
+                  label="Share of Open Space"
+                  isEdit={isEdit}
+                  inputProps={{ placeholder: "00" }}
+                  rules={{ required: "Please enter your share of open space" }}
+                />
+                <ClearableInputField
+                  control={form.control}
+                  name="total"
+                  label="Total"
+                  isEdit={false}
+                  inputProps={{ readOnly: true, placeholder: "00" }}
+                />
               </div>
             </CardContent>
-          </Card >
+          </Card>
 
           <Card className="card">
             <CardContent className="card-content">
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="signature" className="font-medium">Conformity/Signature</label>
+                  <label htmlFor="signature" className="font-medium">
+                    Conformity/Signature
+                  </label>
 
                   {signatureFile ? (
                     <img
                       src={
-                        typeof signatureFile === "string" ? signatureFile : URL.createObjectURL(signatureFile)
+                        typeof signatureFile === "string"
+                          ? signatureFile
+                          : URL.createObjectURL(signatureFile)
                       }
                       alt="Signature"
                       className="w-full max-w-xs border border-gray-300 rounded mb-3"
                     />
                   ) : (
-                    <p className={`text-sm italic text-gray-500 mb-3 bg-customgray2 pl-2 rounded-md ${isEdit ? "py-2" : "py-2.5"}`}>
+                    <p
+                      className={`text-sm italic text-gray-500 mb-3 bg-customgray2 pl-2 rounded-md ${isEdit ? "py-2" : "py-2.5"}`}
+                    >
                       No signature uploaded.
                     </p>
                   )}
@@ -291,8 +346,9 @@ const HousingUtilities = ({ view }) => {
 
                   <label
                     htmlFor="signature-upload"
-                    className={`w-1/2 py-2 rounded-md text-sm bg-blue-button text-white border border-black hover:bg-black duration-200 text-center cursor-pointer mb-3 ${isEdit ? "" : "hidden"
-                      } sm:hidden`}
+                    className={`w-1/2 py-2 rounded-md text-sm bg-blue-button text-white border border-black hover:bg-black duration-200 text-center cursor-pointer mb-3 ${
+                      isEdit ? "" : "hidden"
+                    } sm:hidden`}
                   >
                     Upload Signature
                   </label>
@@ -310,8 +366,9 @@ const HousingUtilities = ({ view }) => {
 
               <label
                 htmlFor="signature-upload"
-                className={`w-1/4 py-2 rounded-md text-sm bg-blue-button text-white border border-black hover:bg-black duration-200 text-center cursor-pointer ${isEdit ? "sm:block hidden" : "hidden"
-                  }`}
+                className={`w-1/4 py-2 rounded-md text-sm bg-blue-button text-white border border-black hover:bg-black duration-200 text-center cursor-pointer ${
+                  isEdit ? "sm:block hidden" : "hidden"
+                }`}
               >
                 Upload Signature
               </label>
@@ -323,7 +380,11 @@ const HousingUtilities = ({ view }) => {
               <p className="text-xl font-medium"> Other Info </p>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <ClearableSelectField control={form.control} name="condition_type" label="Housing Condition/ Types" isEdit={isEdit}
+                <ClearableSelectField
+                  control={form.control}
+                  name="condition_type"
+                  label="Housing Condition/ Types"
+                  isEdit={isEdit}
                   options={[
                     "Needs minor repair",
                     "Needs major repair",
@@ -338,13 +399,35 @@ const HousingUtilities = ({ view }) => {
 
                 <div className="sm:col-start-2">
                   <div className="flex justify-center gap-6 pb-2">
-                    <CheckboxField control={form.control} name="Meralco" label="Meralco" isEdit={isEdit} className="text-black" />
-                    <CheckboxField control={form.control} name="Maynilad" label="Maynilad" isEdit={isEdit} className="text-black" />
-                    <CheckboxField control={form.control} name="Septic_Tank" label="Septic Tank" isEdit={isEdit} className="text-black" />
+                    <CheckboxField
+                      control={form.control}
+                      name="Meralco"
+                      label="Meralco"
+                      isEdit={isEdit}
+                      className="text-black"
+                    />
+                    <CheckboxField
+                      control={form.control}
+                      name="Maynilad"
+                      label="Maynilad"
+                      isEdit={isEdit}
+                      className="text-black"
+                    />
+                    <CheckboxField
+                      control={form.control}
+                      name="Septic_Tank"
+                      label="Septic Tank"
+                      isEdit={isEdit}
+                      className="text-black"
+                    />
                   </div>
                 </div>
 
-                <ClearableSelectField control={form.control} name="land_acquisition" label="Land Acquisition" isEdit={false}
+                <ClearableSelectField
+                  control={form.control}
+                  name="land_acquisition"
+                  label="Land Acquisition"
+                  isEdit={false}
                   options={[
                     "CMP",
                     "Direct Buying",
@@ -356,13 +439,20 @@ const HousingUtilities = ({ view }) => {
                   rules={{ required: "Please select from the options" }}
                   className="pb-2 w-full"
                 />
-                <ClearableSelectField control={form.control} name="status_of_occupancy" label="Status of Occupancy" isEdit={false} options={["Owner", "Sharer", "Renter"]} className="w-full sm:col-span-2 sm:w-1/2" />
+                <ClearableSelectField
+                  control={form.control}
+                  name="status_of_occupancy"
+                  label="Status of Occupancy"
+                  isEdit={false}
+                  options={["Owner", "Sharer", "Renter"]}
+                  className="w-full sm:col-span-2 sm:w-1/2"
+                />
               </div>
             </CardContent>
-          </Card >
-        </div >
-      </Form >
-    </div >
+          </Card>
+        </div>
+      </Form>
+    </div>
   );
 };
 

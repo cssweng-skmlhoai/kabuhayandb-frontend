@@ -11,7 +11,7 @@ const useAuthStore = create(
 
       login: async (username, password) => {
         const API_SECRET = import.meta.env.VITE_API_SECRET;
-        const API_URL = "https://kabuhayandb-backend.onrender.com";
+        const API_URL = import.meta.env.VITE_API_URL;
 
         try {
           const res = await axios.post(

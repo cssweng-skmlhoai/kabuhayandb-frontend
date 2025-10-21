@@ -15,7 +15,7 @@ const MemberLayout = () => {
   const { memberId } = useAuthStore();
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     axios
@@ -27,7 +27,9 @@ const MemberLayout = () => {
       .then((res) => {
         setMember(res.data);
       })
-      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
+      .catch((err) =>
+        toast.error(err.response?.data?.error || "Something went wrong")
+      );
   }, [API_SECRET, memberId]);
 
   return (

@@ -37,24 +37,27 @@ const Settings = () => {
   const [dialogMsg, setDialogMsg] = useState("");
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    axios.get(`${API_URL}/credentials/member/${memberId}`, {
-      headers: {
-        Authorization: `Bearer ${API_SECRET}`,
-      },
-    }).then((res) => {
-      setCredentialsId(res.data.id);
-      setInitialName(res.data.username);
+    axios
+      .get(`${API_URL}/credentials/member/${memberId}`, {
+        headers: {
+          Authorization: `Bearer ${API_SECRET}`,
+        },
+      })
+      .then((res) => {
+        setCredentialsId(res.data.id);
+        setInitialName(res.data.username);
 
-      if (res.data.pfp?.data) {
-        const imageSrc = bufferToBase64Image(res.data.pfp.data);
-        setPfp(imageSrc);
-      }
-    }).catch((err) => {
-      toast.error(err.response?.data?.error || "Something went wrong");
-    });
+        if (res.data.pfp?.data) {
+          const imageSrc = bufferToBase64Image(res.data.pfp.data);
+          setPfp(imageSrc);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.error || "Something went wrong");
+      });
   }, [API_SECRET, memberId]);
 
   const bufferToBase64Image = (bufferData) => {
@@ -71,7 +74,10 @@ const Settings = () => {
       mime = "image/png";
     }
 
-    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+    const binary = uint8Array.reduce(
+      (acc, byte) => acc + String.fromCharCode(byte),
+      ""
+    );
     const base64 = btoa(binary);
     return `data:${mime};base64,${base64}`;
   };
@@ -81,9 +87,13 @@ const Settings = () => {
 
     try {
       if (option === "username") {
-        await axios.put(`${API_URL}/credentials/${credentialsId}`, { username }, {
-          headers: { Authorization: `Bearer ${API_SECRET}` },
-        });
+        await axios.put(
+          `${API_URL}/credentials/${credentialsId}`,
+          { username },
+          {
+            headers: { Authorization: `Bearer ${API_SECRET}` },
+          }
+        );
         setDialogOpen(true);
         setDialogMsg("Username");
         setInitialName(username);
@@ -96,12 +106,16 @@ const Settings = () => {
           return;
         }
 
-        await axios.post(`${API_URL}/credentials/password/${memberId}`, {
-          current_password: currentPass,
-          new_password: newPass,
-        }, {
-          headers: { Authorization: `Bearer ${API_SECRET}` },
-        });
+        await axios.post(
+          `${API_URL}/credentials/password/${memberId}`,
+          {
+            current_password: currentPass,
+            new_password: newPass,
+          },
+          {
+            headers: { Authorization: `Bearer ${API_SECRET}` },
+          }
+        );
 
         setDialogOpen(true);
         setDialogMsg("Password");
@@ -148,7 +162,9 @@ const Settings = () => {
         }
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || err.message || "Something went wrong");
+      toast.error(
+        err.response?.data?.error || err.message || "Something went wrong"
+      );
     }
   };
 
@@ -179,7 +195,6 @@ const Settings = () => {
     }
     return new File([u8arr], filename, { type: mime });
   };
-
 
   return (
     <div className="font-poppins">
@@ -218,7 +233,10 @@ const Settings = () => {
           </div>
         </div>
 
-        <form className="border border-black rounded-xl p-7 flex flex-col gap-20 min-h-lvh xl:flex-4/7" onSubmit={handleUpdate}>
+        <form
+          className="border border-black rounded-xl p-7 flex flex-col gap-20 min-h-lvh xl:flex-4/7"
+          onSubmit={handleUpdate}
+        >
           <Button
             className="w-2/5 self-end bg-blue-button xl:w-1/5"
             type="submit"
@@ -265,7 +283,11 @@ const Settings = () => {
                     onClick={() => setShowCurrentPass((prev) => !prev)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
                   >
-                    {showCurrentPass ? <LuEyeOff className="size-5" /> : <LuEye className="size-5" />}
+                    {showCurrentPass ? (
+                      <LuEyeOff className="size-5" />
+                    ) : (
+                      <LuEye className="size-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -289,7 +311,11 @@ const Settings = () => {
                     onClick={() => setShowNewPass((prev) => !prev)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
                   >
-                    {showNewPass ? <LuEyeOff className="size-5" /> : <LuEye className="size-5" />}
+                    {showNewPass ? (
+                      <LuEyeOff className="size-5" />
+                    ) : (
+                      <LuEye className="size-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -313,7 +339,11 @@ const Settings = () => {
                     onClick={() => setShowConfirmPass((prev) => !prev)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
                   >
-                    {showConfirmPass ? <LuEyeOff className="size-5" /> : <LuEye className="size-5" />}
+                    {showConfirmPass ? (
+                      <LuEyeOff className="size-5" />
+                    ) : (
+                      <LuEye className="size-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -323,7 +353,8 @@ const Settings = () => {
           {option === "picture" && (
             <div className="flex flex-col gap-8 items-center xl:px-7">
               {pfp ? (
-                <img className="size-36 md:size-40 lg:size-44 rounded-full bg-gray-400 object-cover"
+                <img
+                  className="size-36 md:size-40 lg:size-44 rounded-full bg-gray-400 object-cover"
                   src={typeof pfp === "string" ? pfp : URL.createObjectURL(pfp)}
                   alt="Profile Picture"
                 />
@@ -337,7 +368,10 @@ const Settings = () => {
                 className="hidden"
                 id="pfp-upload"
               />
-              <label htmlFor="pfp-upload" className="w-1/2 py-4 rounded-md bg-white text-black border border-black hover:bg-gray-300 duration-200 md:w-1/3 lg:w-1/4">
+              <label
+                htmlFor="pfp-upload"
+                className="w-1/2 py-4 rounded-md bg-white text-black border border-black hover:bg-gray-300 duration-200 md:w-1/3 lg:w-1/4"
+              >
                 <p className="text-center">Upload Image</p>
               </label>
             </div>

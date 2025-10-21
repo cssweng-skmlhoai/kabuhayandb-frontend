@@ -60,12 +60,16 @@ const HHMembers = ({ view }) => {
     name: "family",
   });
 
-  const visibleFamilyCount = watchedFamily.filter((m) => m.update !== false).length || 0;
+  const visibleFamilyCount =
+    watchedFamily.filter((m) => m.update !== false).length || 0;
 
   const toDateString = (date) =>
     date instanceof Date ? format(date, "yyyy-MM-dd") : date;
 
-  const watchedBirthDate = useWatch({ control: form.control, name: "birth_date" });
+  const watchedBirthDate = useWatch({
+    control: form.control,
+    name: "birth_date",
+  });
 
   // function to calculate age to show in the input field
   const calculateAge = (birthDate) => {
@@ -78,7 +82,8 @@ const HHMembers = ({ view }) => {
 
     const hasNotHadBirthdayThisYear =
       today.getMonth() < birth.getMonth() ||
-      (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate());
+      (today.getMonth() === birth.getMonth() &&
+        today.getDate() < birth.getDate());
 
     if (hasNotHadBirthdayThisYear) {
       age--;
@@ -88,7 +93,7 @@ const HHMembers = ({ view }) => {
   };
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     axios
@@ -100,7 +105,9 @@ const HHMembers = ({ view }) => {
       .then((res) => {
         const data = res.data;
 
-        const signatureBase64 = bufferToBase64Image(data.confirmity_signature?.data);
+        const signatureBase64 = bufferToBase64Image(
+          data.confirmity_signature?.data
+        );
 
         const normalizedData = {
           last_name: data.last_name,
@@ -131,7 +138,9 @@ const HHMembers = ({ view }) => {
         setSavedData(normalizedData);
         form.reset(normalizedData);
       })
-      .catch((err) => toast.error(err.response?.data?.error || "Something went wrong"));
+      .catch((err) =>
+        toast.error(err.response?.data?.error || "Something went wrong")
+      );
   }, [form, memberId, API_SECRET]);
 
   const bufferToBase64Image = (bufferData) => {
@@ -148,7 +157,10 @@ const HHMembers = ({ view }) => {
       mime = "image/png";
     }
 
-    const binary = uint8Array.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+    const binary = uint8Array.reduce(
+      (acc, byte) => acc + String.fromCharCode(byte),
+      ""
+    );
     const base64 = btoa(binary);
     return `data:${mime};base64,${base64}`;
   };
@@ -238,7 +250,9 @@ const HHMembers = ({ view }) => {
       navigate(`/memberView`);
       toast.success("Changes saved successfully!");
     } catch (err) {
-      toast.error(err.response?.data?.error || err.message || "Something went wrong");
+      toast.error(
+        err.response?.data?.error || err.message || "Something went wrong"
+      );
     }
   };
 
@@ -256,7 +270,8 @@ const HHMembers = ({ view }) => {
                     form.reset(savedData);
                   }
                   navigate(`/memberView`);
-                }}>
+                }}
+              >
                 Cancel
               </Button>
 
@@ -285,18 +300,77 @@ const HHMembers = ({ view }) => {
             <Card className="card">
               <CardContent className="card-content">
                 <div className="space-y-4 grid gap-4 sm:grid-cols-2">
-                  <ClearableInputField control={form.control} name="last_name" label="Last Name" isEdit={isEdit} inputProps={{ placeholder: "Last Name" }} rules={{ required: "Please enter your last name" }} />
-                  <ClearableInputField control={form.control} name="first_name" label="First Name" isEdit={isEdit} inputProps={{ placeholder: "First Name" }} rules={{ required: "Please enter your first name" }} />
-                  <ClearableInputField control={form.control} name="middle_name" label="Middle Name" isEdit={isEdit} inputProps={{ placeholder: "Middle Name" }} rules={{ required: "Please enter your middle name" }} />
-                  <DatePickerField control={form.control} name="birth_date" label="Date of Birth" isEdit={isEdit} rules={{ required: "Please select your birth date" }} />
+                  <ClearableInputField
+                    control={form.control}
+                    name="last_name"
+                    label="Last Name"
+                    isEdit={isEdit}
+                    inputProps={{ placeholder: "Last Name" }}
+                    rules={{ required: "Please enter your last name" }}
+                  />
+                  <ClearableInputField
+                    control={form.control}
+                    name="first_name"
+                    label="First Name"
+                    isEdit={isEdit}
+                    inputProps={{ placeholder: "First Name" }}
+                    rules={{ required: "Please enter your first name" }}
+                  />
+                  <ClearableInputField
+                    control={form.control}
+                    name="middle_name"
+                    label="Middle Name"
+                    isEdit={isEdit}
+                    inputProps={{ placeholder: "Middle Name" }}
+                    rules={{ required: "Please enter your middle name" }}
+                  />
+                  <DatePickerField
+                    control={form.control}
+                    name="birth_date"
+                    label="Date of Birth"
+                    isEdit={isEdit}
+                    rules={{ required: "Please select your birth date" }}
+                  />
 
                   <div className="inline-fields">
-                    <ClearableInputField control={form.control} name="age" label="Age" isEdit={false} className="w-1/2" inputProps={{ readOnly: true, placeholder: "Age", value: calculateAge(watchedBirthDate) }} />
-                    <ClearableSelectField control={form.control} name="gender" label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Other"]} rules={{ required: "Please choose from the gender options" }} />
+                    <ClearableInputField
+                      control={form.control}
+                      name="age"
+                      label="Age"
+                      isEdit={false}
+                      className="w-1/2"
+                      inputProps={{
+                        readOnly: true,
+                        placeholder: "Age",
+                        value: calculateAge(watchedBirthDate),
+                      }}
+                    />
+                    <ClearableSelectField
+                      control={form.control}
+                      name="gender"
+                      label="Gender"
+                      isEdit={isEdit}
+                      className="w-1/2"
+                      options={["Male", "Female", "Other"]}
+                      rules={{
+                        required: "Please choose from the gender options",
+                      }}
+                    />
                   </div>
 
-                  <ClearableInputField control={form.control} name="position" label="Position" isEdit={isEdit} inputProps={{ placeholder: "Position" }} rules={{ required: "Please enter your position" }} />
-                  <ClearableInputField control={form.control} name="contact_number" label="Contact Number" isEdit={isEdit}
+                  <ClearableInputField
+                    control={form.control}
+                    name="position"
+                    label="Position"
+                    isEdit={isEdit}
+                    inputProps={{ placeholder: "Position" }}
+                    rules={{ required: "Please enter your position" }}
+                  />
+                  <ClearableInputField
+                    control={form.control}
+                    name="contact_number"
+                    label="Contact Number"
+                    isEdit={isEdit}
                     rules={{
                       required: "Please enter your contact number",
                       pattern: {
@@ -304,14 +378,17 @@ const HHMembers = ({ view }) => {
                         message: "Must be an 11-digit number",
                       },
                     }}
-                    inputProps={{ placeholder: "Contact Number" }} />
-                </div >
-              </CardContent >
-            </Card >
+                    inputProps={{ placeholder: "Contact Number" }}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
             <div className="flex flex-col gap-4 card">
               <div className="bg-white px-5 py-6 flex justify-between items-center rounded-md font-poppins">
-                <p className="font-medium">Family Composition ({visibleFamilyCount})</p>
+                <p className="font-medium">
+                  Family Composition ({visibleFamilyCount})
+                </p>
 
                 {isEdit && (
                   <div
@@ -329,37 +406,125 @@ const HHMembers = ({ view }) => {
                 onOpenChange={setIsDialogOpen}
                 onAdd={(data) => {
                   append({ ...data, update: true });
-                  setOpenAccordions((prev) => [...prev, `member-${fields.length}`]);
+                  setOpenAccordions((prev) => [
+                    ...prev,
+                    `member-${fields.length}`,
+                  ]);
                 }}
               />
 
-              <Accordion type="multiple" value={openAccordions} onValueChange={setOpenAccordions}>
+              <Accordion
+                type="multiple"
+                value={openAccordions}
+                onValueChange={setOpenAccordions}
+              >
                 <div className="flex flex-col gap-4">
                   {fields.map((member, index) => {
-                    const isDeleted = form.getValues(`family.${index}.update`) === false;
+                    const isDeleted =
+                      form.getValues(`family.${index}.update`) === false;
                     if (isDeleted) return null;
 
                     const watchedFirstName = watchedFamily?.[index]?.first_name;
 
                     return (
-                      <AccordionItem key={member.id ?? `new-${index}`} value={`member-${index}`}>
+                      <AccordionItem
+                        key={member.id ?? `new-${index}`}
+                        value={`member-${index}`}
+                      >
                         <AccordionTrigger className="hover:no-underline bg-white p-5 rounded-md font-poppins font-medium data-[state=open]:rounded-b-none cursor-pointer text-md">
                           {watchedFirstName || `Family Member ${index + 1}`}
                         </AccordionTrigger>
                         <AccordionContent className="flex flex-col bg-white px-5 pb-5 font-poppins rounded-b-md">
                           <div className="grid gap-4 sm:grid-cols-2 mt-4">
-                            <ClearableInputField control={form.control} name={`family.${index}.last_name`} label="Last Name" isEdit={isEdit} inputProps={{ placeholder: "Last Name" }} rules={{ required: "Please enter the last name" }} />
-                            <ClearableInputField control={form.control} name={`family.${index}.first_name`} label="First Name" isEdit={isEdit} inputProps={{ placeholder: "First Name" }} rules={{ required: "Please enter the first name" }} />
-                            <ClearableInputField control={form.control} name={`family.${index}.middle_name`} label="Middle Name" isEdit={isEdit} inputProps={{ placeholder: "Middle Name" }} rules={{ required: "Please enter the middle name" }} />
-                            <ClearableInputField control={form.control} name={`family.${index}.relation_to_member`} label="Relation to Member" isEdit={isEdit} inputProps={{ placeholder: "Relation" }} rules={{ required: "Please enter the relation" }} />
-                            <DatePickerField control={form.control} name={`family.${index}.birth_date`} label="Birth Date" isEdit={isEdit} rules={{ required: "Please select the birth date" }} />
+                            <ClearableInputField
+                              control={form.control}
+                              name={`family.${index}.last_name`}
+                              label="Last Name"
+                              isEdit={isEdit}
+                              inputProps={{ placeholder: "Last Name" }}
+                              rules={{ required: "Please enter the last name" }}
+                            />
+                            <ClearableInputField
+                              control={form.control}
+                              name={`family.${index}.first_name`}
+                              label="First Name"
+                              isEdit={isEdit}
+                              inputProps={{ placeholder: "First Name" }}
+                              rules={{
+                                required: "Please enter the first name",
+                              }}
+                            />
+                            <ClearableInputField
+                              control={form.control}
+                              name={`family.${index}.middle_name`}
+                              label="Middle Name"
+                              isEdit={isEdit}
+                              inputProps={{ placeholder: "Middle Name" }}
+                              rules={{
+                                required: "Please enter the middle name",
+                              }}
+                            />
+                            <ClearableInputField
+                              control={form.control}
+                              name={`family.${index}.relation_to_member`}
+                              label="Relation to Member"
+                              isEdit={isEdit}
+                              inputProps={{ placeholder: "Relation" }}
+                              rules={{ required: "Please enter the relation" }}
+                            />
+                            <DatePickerField
+                              control={form.control}
+                              name={`family.${index}.birth_date`}
+                              label="Birth Date"
+                              isEdit={isEdit}
+                              rules={{
+                                required: "Please select the birth date",
+                              }}
+                            />
 
                             <div className="flex gap-4 col-span-2">
-                              <ClearableInputField control={form.control} name={`family.${index}.age`} label="Age" isEdit={false} className="w-1/2" inputProps={{ readOnly: true, placeholder: "Age", value: calculateAge(watchedFamily?.[index]?.birth_date) }} />
-                              <ClearableSelectField control={form.control} name={`family.${index}.gender`} label="Gender" isEdit={isEdit} className="w-1/2" options={["Male", "Female", "Prefer not to say"]} rules={{ required: "Please choose gender" }} />
+                              <ClearableInputField
+                                control={form.control}
+                                name={`family.${index}.age`}
+                                label="Age"
+                                isEdit={false}
+                                className="w-1/2"
+                                inputProps={{
+                                  readOnly: true,
+                                  placeholder: "Age",
+                                  value: calculateAge(
+                                    watchedFamily?.[index]?.birth_date
+                                  ),
+                                }}
+                              />
+                              <ClearableSelectField
+                                control={form.control}
+                                name={`family.${index}.gender`}
+                                label="Gender"
+                                isEdit={isEdit}
+                                className="w-1/2"
+                                options={[
+                                  "Male",
+                                  "Female",
+                                  "Prefer not to say",
+                                ]}
+                                rules={{ required: "Please choose gender" }}
+                              />
                             </div>
 
-                            <ClearableInputField control={form.control} name={`family.${index}.educational_attainment`} label="Educational Attainment" isEdit={isEdit} inputProps={{ placeholder: "Educational Attainment" }} rules={{ required: "Please enter the educational attainment" }} />
+                            <ClearableInputField
+                              control={form.control}
+                              name={`family.${index}.educational_attainment`}
+                              label="Educational Attainment"
+                              isEdit={isEdit}
+                              inputProps={{
+                                placeholder: "Educational Attainment",
+                              }}
+                              rules={{
+                                required:
+                                  "Please enter the educational attainment",
+                              }}
+                            />
                           </div>
 
                           {isEdit && (
@@ -367,8 +532,14 @@ const HHMembers = ({ view }) => {
                               <ConfirmDialog
                                 title="Delete Family Member"
                                 description="Are you sure you want to delete this member?"
-                                triggerLabel={<><Trash2 className="mr-1" /> Delete</>}
-                                onConfirm={() => handleDeleteFamilyMember(index)}
+                                triggerLabel={
+                                  <>
+                                    <Trash2 className="mr-1" /> Delete
+                                  </>
+                                }
+                                onConfirm={() =>
+                                  handleDeleteFamilyMember(index)
+                                }
                               />
                             </div>
                           )}
@@ -379,10 +550,9 @@ const HHMembers = ({ view }) => {
                 </div>
               </Accordion>
             </div>
-
-          </Form >
-        </div >
-      </div >
+          </Form>
+        </div>
+      </div>
       <BackToTopButton />
     </>
   );
