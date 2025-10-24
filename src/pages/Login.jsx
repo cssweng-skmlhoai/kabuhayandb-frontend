@@ -37,8 +37,12 @@ const Login = () => {
         navigate(`/memberView`);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     }
+  };
+
+  const handleForgotPassword = () => {
+    navigate("/forgot-password");
   };
 
   return (
@@ -91,6 +95,17 @@ const Login = () => {
                 )}
               </button>
             </div>
+          </div>
+
+          {/* Forgot Password link */}
+          <div className="flex justify-end w-full md:w-3/5 lg:w-1/2 xl:w-2/5 mt-1">
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="text-blue-600 hover:underline text-sm"
+            >
+              Forgot Password?
+            </button>
           </div>
         </div>
 

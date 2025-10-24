@@ -47,7 +47,7 @@ const AddMember = () => {
   const [showCloseButton, setShowCloseButton] = useState(false);
 
   const API_SECRET = import.meta.env.VITE_API_SECRET;
-  const API_URL = "https://kabuhayandb-backend.onrender.com";
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     let timer;
