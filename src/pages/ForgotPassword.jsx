@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Logo from "@/assets/SKMLHOAI_Logo.jpg";
+import axios from "axios";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -12,12 +13,18 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     try {
+      const API_SECRET = import.meta.env.VITE_API_SECRET;
+      const API_URL = import.meta.env.VITE_API_URL;
       // Placeholder logic – replace with your API call if needed
-      // await api.post("/auth/forgot-password", { email });
+      await axios.post(
+        `${API_URL}/credentials/reset`,
+        { email },
+        { headers: { Authorization: `Bearer ${API_SECRET}` } }
+      );
       toast.success("Password reset instructions sent to your email!");
       navigate("/login");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong");
     }
   };
 
@@ -32,7 +39,8 @@ const ForgotPassword = () => {
           Forgot Your Password?
         </p>
         <p className="text-gray-600 text-center text-sm w-[70%] md:w-3/5 lg:w-1/2 xl:w-2/5">
-          Enter your email address below and we’ll send you instructions to reset your password.
+          Enter your email address below and we’ll send you instructions to
+          reset your password.
         </p>
 
         <div className="flex flex-col gap-3 w-[65%] md:items-center">
