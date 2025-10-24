@@ -24,9 +24,6 @@ const ChangeHistory = () => {
   const [selectedAdmin, setSelectedAdmin] = useState("All");
   const [date, setDate] = useState();
 
-  {
-    /* Sample data for history change */
-  }
   const changedData = [
     {
       id: 1,
