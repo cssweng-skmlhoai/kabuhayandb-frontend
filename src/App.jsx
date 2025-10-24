@@ -12,7 +12,8 @@ import MemberLayout from "./layouts/MemberLayout";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import SearchMember from "./pages/admin/SearchMember";
 import MonthlyDues from "./pages/admin/MonthlyDues";
-import ForgotPassword from "@/pages/ForgotPassword";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Admin-only routes */}
       <Route element={<ProtectedRoute adminOnly={true} />}>
@@ -28,8 +30,14 @@ const App = () => {
         <Route path="/members/add" element={<AddMember />} />
         <Route path="/members/:id" element={<MemberForms view="view" />} />
         <Route path="/members/:id/edit" element={<MemberForms view="edit" />} />
-        <Route path="/searchMemberDues" element={<SearchMember purpose={"dues"} />} />
-        <Route path="/searchMemberCert" element={<SearchMember purpose={"certification"} />} />
+        <Route
+          path="/searchMemberDues"
+          element={<SearchMember purpose={"dues"} />}
+        />
+        <Route
+          path="/searchMemberCert"
+          element={<SearchMember purpose={"certification"} />}
+        />
         <Route path="/dues/:id/:name" element={<Dues />} />
         <Route path="/monthlyDuesReport/" element={<MonthlyDues />} />
         <Route path="/certification/:id" element={<Certification />} />
