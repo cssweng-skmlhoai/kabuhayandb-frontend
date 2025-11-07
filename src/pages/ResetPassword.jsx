@@ -45,7 +45,7 @@ export default function ResetPassword() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer"
               >
-                {showPassword ? <BsEyeSlash size={20} /> : <BsEye size={20} />}
+                {showPassword ? <BsEye size={20} /> : <BsEyeSlash size={20} />}
               </span>
             </div>
           </div>
@@ -66,7 +66,11 @@ export default function ResetPassword() {
                 onClick={() => setShowConfirmedPassword(!showConfirmedPassword)}
                 className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer"
               >
-                {showPassword ? <BsEyeSlash size={20} /> : <BsEye size={20} />}
+                {showConfirmedPassword ? (
+                  <BsEye size={20} />
+                ) : (
+                  <BsEyeSlash size={20} />
+                )}
               </span>
             </div>
           </div>
