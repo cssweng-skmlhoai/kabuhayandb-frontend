@@ -12,6 +12,7 @@ import MemberLayout from "./layouts/MemberLayout";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import SearchMember from "./pages/admin/SearchMember";
 import MonthlyDues from "./pages/admin/MonthlyDues";
+import UnpaidDues from "./pages/admin/UnpaidDues";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
@@ -40,6 +41,7 @@ const App = () => {
         />
         <Route path="/dues/:id/:name" element={<Dues />} />
         <Route path="/monthlyDuesReport/" element={<MonthlyDues />} />
+        <Route path="/unpaidDuesReport/" element={<UnpaidDues />} />
         <Route path="/certification/:id" element={<Certification />} />
         <Route path="/settings" element={<Settings />} />
       </Route>

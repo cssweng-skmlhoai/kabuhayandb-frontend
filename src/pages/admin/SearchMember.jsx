@@ -3,8 +3,9 @@ import TopNav from "@/components/AdminCompts/TopNav";
 import Sidebar from "@/components/AdminCompts/Sidebar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import ReportDropdown from "@/components/ui/report_dropdown";
 import {
   Dialog,
   DialogContent,
@@ -153,6 +154,14 @@ const SearchMember = ({ purpose }) => {
     return new Date(isoDate).toISOString().split("T")[0];
   };
 
+  const handleReportSelection = (report) => {
+    if (report === 'Monthly Due Report') {
+      navigate('/monthlyDuesReport');
+    } else if (report === 'Unpaid Due Report') {
+      navigate('/unpaidDuesReport');
+    }
+  };
+
   return (
     <div className="pb-35 xl:pb-0">
       <TopNav />
@@ -172,7 +181,7 @@ const SearchMember = ({ purpose }) => {
                   {purpose === "dues" && (
                     <>
                       Check{" "}
-                      <span className="font-semibold">Monthly Dues Report</span>{" "}
+                      <span className="font-semibold">Dues Report</span>{" "}
                       or{" "}
                     </>
                   )}
@@ -184,11 +193,9 @@ const SearchMember = ({ purpose }) => {
                 </p>
               </div>
               {purpose === "dues" && (
-                <Link to="/monthlyDuesReport">
-                  <Button className="font-normal px-10 py-6 bg-blue-button">
-                    Generate Monthly Dues Report
-                  </Button>
-                </Link>
+                <div className="w-64">
+                  <ReportDropdown onSelectReport={handleReportSelection} />
+                </div>
               )}
             </div>
 
@@ -208,7 +215,7 @@ const SearchMember = ({ purpose }) => {
                       <>
                         Check{" "}
                         <span className="font-semibold">
-                          Monthly Dues Report
+                          Dues Report
                         </span>{" "}
                         or{" "}
                       </>
@@ -221,11 +228,7 @@ const SearchMember = ({ purpose }) => {
                   </p>
                   {purpose === "dues" && (
                     <div className="py-5 flex justify-center xl:hidden">
-                      <Link to="/monthlyDuesReport">
-                        <Button className="font-normal px-10 py-6 bg-blue-button">
-                          Generate Monthly Dues Report
-                        </Button>
-                      </Link>
+                      <ReportDropdown onSelectReport={handleReportSelection} />
                     </div>
                   )}
                 </div>
@@ -260,7 +263,7 @@ const SearchMember = ({ purpose }) => {
                   currentMembers.map((member) => (
                     <div
                       key={member.member_id}
-                      className="bg-customgray1 px-4 py-7 flex flex-col rounded-md hover:bg-gray-300 xl:relative xl:py-5 xl:mb-0 duration-200 shadow-md"
+                      className="bg-customgray1 px-4 py-7 flex flex-col rounded-md hover:bg-gray-300 xl:relative xl:py-5 xl:mb-0 duration-200 shadow-md cursor-pointer"
                       onClick={
                         purpose === "certification"
                           ? () => openAddCertDialog(member.member_id)
