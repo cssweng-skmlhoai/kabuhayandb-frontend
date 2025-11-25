@@ -23,6 +23,7 @@ const ForgotPassword = () => {
       );
       toast.success("Password reset instructions sent to your email!");
       navigate("/login");
+      console.log("API URL = ", API_URL);
     } catch (error) {
       toast.error(error.message || "Something went wrong");
     }

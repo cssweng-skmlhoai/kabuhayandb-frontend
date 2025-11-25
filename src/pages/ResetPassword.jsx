@@ -1,13 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { BsEyeSlash } from "react-icons/bs";
 import { BsEye } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmedPassword, setShowConfirmedPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+
+  const API_URL = import.meta.env.VITE_API_URL;
+  const API_SECRET = import.meta.env.VITE_API_SECRET;
+
+  const token = new URLSearchParams(window.location.search).get("token");
+
+  useEffect(() => {
+    if (!token) {
+      toast.error("Invalid or missing token");
+      navigate("/login");
+      return;
+    }
+
+    const verifyToken = async () => {
+      try {
+        const res = await axios.get(
+          `${API_URL}/credentials/reset/verify?token=${token}`,
+          { headers: { Authorization: `Bearer ${API_SECRET}` } }
+        );
+
+        if (!res.data.valid) {
+          toast.error("Invalid or expired token");
+          navigate("/login");
+        }
+
+        setLoading(false);
+      } catch (error) {
+        toast.error("Invalid link or expired token");
+        navigate("/login");
+      }
+    };
+
+    verifyToken();
+  }, []);
 
   return (
     <div className="h-screen flex flex-col justify-center items-center bg-white">
