@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { BsEyeSlash } from "react-icons/bs";
 import { BsEye } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import axios from "axios";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -27,15 +29,10 @@ export default function ResetPassword() {
 
     const verifyToken = async () => {
       try {
-        const res = await axios.get(
+        await axios.get(
           `${API_URL}/credentials/reset/verify?token=${token}`,
           { headers: { Authorization: `Bearer ${API_SECRET}` } }
         );
-
-        if (!res.data.valid) {
-          toast.error("Invalid or expired token");
-          navigate("/login");
-        }
 
         setLoading(false);
       } catch (error) {
@@ -46,6 +43,37 @@ export default function ResetPassword() {
 
     verifyToken();
   }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!password || !confirmPassword){
+      toast.error("Please enter a new password and confirm it");
+      return;
+    }
+
+    if (password !== confirmPassword){
+      toast.error("New Password and Confirm Password Do Not Match");
+      return;
+    }
+
+    if (!token){
+      toast.error("Invalid or missing token");
+      return;
+    }
+
+    try {
+      await axios.post(`${API_URL}/credentials/reset/confirm`, {
+        token, new_password: password},
+        { headers: { Authorization: `Bearer ${API_SECRET}` } }
+      );
+
+      toast.success("Password reset successfully");
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Something went wrong");
+    }
+  };
 
   return (
     <div className="h-screen flex flex-col justify-center items-center bg-white">
@@ -115,7 +143,7 @@ export default function ResetPassword() {
         </div>
 
         <div className="flex item-center justify-center">
-          <Button className="font-normal text-md px-5 py-6 bg-blue-button md:px-10 hover:cursor-pointer">
+          <Button type="submit" onClick={handleSubmit} className="font-normal text-md px-5 py-6 bg-blue-button md:px-10 hover:cursor-pointer">
             Save New Password
           </Button>
         </div>
