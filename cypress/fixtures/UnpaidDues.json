@@ -1,0 +1,54 @@
+[
+  {
+    "member_name": "Juan Dela Cruz",
+    "filter_value": "Blk 3, Lot 3",
+    "dues": [
+      {
+        "due_type": "Monthly Dues",
+        "amount_due": 1500,
+        "amount_paid": 0,
+        "balance": 1500,
+        "due_date": "2025-10-31"
+      }
+    ]
+  },
+  {
+    "member_name": "Abby Salle",
+    "filter_value": "Blk 3, Lot 8",
+    "dues": [
+      {
+        "due_type": "Taxes",
+        "amount_due": 500,
+        "amount_paid": 0,
+        "balance": 500,
+        "due_date": "2025-10-31"
+      }
+    ]
+  },
+  {
+    "member_name": "Emma Fuente",
+    "filter_value": "Blk 10, Lot 8",
+    "dues": [
+      {
+        "due_type": "Monthly Amortization",
+        "amount_due": 2500,
+        "amount_paid": 0,
+        "balance": 2500,
+        "due_date": "2025-10-31"
+      }
+    ]
+  },
+  {
+    "member_name": "Mark Reyes",
+    "filter_value": "Blk 13, Lot 9",
+    "dues": [
+      {
+        "due_type": "Penalties",
+        "amount_due": 300,
+        "amount_paid": 0,
+        "balance": 300,
+        "due_date": "2025-10-31"
+      }
+    ]
+  }
+]
