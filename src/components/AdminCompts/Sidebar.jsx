@@ -6,6 +6,7 @@ import { GrDocumentUser } from "react-icons/gr";
 import { SlSettings } from "react-icons/sl";
 import { MdOutlineLogout } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
+import { MdHistory } from "react-icons/md";
 import {
   Dialog,
   DialogContent,
@@ -105,6 +106,21 @@ const Sidebar = () => {
                 className={`ml-2 overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 w-auto translate-x-0" : "opacity-0 w-0 -translate-x-2"}`}
               >
                 Certification
+              </span>
+            )}
+          </Link>
+          <Link
+            to="/changesHistory"
+            className="flex items-center gap-2 hover:bg-gray-300 p-2 rounded"
+          >
+            <div className="min-w-[24px] flex justify-center items-center">
+              <MdHistory className="size-6" />
+            </div>
+            {isOpen && (
+              <span
+                className={`ml-2 overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 w-auto translate-x-0" : "opacity-0 w-0 -translate-x-2"}`}
+              >
+                Changes History
               </span>
             )}
           </Link>
