@@ -46,7 +46,7 @@ const ChangesHistory = () => {
       params.append("dateFrom", date.from.toISOString().split("T")[0]);
     if (date?.to) params.append("dateTo", date.to.toISOString().split("T")[0]);
 
-    const url = `${API_URL}/change-histories?${params.toString()}`;
+    const url = `${API_URL}/changes?${params.toString()}`;
 
     try {
       setLoading(true);
@@ -69,7 +69,7 @@ const ChangesHistory = () => {
       console.error("Request URL:", url);
 
       if (error.response?.status === 404) {
-        toast.error("Backend route /change-histories not found.");
+        toast.error("Backend route /changes not found.");
       } else {
         toast.error(
           error.response?.data?.error || "Failed to load change history"
