@@ -99,122 +99,137 @@ const UnpaidDues = () => {
       <TopNav />
       <div className="flex flex-col xl:flex-row flex-1 relative">
         <Sidebar />
-        <div className="flex-1 bg-customgray1 p-8 xl:p-10">
-          {/* Back Button */}
-          <div className="flex items-center gap-3 mb-6">
-            <button
-              onClick={() => window.history.back()}
-              className="flex items-center text-gray-700 hover:text-gray-900 transition"
-            >
-              <IoIosArrowRoundBack className="size-8" />
-              <span className="text-lg font-medium">Back</span>
-            </button>
-          </div>
-
-          {/* Main Card */}
-          <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">
-            <h1 className="text-2xl font-semibold text-center mb-2">
-              Unpaid Due Report
-            </h1>
-            <p className="text-sm text-gray-600 text-center mb-6">
-              View members with unpaid dues by selecting a filter and entering details.
-            </p>
-
-            {/* Filter Section */}
-            <div className="flex flex-col md:flex-row gap-3 items-center justify-center mb-6">
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="w-full md:w-1/3 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-400"
-              >
-                <option value="">Filter By:</option>
-                <option value="household">Household</option>
-                <option value="blockNo">Block No.</option>
-                <option value="lotNo">Lot No.</option>
-              </select>
-
-              <input
-                type="text"
-                placeholder={
-                  filterType === "blockNo"
-                    ? "Enter block number"
-                    : filterType === "lotNo"
-                    ? "Enter lot number"
-                    : filterType === "household"
-                    ? "Enter household number"
-                    : "Enter household, name, or due type"
-                }
-                value={filterValue}
-                onChange={(e) => setFilterValue(e.target.value)}
-                className="w-full md:w-1/3 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-400"
-              />
-
-              <button
-                onClick={handleGenerate}
-                disabled={loading}
-                className="w-full md:w-1/4 bg-slate-700 text-white py-2.5 rounded hover:bg-slate-800 transition"
-              >
-                {loading ? "Loading..." : "Generate Report"}
-              </button>
+        <div className="flex-1 relative">
+           {/* Main Container with correct backgrounds */}
+          <div className="pb-5 pt-8 px-7 flex flex-col bg-customgray1 gap-10 font-poppins h-max xl:bg-white xl:gap-0 xl:px-5 xl:pt-5">
+            
+            {/* Header Section (Desktop) */}
+            <div className="hidden xl:flex justify-between w-full items-end p-5">
+              <div className="flex flex-col">
+                <p className="font-semibold text-3xl">Unpaid Due Report</p>
+                <p>View members with unpaid dues</p>
+              </div>
             </div>
 
-            {/* Message */}
-            {message && (
-              <div className="text-center text-gray-600 text-sm mb-4">
-                {message}
-              </div>
-            )}
+            {/* Main Content Card matching MonthlyDues style */}
+            <div className="flex flex-col gap-11 xl:flex xl:border xl:border-black xl:mr-3 xl:mt-3 xl:mb-10 xl:rounded-lg xl:flex-col xl:px-10 xl:py-10 bg-white">
+              
+              {/* Back Button with Border */}
+              <button
+                onClick={() => window.history.back()}
+                className="cursor-pointer px-3 py-1 rounded-md border border-black flex items-center justify-center gap-2 w-32 md:w-40 hover:bg-gray-50 transition"
+                >
+                <IoIosArrowRoundBack className="size-8" />
+                <p className="font-poppins text-lg">Back</p>
+              </button>
 
-            {loading ? (
-              <p className="text-center py-4">Loading...</p>
-            ) : error ? (
-              <p className="text-center py-4 text-red-600">{error}</p>
-            ) : filteredReport.length === 0 ? (
-              <p className="text-center py-4 text-gray-600">No unpaid dues found.</p>
-            ) : (
-              <div className="space-y-6">
-                {filteredReport.map((member, index) => (
-                  <div
-                    key={index}
-                    className="bg-white border border-gray-200 rounded-md shadow-sm p-4"
-                  >
-                    <h2 className="font-semibold mb-3">
-                      For {member.member_name}, {member.filter_value}
-                    </h2>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm border-collapse">
-                        <thead>
-                          <tr className="bg-gray-100 border-b text-gray-700">
-                            <th className="text-left py-2 px-3">Due Type</th>
-                            <th className="text-left py-2 px-3">Amount Due (₱)</th>
-                            <th className="text-left py-2 px-3">Amount Paid (₱)</th>
-                            <th className="text-left py-2 px-3">Balance (₱)</th>
-                            <th className="text-left py-2 px-3">Due Date</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {member.dues.map((due, i) => (
-                            <tr key={i} className="border-b">
-                              <td className="py-2 px-3">{due.due_type}</td>
-                              <td className="py-2 px-3">
-                                {due.amount_due.toLocaleString()}
-                              </td>
-                              <td className="py-2 px-3">
-                                {due.amount_paid.toLocaleString()}
-                              </td>
-                              <td className="py-2 px-3">
-                                {due.balance.toLocaleString()}
-                              </td>
-                              <td className="py-2 px-3">{formatDueDate(due.due_date)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                ))}
+              {/* Title inside card */}
+              <div>
+                <h1 className="font-semibold text-center text-3xl">
+                  Unpaid Due Report
+                </h1>
+                <p className="text-sm text-gray-600 text-center mt-2">
+                  View members with unpaid dues by selecting a filter and entering details.
+                </p>
               </div>
-            )}
+
+              {/* Filter Section */}
+              <div className="flex flex-col md:flex-row gap-3 items-center justify-center">
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-full md:w-1/3 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-400"
+                >
+                  <option value="">Filter By:</option>
+                  <option value="household">Household</option>
+                  <option value="blockNo">Block No.</option>
+                  <option value="lotNo">Lot No.</option>
+                </select>
+
+                <input
+                  type="text"
+                  placeholder={
+                    filterType === "blockNo"
+                      ? "Enter block number"
+                      : filterType === "lotNo"
+                      ? "Enter lot number"
+                      : filterType === "household"
+                      ? "Enter household number"
+                      : "Enter household, name, or due type"
+                  }
+                  value={filterValue}
+                  onChange={(e) => setFilterValue(e.target.value)}
+                  className="w-full md:w-1/3 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-400"
+                />
+
+                <button
+                  onClick={handleGenerate}
+                  disabled={loading}
+                  className="w-full md:w-1/4 bg-slate-700 text-white py-2.5 rounded hover:bg-slate-800 transition"
+                >
+                  {loading ? "Loading..." : "Generate Report"}
+                </button>
+              </div>
+
+              {/* Message */}
+              {message && (
+                <div className="text-center text-gray-600 text-sm mb-4">
+                  {message}
+                </div>
+              )}
+
+              {/* Results */}
+              {loading ? (
+                <p className="text-center py-4">Loading...</p>
+              ) : error ? (
+                <p className="text-center py-4 text-red-600">{error}</p>
+              ) : filteredReport.length === 0 ? (
+                <p className="text-center py-4 text-gray-600">No unpaid dues found.</p>
+              ) : (
+                <div className="space-y-6">
+                  {filteredReport.map((member, index) => (
+                    <div
+                      key={index}
+                      className="bg-white border border-black rounded-md p-4"
+                    >
+                      <h2 className="font-semibold mb-3">
+                        For {member.member_name}, {member.filter_value}
+                      </h2>
+                      <div className="overflow-x-auto">
+                        <table className="w-full border border-black border-separate rounded-md text-center">
+                          <thead className="bg-customgray2">
+                            <tr>
+                              <th className="border-r border-b border-black px-4 py-2 font-semibold text-left">Due Type</th>
+                              <th className="border-r border-b border-black px-4 py-2 text-left">Amount Due (₱)</th>
+                              <th className="border-r border-b border-black px-4 py-2 text-left">Amount Paid (₱)</th>
+                              <th className="border-r border-b border-black px-4 py-2 text-left">Balance (₱)</th>
+                              <th className="border-b border-black px-4 py-2 text-left">Due Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {member.dues.map((due, i) => (
+                              <tr key={i}>
+                                <td className="border-r border-b border-black px-4 py-2 bg-white text-left">{due.due_type}</td>
+                                <td className="border-r border-b border-black px-4 py-2 bg-white text-left">
+                                  {due.amount_due.toLocaleString()}
+                                </td>
+                                <td className="border-r border-b border-black px-4 py-2 bg-white text-left">
+                                  {due.amount_paid.toLocaleString()}
+                                </td>
+                                <td className="border-r border-b border-black px-4 py-2 bg-white text-left">
+                                  {due.balance.toLocaleString()}
+                                </td>
+                                <td className="border-b border-black px-4 py-2 bg-white text-left">{formatDueDate(due.due_date)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
