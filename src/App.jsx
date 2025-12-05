@@ -15,6 +15,7 @@ import MonthlyDues from "./pages/admin/MonthlyDues";
 import UnpaidDues from "./pages/admin/UnpaidDues";
 import ForgotPassword from "./pages/ForgotPassword";
 import ChangesHistory from "./pages/admin/ChangesHistory";
+import ResetPassword from "./pages/ResetPassword";
 
 const App = () => {
   return (
