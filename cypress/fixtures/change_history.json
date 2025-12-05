@@ -1,0 +1,33 @@
+{
+  "changes": [
+    {
+      "date": "2025-01-01T12:00:00Z",
+      "changedBy": "Admin 1",
+      "member": "John Doe",
+      "change_type": "Update",
+      "field_changed": "first_name",
+      "old_value": "Johnny",
+      "new_value": "John"
+    },
+    {
+      "date": "2025-01-02T08:30:00Z",
+      "changedBy": "Admin 2",
+      "member": "Jane Smith",
+      "change_type": "Add",
+      "field_changed": "family_member",
+      "old_value": null,
+      "new_value": "Added: Sister - Mary Smith"
+    },
+    {
+      "date": "2025-01-03T15:15:00Z",
+      "changedBy": "Admin 3",
+      "member": "Carlos Reyes",
+      "change_type": "Delete",
+      "field_changed": "middle_name",
+      "old_value": "Anton",
+      "new_value": "Antonio"
+    }
+  ],
+  "total": 3,
+  "totalPages": 1
+}

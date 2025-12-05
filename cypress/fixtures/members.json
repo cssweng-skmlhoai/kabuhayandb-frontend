@@ -1,0 +1,62 @@
+[
+  {
+    "member_id": 1,
+    "fullname": "Sabrina Carpenter",
+    "last_name": "Carpenter",
+    "first_name": "Sabrina",
+    "middle_name": "A",
+    "birth_date": "1990-01-01",
+    "age": 35,
+    "gender": "Male",
+    "head_position": "President",
+    "position": "Head",
+    "contact_number": "09123456789",
+    "tct_no": "1234",
+    "block_no": "5",
+    "lot_no": "10",
+    "open_space_share": 20,
+    "area": 100,
+    "total": 120,
+    "confirmity_signature": null,
+    "remarks": "",
+    "family_id": 1,
+    "condition_type": "Owned",
+    "Meralco": true,
+    "Maynilad": true,
+    "Septic_Tank": true,
+    "land_acquisition": "Purchased",
+    "status_of_occupancy": "Owner",
+    "pfp": null,
+    "family_members": [
+        {
+        "id": 1,
+        "last_name": "Doe",
+        "first_name": "Jane",
+        "middle_name": "B",
+        "relation": "Sister",
+        "birth_date": "1992-05-12",
+        "age": 33,
+        "gender": "Female",
+        "educational_attainment": "College"
+        }
+    ]
+  },
+  {
+    "member_id": 2,
+    "fullname": "John Doe",
+    "head_position": "Member",
+    "block_no": "8",
+    "lot_no": "10",
+    "tct_no": "TCT-67890",
+    "pfp": null
+  },
+  {
+    "member_id": 3,
+    "fullname": "Taylor Swift",
+    "head_position": "Member",
+    "block_no": "15",
+    "lot_no": "3",
+    "tct_no": "TCT-54321",
+    "pfp": null
+  }
+]

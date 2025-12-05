@@ -52,4 +52,9 @@ const useAuthStore = create(
   )
 );
 
+// For testing purposes
+if (typeof window !== "undefined") {
+  window.useAuthStore = useAuthStore;
+}
+
 export default useAuthStore;
