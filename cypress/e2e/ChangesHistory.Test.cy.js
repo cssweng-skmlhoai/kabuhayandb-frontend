@@ -5,11 +5,54 @@ describe("Changes History Page - Frontend Tests", () => {
 
     cy.visit("/changesHistory");
 
-    cy.intercept("GET", "**/changes*", {
-      fixture: "change_history.json",
+    cy.fixture("change_history.json").then((data) => {
+    cy.intercept("GET", "**/changes*", (req) => {
+      let filtered = data.changes;
+
+      // Filter by search
+      if (req.query.search) {
+        const search = req.query.search.toLowerCase();
+        filtered = filtered.filter((item) =>
+          item.member.toLowerCase().includes(search)
+        );
+      }
+
+      // Filter by selected admin
+      if (req.query.admin && req.query.admin !== "All") {
+        filtered = filtered.filter(
+          (item) => item.changedBy === req.query.admin
+        );
+      }
+
+      // Filter by date range
+      if (req.query.dateFrom) {
+        const from = new Date(req.query.dateFrom);
+        from.setHours(0, 0, 0, 0);
+        filtered = filtered.filter((item) => new Date(item.date) >= from);
+      }
+
+      if (req.query.dateTo) {
+        const to = new Date(req.query.dateTo);
+        to.setHours(23, 59, 59, 999);
+        filtered = filtered.filter((item) => new Date(item.date) <= to);
+      }
+
+      console.log("FROM:", req.query.dateFrom, "TO:", req.query.dateTo);
+
+      req.reply({
+        changes: filtered,
+        total: filtered.length,
+        totalPages: 1,
+      });
     }).as("getChanges");
   });
+  });
 
+  /**
+   * Test #1: Verify that the Change History page loads with all required UI elements.
+   * Ensures that headers, search input, dropdowns, reset filters button,
+   * and the table column headers are rendered correctly on initial page load.
+   */
   it("Test 1: Page loads with headers, inputs, buttons, and table", () => {
     cy.contains("Change History").should("be.visible");
     cy.contains("View changes in member details by admin").should("be.visible");
@@ -30,6 +73,11 @@ describe("Changes History Page - Frontend Tests", () => {
     cy.get("table thead").contains("New Value").should("exist");
   });
 
+  /**
+   * Test #2: Validate that the table correctly loads and displays mocked change history data.
+   * Confirms that each mocked record (Update, Add, Delete) appears with accurate details,
+   * including date, admin, member, change type, and past/new values.
+   */
   it("Test 2: Table loads with mocked data", () => {
     cy.wait("@getChanges");
 
@@ -38,7 +86,7 @@ describe("Changes History Page - Frontend Tests", () => {
       .parents("tr")
       .within(() => {
         cy.contains("Update");
-        cy.contains("1/1/2025");
+        cy.contains("12/1/2025");
         cy.contains("Admin 1");
         cy.contains("first_name");
         cy.contains("John");
@@ -50,7 +98,7 @@ describe("Changes History Page - Frontend Tests", () => {
       .parents("tr")
       .within(() => {
         cy.contains("Add");
-        cy.contains("1/2/2025");
+        cy.contains("12/2/2025");
         cy.contains("Admin 2");
         cy.contains("family_member");
         cy.contains("Added: Sister - Mary Smith");
@@ -69,6 +117,11 @@ describe("Changes History Page - Frontend Tests", () => {
       });
   });
 
+  /**
+   * Test #3: Ensure that the Reset Filters button restores the search field to empty.
+   * After typing text in the search field, clicking Reset Filters
+   * should instantly clear the input and trigger the correct state update.
+   */
   it("Test 3: Reset Search filter", () => {
     cy.wait("@getChanges");
 
@@ -83,51 +136,62 @@ describe("Changes History Page - Frontend Tests", () => {
     );
   });
 
-  /*it("Test 4: Filter change logs by admin", () => {
+  /**
+   * Test #4: Filter change logs by selected admin.
+   * This test simulates selecting an admin from the "Changed By" dropdown.
+   * The frontend is assumed to append the selected admin to the API request as `admin`.
+   */
+  it("Test 4: Filter change logs by admin", () => {
     cy.wait("@getChanges");
     
-    // Mock the filtered response for Admin 1
-    cy.intercept("GET", //TBA, {
-        fixture: "change_history.json"
-    }).as("getChangesByAdmin");
-
     cy.contains("Changed By").click();
-    cy.contains("Admin 1").click();
+    cy.contains("Admin 2").click();
 
-    cy.wait("@getChangesByAdmin");
+    cy.wait("@getChanges");
 
-    cy.get("table tbody").contains("Admin 1").should("be.visible");
-    cy.get("table tbody").contains("Admin 2").should("not.exist");
+    cy.contains("Jane Smith").should("exist");
+    cy.get("table tbody").contains("Admin 1").should("not.exist");
+    cy.get("table tbody").contains("Admin 2").should("be.visible");
     cy.get("table tbody").contains("Admin 3").should("not.exist");
-  });*/
+  });
 
-  /*it("Test 5: Search change logs by member name", () => {
+  /**
+   * Test #5: Verify search functionality filters results based on member name.
+   * Typing "John" should filter out any rows that do not contain "John Doe".
+   */
+  it("Test 5: Search change logs by member name", () => {
     cy.wait("@getChanges");
-    cy.intercept("GET", //TBA, {
-        fixture: "change_history.json" // only includes John Doe
-    }).as("getChangesSearch");
 
+    // Type in search input
     cy.get('input[placeholder="Search Affected Member Name"]').type("John");
-    cy.wait("@getChangesSearch");
-
-    cy.get("table tbody tr").should("have.length", 1);
-    cy.get("table tbody").contains("John Doe").should("be.visible");
-  });*/
-
-  /*it("Test 6: Filter change logs by date range (check date field only)", () => {
+    
+    // Optionally wait for filtered API call if frontend triggers a request
     cy.wait("@getChanges");
 
-    // Select a date range
+    // Table should only show John Doe
+    cy.get("table tbody").contains("John Doe").should("exist");
+    cy.get("table tbody").contains("Jane Smith").should("not.exist");
+  });
+
+  /**
+   * Test #6: Validate filtering by date range using the date picker component.
+   * After selecting a specific start and end date, only records whose dates fall within
+   * the range should remain visible.
+   */
+  it("Test 6: Filter change logs by date range", () => {
+    cy.wait("@getChanges");
+
+    // Open the date picker popover
     cy.contains("Date Range").click();
-    cy.get(".rdp-day").contains("1").click(); // Jan 1
-    cy.get(".rdp-day").contains("2").click(); // Jan 2
 
-    // Check that the table contains only the expected dates
-    cy.get("table tbody").contains("1/1/2025").should("be.visible");
-    cy.get("table tbody").contains("1/2/2025").should("be.visible");
+    cy.get('div[role="dialog"] button').contains(/^1$/).click();
+    cy.get('div[role="dialog"] button').contains(/^3$/).click();
 
-    // Dates outside the range should not be present
-    cy.get("table tbody").contains("1/3/2025").should("not.exist");
-    });
-    */
+    // Wait for API to be called with the selected date range
+    cy.wait("@getChanges");
+
+    cy.contains("John Doe").should("exist");
+    cy.contains("Jane Smith").should("exist");
+    cy.contains("Carlos Reyes").should("not.exist");
+  });
 });
