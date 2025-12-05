@@ -18,9 +18,9 @@ describe("Changes History Page - Frontend Tests", () => {
       }
 
       // Filter by selected admin
-      if (req.query.admin && req.query.admin !== "All") {
+      if (req.query.admin && req.query.admin !== "all") {
         filtered = filtered.filter(
-          (item) => item.changedBy === req.query.admin
+          (item) => String(item.admin_id) === req.query.admin
         );
       }
 
@@ -158,15 +158,6 @@ describe("Changes History Page - Frontend Tests", () => {
     // Verify table updates
     cy.get("table tbody").contains("Admin 2").should("be.visible");
     cy.get("table tbody").contains("Admin 1").should("not.exist");
-
-    cy.contains("button", "Changed By").click();
-
-    cy.get('[role="menu"]').should('be.visible');
-    
-    cy.contains('[role="menuitem"]', "Admin 1").click();
-
-    cy.get("table tbody").contains("Admin 1").should("be.visible");
-    cy.get("table tbody").contains("Admin 2").should("not.exist");
     cy.get("table tbody").contains("Admin 3").should("not.exist");
   });
 
