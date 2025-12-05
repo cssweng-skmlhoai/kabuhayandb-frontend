@@ -46,6 +46,11 @@ const ChangesHistory = () => {
     });
 
     if (searchTerm) params.append("search", searchTerm);
+
+    if (_selectedAdmin && _selectedAdmin.id !== "all") {
+      params.append("admin", _selectedAdmin.id);
+    }
+
     const formatLocalTime = (dateObj) => {
       const year = dateObj.getFullYear();
       const month = String(dateObj.getMonth() + 1).padStart(2, "0");
@@ -111,14 +116,14 @@ const ChangesHistory = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchTerm, date, API_URL, API_SECRET]);
+  }, [currentPage, searchTerm, date, _selectedAdmin, API_URL, API_SECRET]);
 
   useEffect(() => {
     fetchChangeHistory();
   }, [fetchChangeHistory]);
 
   const handleResetFilters = () => {
-    setSelectedAdmin("All");
+    setSelectedAdmin({ id: "all", name: "All" });
     setDate(undefined);
     setSearchTerm("");
     setCurrentPage(1);
