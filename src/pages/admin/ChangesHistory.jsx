@@ -42,9 +42,17 @@ const ChangesHistory = () => {
     });
 
     if (searchTerm) params.append("search", searchTerm);
-    if (date?.from)
-      params.append("dateFrom", date.from.toISOString().split("T")[0]);
-    if (date?.to) params.append("dateTo", date.to.toISOString().split("T")[0]);
+    const formatLocalTime = (dateObj) => {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    };
+
+    if (date?.from) params.append("dateFrom", formatLocalTime(date.from));
+
+    if (date?.to) params.append("dateTo", formatLocalTime(date.to));
 
     const url = `${API_URL}/changes?${params.toString()}`;
 
