@@ -144,14 +144,29 @@ describe("Changes History Page - Frontend Tests", () => {
   it("Test 4: Filter change logs by admin", () => {
     cy.wait("@getChanges");
     
-    cy.contains("Changed By").click();
-    cy.contains("Admin 2").click();
+    // Open the dropdown
+    cy.contains("button", "Changed By").click();
+
+    // Wait until the dropdown content is visible
+    cy.get('[role="menu"]').should('be.visible');
+
+    // Click the admin
+    cy.contains('[role="menuitem"]', "Admin 2").click();
 
     cy.wait("@getChanges");
 
-    cy.contains("Jane Smith").should("exist");
-    cy.get("table tbody").contains("Admin 1").should("not.exist");
+    // Verify table updates
     cy.get("table tbody").contains("Admin 2").should("be.visible");
+    cy.get("table tbody").contains("Admin 1").should("not.exist");
+
+    cy.contains("button", "Changed By").click();
+
+    cy.get('[role="menu"]').should('be.visible');
+    
+    cy.contains('[role="menuitem"]', "Admin 1").click();
+
+    cy.get("table tbody").contains("Admin 1").should("be.visible");
+    cy.get("table tbody").contains("Admin 2").should("not.exist");
     cy.get("table tbody").contains("Admin 3").should("not.exist");
   });
 

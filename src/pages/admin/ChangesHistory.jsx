@@ -23,7 +23,11 @@ import axios from "axios";
 import { toast } from "sonner";
 
 const ChangesHistory = () => {
-  const [_selectedAdmin, setSelectedAdmin] = useState("All");
+  const [availableAdmins, setAvailableAdmins] = useState([]);
+  const [_selectedAdmin, setSelectedAdmin] = useState({
+    id: "all",
+    name: "All",
+  });
   const [date, setDate] = useState();
   const [changedData, setChangedData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,9 +46,17 @@ const ChangesHistory = () => {
     });
 
     if (searchTerm) params.append("search", searchTerm);
-    if (date?.from)
-      params.append("dateFrom", date.from.toISOString().split("T")[0]);
-    if (date?.to) params.append("dateTo", date.to.toISOString().split("T")[0]);
+    const formatLocalTime = (dateObj) => {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    };
+
+    if (date?.from) params.append("dateFrom", formatLocalTime(date.from));
+
+    if (date?.to) params.append("dateTo", formatLocalTime(date.to));
 
     const url = `${API_URL}/changes?${params.toString()}`;
 
@@ -64,6 +76,27 @@ const ChangesHistory = () => {
           1
       );
       setTotalRecords(res.data.total || changes.length || 0);
+      setAvailableAdmins((prevAdmins) => {
+        const adminsMap = new Map();
+        prevAdmins.forEach((admin) => adminsMap.set(admin.id, admin.name));
+
+        changes.forEach((change) => {
+          const adminId = change.admin_id;
+          const adminName = change.changedBy;
+
+          if (adminId && adminName) {
+            adminsMap.set(adminId, adminName);
+          }
+        });
+
+        const newAdminsArray = Array.from(adminsMap, ([id, name]) => ({
+          id,
+          name,
+        }));
+
+        return newAdminsArray;
+      });
+      console.log(availableAdmins);
     } catch (error) {
       console.error("Failed to fetch change history:", error);
       console.error("Request URL:", url);
@@ -90,6 +123,11 @@ const ChangesHistory = () => {
     setSearchTerm("");
     setCurrentPage(1);
   };
+
+  const adminOptions = [
+    { id: "all", name: "All" },
+    ...availableAdmins, // [{ id: 1, name: 'Admin A' }, ...]
+  ];
 
   return (
     <div className="pb-35 xl:pb-0">
@@ -124,17 +162,17 @@ const ChangesHistory = () => {
                           variant="outline"
                           className="font-normal text-md py-6 md:px-10 w-[22rem] flex justify-between items-center text-left hover:cursor-pointer"
                         >
-                          Changed By
+                          Changed By: {_selectedAdmin?.name || "Select Admin"}
                           <BsArrowDown className="size-5 ml-3 mt-1" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="start">
-                        {["All"].map((admin) => (
+                        {adminOptions.map((admin) => (
                           <DropdownMenuItem
-                            key={admin}
+                            key={admin.id}
                             onClick={() => setSelectedAdmin(admin)}
                           >
-                            {admin}
+                            {admin.name}
                           </DropdownMenuItem>
                         ))}
                       </DropdownMenuContent>

@@ -23,6 +23,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import imageCompression from "browser-image-compression";
+import useAuthStore from "@/authStore";
 
 const MemberForms = ({ view }) => {
   const { id } = useParams();
@@ -221,6 +222,9 @@ const MemberForms = ({ view }) => {
       formData.append("families", JSON.stringify(familyData));
       formData.append("households", JSON.stringify(householdData));
       formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
+
+      const admin_id = useAuthStore.getState().memberId;
+      formData.append("admin_id", admin_id);
 
       await axios.put(`${API_URL}/members/info/${id}`, formData, {
         headers: {
