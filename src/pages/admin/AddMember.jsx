@@ -23,6 +23,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import imageCompression from "browser-image-compression";
+import useAuthStore from "../../authStore";
 
 const AddMember = () => {
   const navigate = useNavigate();
@@ -137,6 +138,10 @@ const AddMember = () => {
       formData.append("families", JSON.stringify(familyData));
       formData.append("households", JSON.stringify(householdData));
       formData.append("family_members", JSON.stringify(cleanedFamilyMembers));
+      const admin_id = useAuthStore.getState().memberId;
+      formData.append("admin_id", admin_id);
+
+      console.log("Submitting member with data:", formData);
 
       const res = await axios.post(`${API_URL}/members/info`, formData, {
         headers: {

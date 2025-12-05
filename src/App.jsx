@@ -12,9 +12,8 @@ import MemberLayout from "./layouts/MemberLayout";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import SearchMember from "./pages/admin/SearchMember";
 import MonthlyDues from "./pages/admin/MonthlyDues";
-import UnpaidDues from "./pages/admin/UnpaidDues";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ChangesHistory from "./pages/admin/ChangesHistory";
 
 const App = () => {
   return (
@@ -43,6 +42,7 @@ const App = () => {
         <Route path="/monthlyDuesReport/" element={<MonthlyDues />} />
         <Route path="/unpaidDuesReport/" element={<UnpaidDues />} />
         <Route path="/certification/:id" element={<Certification />} />
+        <Route path="/changesHistory" element={<ChangesHistory />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
 
