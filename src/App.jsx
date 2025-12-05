@@ -12,7 +12,8 @@ import MemberLayout from "./layouts/MemberLayout";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import SearchMember from "./pages/admin/SearchMember";
 import MonthlyDues from "./pages/admin/MonthlyDues";
-import ForgotPassword from "@/pages/ForgotPassword";
+import UnpaidDues from "./pages/admin/UnpaidDues";
+import ForgotPassword from "./pages/ForgotPassword";
 import ChangesHistory from "./pages/admin/ChangesHistory";
 
 const App = () => {
