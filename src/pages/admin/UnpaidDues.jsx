@@ -192,8 +192,11 @@ const UnpaidDues = () => {
                       key={index}
                       className="bg-white border border-black rounded-md p-4"
                     >
-                      <h2 className="font-semibold mb-3">
-                        For {member.member_name}, {member.filter_value}
+                      <h2 className="font-semibold mb-3 text-lg">
+                        <span className="text-gray-700">
+                          [{member.filter_value}]
+                        </span>{" "}
+                        {member.member_name}
                       </h2>
                       <div className="overflow-x-auto">
                         <table className="w-full border border-black border-separate rounded-md text-center">
