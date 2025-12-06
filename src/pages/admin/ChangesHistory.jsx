@@ -1,6 +1,6 @@
 import TopNav from "@/components/AdminCompts/TopNav";
 import React, { useState, useEffect, useCallback } from "react";
-import SideBar from "@/components/AdminCompts/SideBar";
+import SideBar from "@/components/AdminCompts/Sidebar";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
